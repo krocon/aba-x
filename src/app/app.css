@@ -17,12 +17,12 @@
   justify-content: center;
   gap: 0.25rem 1rem;
   padding: 0.25rem 1rem 0.5rem;
-  color: var(--color-text-muted);
+  color: var(--page-muted);
   font-size: 0.75rem;
 }
 
 .problem {
-  color: var(--color-danger);
+  color: #ff9a8a;
 }
 
 .link {

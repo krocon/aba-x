@@ -54,10 +54,17 @@
   color-scheme: light;
 }
 
+/* The page around the device is always dark (Marc, 02.11.2026) – in light and dark scheme alike. */
+:root {
+  --page-bg: #252936;
+  --page-text: #e1e5ec;
+  --page-muted: #a3abb8;
+}
+
 html,
 body {
   margin: 0;
-  background: var(--color-bg);
+  background: var(--page-bg);
   color: var(--color-text);
   font-family: var(--font-ui);
   font-size: 16px;
