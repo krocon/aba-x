@@ -17,3 +17,6 @@
   Dezimalwert – auch für Ergebnisse aus dem CAS-Menü (vorher fehlte dort „≈ …“).
 - E6 Bearbeiten: Klick auf eine Ebene oder ↑ + ENTER legt ihre Eingabe in die Zeile; ENTER ersetzt die Ebene an
   ihrer Stelle, ESC/ON bricht ab. RECALL (◀⇧ ▲) holt weiterhin das Ergebnis.
+- E7 Volle Größe (Wunsch Marc, Einstellung `fullSize`, ⤢ in der Kopfzeile, ⌥F, Menü Ansicht): Gerät füllt das
+  Fenster; Hochformat = Display wächst, Tastatur volle Breite; Querformat ab 860 px = Display links, Tastatur rechts;
+  so viele Stack-Ebenen, wie hineinpassen (gemessen per ResizeObserver), größere Schrift im Display.

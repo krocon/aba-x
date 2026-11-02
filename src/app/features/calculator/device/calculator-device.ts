@@ -3,9 +3,14 @@ import {
   ChangeDetectionStrategy,
   Component,
   DestroyRef,
+  ElementRef,
+  afterNextRender,
   computed,
   inject,
+  signal,
+  viewChild,
 } from '@angular/core';
+import { SettingsStore } from '../../settings/settings-store';
 import { KeyboardDispatcher } from '../../../core/actions/keyboard-dispatcher';
 import { I18n } from '../../../core/i18n/i18n';
 import type { ActionId } from '../../../core/actions/keymap';
@@ -33,8 +38,12 @@ import {
   mainItems,
 } from './softkeys';
 
-/** Visible stack levels in the display. */
+/** Visible stack levels in the normal display; full size shows as many as fit. */
 const LEVELS = 4;
+/** Height of one stack level with input/approximation lines (px), for the full-size count. */
+const LEVEL_PX = 50;
+/** Height of the fixed display rows (annunciators, path, input line, message, menu) in px. */
+const LCD_FIXED_PX = 150;
 
 /**
  * The calculator: display (annunciators, stack, input line, soft menu), the six softkeys and the
@@ -110,14 +119,36 @@ export class CalculatorDevice {
     return [...items, exit];
   });
   protected readonly title = computed(() => MODE_TITLES[this.ui.mode()]);
-  protected readonly levels = computed(() =>
-    visibleLevels(this.calc.stack(), LEVELS, this.calc.selected()),
+  private readonly settings = inject(SettingsStore);
+  protected readonly full = computed(() => this.settings.settings().fullSize);
+  /** Display height, measured (full size only). */
+  private readonly lcdHeight = signal(0);
+  protected readonly levelCount = computed(() =>
+    this.full()
+      ? Math.max(LEVELS, Math.floor((this.lcdHeight() - LCD_FIXED_PX) / LEVEL_PX))
+      : LEVELS,
   );
+  protected readonly levels = computed(() =>
+    visibleLevels(this.calc.stack(), this.levelCount(), this.calc.selected()),
+  );
+  private readonly lcd = viewChild<ElementRef<HTMLElement>>('lcd');
+
+  protected toggleFull(): void {
+    this.settings.update({ fullSize: !this.full() });
+  }
 
   private readonly keys = inject(KeyboardDispatcher);
+  private readonly destroyRef = inject(DestroyRef);
   protected readonly i18n = inject(I18n);
 
   constructor() {
+    afterNextRender(() => {
+      const el = this.lcd()?.nativeElement;
+      if (!el || typeof ResizeObserver === 'undefined') return;
+      const ro = new ResizeObserver(() => this.lcdHeight.set(el.clientHeight));
+      ro.observe(el);
+      this.destroyRef.onDestroy(() => ro.disconnect());
+    });
     const keys = this.keys;
     const softkey = (i: number) => () => {
       this.calc.flash(`soft-${i}`);

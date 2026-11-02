@@ -34,3 +34,24 @@
   text-decoration: underline;
   cursor: pointer;
 }
+
+/* Full size (setting): the device fills the window, the status line stays small below */
+:host.full {
+  height: 100dvh;
+  min-height: 0;
+}
+
+:host.full .content {
+  display: block;
+  padding: 0;
+  min-height: 0;
+}
+
+:host.full .status {
+  padding: 0.15rem 1rem 0.25rem;
+}
+
+/* the floating web menu button must not cover the device name */
+:host.full.web-menu ::ng-deep .device.full .brandline {
+  padding-left: 6.5rem;
+}

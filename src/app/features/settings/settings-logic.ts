@@ -12,6 +12,8 @@ export interface Settings {
   timeoutSec: number;
   theme: Theme;
   lang: Lang;
+  /** Full-size mode: the device fills the whole window (display and keypad). */
+  fullSize: boolean;
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -21,6 +23,7 @@ export const DEFAULT_SETTINGS: Settings = {
   timeoutSec: 8,
   theme: 'system',
   lang: 'en',
+  fullSize: false,
 };
 
 const clampInt = (v: unknown, min: number, max: number, def: number) =>
@@ -41,6 +44,7 @@ export function sanitizeSettings(
       timeoutSec: clampInt(r['timeoutSec'], 1, 60, defaults.timeoutSec),
       theme: oneOf(r['theme'], ['system', 'light', 'dark'] as const, defaults.theme),
       lang: oneOf(r['lang'], ['en', 'de'] as const, defaults.lang),
+      fullSize: typeof r['fullSize'] === 'boolean' ? r['fullSize'] : defaults.fullSize,
     },
     readOnly: typeof r['schemaVersion'] === 'number' && r['schemaVersion'] > SETTINGS_SCHEMA,
   };

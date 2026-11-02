@@ -1,10 +1,22 @@
-<div class="device">
+<div class="device" [class.full]="full()">
   <div class="brandline">
     <span class="brand">ABA-X1</span>
     <span class="model">SCIENTIFIC · SYMBOLIC · GRAPHING</span>
+    <button
+      type="button"
+      class="size"
+      tabindex="-1"
+      [attr.aria-pressed]="full()"
+      [attr.aria-label]="i18n.t(full() ? 'device.normalSize' : 'device.fullSize')"
+      [title]="i18n.t(full() ? 'device.normalSize' : 'device.fullSize')"
+      (pointerdown)="$event.preventDefault()"
+      (click)="toggleFull()"
+    >
+      {{ full() ? '⤡' : '⤢' }}
+    </button>
   </div>
 
-  <section class="lcd" aria-label="Display">
+  <section #lcd class="lcd" aria-label="Display">
     <div class="annunciators" aria-live="polite">
       <span class="ann" [class.on]="calc.shift() === 'left'" aria-label="Left shift">◀⇧</span>
       <span class="ann" [class.on]="calc.shift() === 'right'" aria-label="Right shift">⇧▶</span>

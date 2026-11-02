@@ -90,6 +90,17 @@ import { SettingsStore } from './settings-store';
           }
         </fieldset>
         <fieldset>
+          <legend>{{ i18n.t('settings.layout') }}</legend>
+          <label>
+            <input
+              type="checkbox"
+              [checked]="s().fullSize"
+              (change)="store.update({ fullSize: !s().fullSize })"
+            />
+            {{ i18n.t('settings.fullSize') }}
+          </label>
+        </fieldset>
+        <fieldset>
           <legend>{{ i18n.t('settings.language') }}</legend>
           <label
             ><input

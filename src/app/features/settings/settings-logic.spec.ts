@@ -18,6 +18,7 @@ describe('settings-logic', () => {
       timeoutSec: 1,
       theme: 'dark',
       lang: 'de',
+      fullSize: false,
     });
   });
 

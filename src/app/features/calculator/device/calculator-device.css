@@ -45,13 +45,38 @@
   color: #c9cfda;
 }
 
+.size {
+  margin-left: 0.6rem;
+  width: 1.6rem;
+  height: 1.3rem;
+  padding: 0;
+  border: 1px solid #4a5366;
+  border-radius: 5px;
+  background: #2b313e;
+  color: #c9cfda;
+  font-size: 0.85rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.size:hover {
+  background: #39404f;
+}
+
+.size:focus-visible {
+  outline: 2px solid var(--dev-armed);
+  outline-offset: 1px;
+}
+
 .brand {
+  white-space: nowrap;
   font-weight: 800;
   letter-spacing: 0.12em;
   font-size: 0.85rem;
 }
 
 .model {
+  margin-left: auto;
   font-size: 0.55rem;
   letter-spacing: 0.14em;
   color: #8e97a8;
@@ -337,4 +362,87 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* ---------------------------------------------------------------- full size (setting) */
+
+:host {
+  height: 100%;
+}
+
+.device.full {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  border-radius: 0;
+  padding: 0.6rem 0.9rem 0.8rem;
+  box-shadow: none;
+}
+
+.device.full .lcd {
+  flex: 1 1 auto;
+  height: auto;
+  min-height: 15.5rem;
+}
+
+.device.full app-keypad {
+  width: 100%;
+}
+
+/* larger type in the large display */
+.device.full .level {
+  font-size: 1.2rem;
+  min-height: 2rem;
+}
+
+.device.full .results {
+  font-size: 1.15rem;
+}
+
+.device.full .val .input {
+  font-size: 0.85rem;
+}
+
+.device.full .path {
+  font-size: 1rem;
+}
+
+/* Landscape: display on the left, keypad on the right (keys would be absurdly wide otherwise) */
+@media (orientation: landscape) and (min-width: 860px) {
+  .device.full {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(22rem, 30rem);
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    column-gap: 1.5rem;
+  }
+
+  .device.full .brandline {
+    grid-column: 1 / -1;
+  }
+
+  .device.full .lcd {
+    grid-column: 1;
+    grid-row: 2;
+    min-height: 0;
+  }
+
+  .device.full .softkeys {
+    grid-column: 1;
+    grid-row: 3;
+    margin-bottom: 0;
+  }
+
+  .device.full app-keypad {
+    grid-column: 2;
+    grid-row: 2 / span 2;
+    align-self: end;
+  }
+}
+
+@media (max-width: 560px) {
+  .device.full .model {
+    visibility: hidden;
+  }
 }

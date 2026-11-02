@@ -29,7 +29,8 @@ export type ActionId =
   | 'vars'
   | 'modeStandard'
   | 'modeCas'
-  | 'modeGraph';
+  | 'modeGraph'
+  | 'toggleFullSize';
 
 export interface ActionInfo {
   readonly id: ActionId;
@@ -60,6 +61,7 @@ export const ACTIONS: readonly ActionInfo[] = [
   { id: 'modeStandard', title: 'Standard mode' },
   { id: 'modeCas', title: 'CAS mode' },
   { id: 'modeGraph', title: 'Graph mode' },
+  { id: 'toggleFullSize', title: 'Full size' },
 ];
 
 export interface Chord {
@@ -90,6 +92,7 @@ const BASE: Keymap = [
   { action: 'exportData', chord: { mod: true, key: 'S' } },
   { action: 'importData', chord: { mod: true, key: 'O' } },
   { action: 'copyResult', chord: { mod: true, shift: true, key: 'C' } },
+  { action: 'toggleFullSize', chord: { alt: true, key: 'F' } },
 ];
 
 /** Default keymap; identical on all OS today, `Mod` resolves per OS. */

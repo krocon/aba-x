@@ -27,6 +27,10 @@ import { VarsStore } from './features/vars/vars-store';
   imports: [CalculatorDevice, ShortcutsDialog, MenuBar, AboutDialog, ImportDialog, SettingsDialog],
   templateUrl: './app.html',
   styleUrl: './app.css',
+  host: {
+    '[class.full]': 'settings.settings().fullSize',
+    '[class.web-menu]': '!menu.native',
+  },
 })
 export class App implements OnInit {
   private readonly platform = inject(PlatformApi);
@@ -56,6 +60,9 @@ export class App implements OnInit {
     }
     this.keys.register('about', () => this.aboutOpen.set(true));
     this.keys.register('settings', () => this.settingsOpen.set(true));
+    this.keys.register('toggleFullSize', () =>
+      this.settings.update({ fullSize: !this.settings.settings().fullSize }),
+    );
     this.keys.register('exportData', () => void this.backup.exportData(this.settings.settings()));
     this.keys.register('importData', () => void this.backup.chooseImport());
   }

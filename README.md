@@ -45,7 +45,7 @@ mouse, wheel and pinch; TRACE; zeros, extrema, intersections, tangent, signed ar
 
 **Everywhere** – full hardware-keyboard support, history with favourites, export/import of all data (same file on
 desktop and web), settings (angle, exact/decimal, digits, time limit, theme), English and German, native menu on the
-desktop, installable offline web app (PWA).
+desktop, installable offline web app (PWA), **full-size mode** (⤢ or `⌥F`) in which display and keypad fill the window.
 
 ## Keyboard
 
@@ -57,6 +57,7 @@ desktop, installable offline web app (PWA).
 | `↑` on an empty line | browse the stack (↑ ↓, Enter = edit, Delete = drop); click a level to edit it |
 | `F1`–`F6` | softkeys (mode menu: Standard, CAS, Graph, VARS, HIST, SETUP) |
 | `⌥R` / `⌥E` | radians ↔ degrees / exact ↔ decimal |
+| `⌥F` | full size: display and keypad fill the window (landscape: keypad beside the display) |
 | `⌥⌫` / `⌥S` | DROP / SWAP |
 | `⌘/` · `⌘,` · `⌘S` · `⌘O` | shortcuts · settings · export · import (Ctrl on Windows/Linux) |
 | Graph mode, empty line | arrows pan (TRACE: move/switch), `+`/`−` zoom |

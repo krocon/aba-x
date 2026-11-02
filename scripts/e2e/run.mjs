@@ -146,6 +146,28 @@ const checks = {
     await page.setViewportSize({ width: 1000, height: 900 });
     if (overflow > 0) throw new Error(`horizontal overflow ${overflow}px at 375px`);
   },
+  /** Full size (⌥F): fills the window without scrolling, more stack levels in a big display. */
+  async fullSize(page) {
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.click('math-field');
+    await page.keyboard.press('Alt+KeyF');
+    await page.waitForSelector('.device.full');
+    await page.waitForTimeout(300);
+    const r = await page.evaluate(() => ({
+      levels: document.querySelectorAll('.level').length,
+      overflow:
+        document.documentElement.scrollHeight -
+        innerHeight +
+        (document.documentElement.scrollWidth - innerWidth),
+    }));
+    await page.setViewportSize({ width: 375, height: 812 });
+    const phone = await page.evaluate(() => document.documentElement.scrollWidth - innerWidth);
+    await page.keyboard.press('Alt+KeyF');
+    await page.waitForFunction(() => !document.querySelector('.device.full'));
+    await page.setViewportSize({ width: 1000, height: 900 });
+    if (r.levels <= 4 || r.overflow > 0 || phone > 0)
+      throw new Error(`full size: ${JSON.stringify({ ...r, phone })}`);
+  },
   async accessibility(page) {
     await page.addScriptTag({ content: axeSource });
     const r = await page.evaluate(() =>
