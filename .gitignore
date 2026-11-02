@@ -1,3 +1,37 @@
+# Compiled output
+/dist
+/tmp
+/out-tsc
+
+# Node
+/node_modules
+npm-debug.log
+
+# IDEs and editors
+/.idea/
+.project
+.classpath
+*.launch
+.settings/
+*.sublime-workspace
+.vscode/*
+!.vscode/extensions.json
+.history/*
+
+# Angular
+/.angular/
+
+# Tests / tools
+/coverage
+__screenshots__/
+/test-results/
+/playwright-report/
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Agents
 /.agents/
 /.gemini/
-/.idea/
+/.claude/

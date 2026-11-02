@@ -1,0 +1,66 @@
+/* Design tokens (light + dark). Components use only these variables. */
+:root {
+  color-scheme: light dark;
+  --font-ui: system-ui, -apple-system, 'Segoe UI', Roboto, Ubuntu, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+  --radius: 8px;
+
+  --color-bg: #f6f7f9;
+  --color-surface: #ffffff;
+  --color-surface-2: #eceef2;
+  --color-border: #d5d9e0;
+  --color-text: #15181d;
+  --color-text-muted: #5b6370;
+  --color-accent: #1f6feb;
+  --color-accent-soft: #d6e4fd;
+  --color-focus: #1f6feb;
+  --color-danger: #b42318;
+  --color-shadow: rgb(0 0 0 / 0.12);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #111317;
+    --color-surface: #1a1d23;
+    --color-surface-2: #252a32;
+    --color-border: #343a44;
+    --color-text: #e8eaee;
+    --color-text-muted: #9aa3b0;
+    --color-accent: #5b9dff;
+    --color-accent-soft: #233a5e;
+    --color-focus: #7cb1ff;
+    --color-danger: #ff8a7a;
+    --color-shadow: rgb(0 0 0 / 0.5);
+  }
+}
+
+html,
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-ui);
+  font-size: 16px;
+  line-height: 1.45;
+}
+
+code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}

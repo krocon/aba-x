@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <title>ABA-X1</title>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2a7bf0"/>
+      <stop offset="1" stop-color="#173e8f"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+  <!-- integral sign -->
+  <path d="M206 404c-14 30-44 40-68 28 M206 404 L262 116 c14-30 44-40 68-28" fill="none" stroke="#fff" stroke-width="34" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- x -->
+  <path d="M300 236 L380 332 M380 236 L300 332" stroke="#9cd2ff" stroke-width="30" stroke-linecap="round"/>
+</svg>
