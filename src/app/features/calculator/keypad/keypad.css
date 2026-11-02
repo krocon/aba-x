@@ -1,0 +1,150 @@
+:host {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.block {
+  display: grid;
+  column-gap: 0.55rem;
+  row-gap: 0.1rem;
+}
+
+.six {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+
+.five {
+  grid-template-columns: 0.9fr repeat(3, 1.15fr) 1fr;
+  column-gap: 0.7rem;
+}
+
+.cell {
+  display: grid;
+  grid-template-rows: auto auto;
+  position: relative;
+  min-width: 0;
+}
+
+.shifted {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.2rem;
+  height: 0.95rem;
+  font-size: 0.58rem;
+  font-weight: 700;
+  line-height: 0.95rem;
+  white-space: nowrap;
+  overflow: visible;
+}
+
+.sl {
+  color: var(--dev-shift-left);
+}
+
+.sr {
+  color: var(--dev-shift-right);
+  margin-left: auto;
+}
+
+.sl.on,
+.sr.on {
+  text-shadow: 0 0 6px currentColor;
+}
+
+.key {
+  font: inherit;
+  font-weight: 700;
+  font-size: 0.82rem;
+  letter-spacing: 0.02em;
+  height: 2.05rem;
+  padding: 0;
+  border: 0;
+  border-radius: 7px 7px 9px 9px;
+  color: var(--dev-key-ink);
+  background: linear-gradient(180deg, var(--dev-key-top), var(--dev-key-bottom));
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.18),
+    0 2px 0 var(--dev-key-edge),
+    0 3px 5px rgb(0 0 0 / 0.45);
+  cursor: pointer;
+  user-select: none;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.key:active,
+.key.lit {
+  transform: translateY(2px);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.1),
+    0 0 0 var(--dev-key-edge),
+    0 1px 2px rgb(0 0 0 / 0.5);
+  filter: brightness(1.25);
+}
+
+.v-digit {
+  height: 2.35rem;
+  font-size: 1.25rem;
+  background: linear-gradient(180deg, var(--dev-digit-top), var(--dev-digit-bottom));
+}
+
+.v-op {
+  height: 2.35rem;
+  font-size: 1.35rem;
+}
+
+.v-enter {
+  font-size: 0.95rem;
+}
+
+.v-shift-left,
+.v-shift-right,
+.v-alpha {
+  height: 2.35rem;
+  font-size: 1rem;
+}
+
+.v-shift-left {
+  color: #1c1430;
+  background: linear-gradient(180deg, #c7b1ee, var(--dev-shift-left-key));
+}
+
+.v-shift-right {
+  color: #0b2a2a;
+  background: linear-gradient(180deg, #8ae3de, var(--dev-shift-right-key));
+}
+
+.v-alpha {
+  font-size: 1.1rem;
+}
+
+.armed {
+  outline: 2px solid var(--dev-armed);
+  outline-offset: 2px;
+}
+
+.letter {
+  position: absolute;
+  right: -0.45rem;
+  bottom: -0.05rem;
+  font-size: 0.55rem;
+  font-weight: 700;
+  color: var(--dev-alpha);
+}
+
+.five .letter {
+  right: -0.6rem;
+}
+
+@media (max-width: 420px) {
+  .block {
+    column-gap: 0.45rem;
+  }
+  .key {
+    font-size: 0.74rem;
+  }
+  .shifted {
+    font-size: 0.47rem;
+    gap: 0.1rem;
+  }
+}

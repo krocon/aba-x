@@ -1,0 +1,40 @@
+<ng-template #keyTpl let-key>
+  <div class="cell" [style.grid-column]="key.span ? 'span ' + key.span : null">
+    <div class="shifted" aria-hidden="true">
+      <span class="sl" [class.on]="store.shift() === 'left'">{{ key.left?.label }}</span>
+      <span class="sr" [class.on]="store.shift() === 'right'">{{ key.right?.label }}</span>
+    </div>
+    <button
+      type="button"
+      class="key"
+      [class]="'key v-' + key.variant"
+      [class.lit]="store.litKey() === key.id"
+      [class.armed]="armed(key)"
+      [attr.aria-label]="key.name"
+      [attr.aria-pressed]="
+        key.variant.startsWith('shift') || key.id === 'alpha' ? armed(key) : null
+      "
+      tabindex="-1"
+      (pointerdown)="$event.preventDefault()"
+      (click)="store.press(key)"
+    >
+      {{ key.label }}
+    </button>
+    <span class="letter" aria-hidden="true">{{ key.alpha }}</span>
+  </div>
+</ng-template>
+
+<div class="block six" role="group" aria-label="Function keys">
+  @for (row of functionRows; track $index) {
+    @for (key of row; track key.id) {
+      <ng-container *ngTemplateOutlet="keyTpl; context: { $implicit: key }" />
+    }
+  }
+</div>
+<div class="block five" role="group" aria-label="Number keys">
+  @for (row of numberRows; track $index) {
+    @for (key of row; track key.id) {
+      <ng-container *ngTemplateOutlet="keyTpl; context: { $implicit: key }" />
+    }
+  }
+</div>

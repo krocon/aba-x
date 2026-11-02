@@ -1,0 +1,221 @@
+:host {
+  display: block;
+  /* The device has fixed colours like a physical calculator; only the page follows light/dark. */
+  --dev-body-top: #3a4150;
+  --dev-body-bottom: #232834;
+  --dev-bezel: #151820;
+  --dev-key-top: #4b5466;
+  --dev-key-bottom: #343b4a;
+  --dev-key-edge: #191d26;
+  --dev-key-ink: #f3f5f8;
+  --dev-digit-top: #5a6478;
+  --dev-digit-bottom: #3f4757;
+  --dev-shift-left: #c3a6ff;
+  --dev-shift-right: #6fd8d0;
+  --dev-shift-left-key: #9a7fd0;
+  --dev-shift-right-key: #4fb8b1;
+  --dev-alpha: #e8c46a;
+  --dev-armed: #ffe08a;
+  --lcd-bg-top: #b9c4a6;
+  --lcd-bg-bottom: #a7b394;
+  --lcd-ink: #1d2417;
+  --lcd-dim: rgb(29 36 23 / 0.22);
+  --lcd-select: rgb(29 36 23 / 0.2);
+}
+
+.device {
+  box-sizing: border-box;
+  width: min(100%, 25rem);
+  margin: 0 auto;
+  padding: 0.7rem 0.85rem 1rem;
+  border-radius: 22px 22px 34px 34px;
+  background: linear-gradient(175deg, var(--dev-body-top), var(--dev-body-bottom));
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.12),
+    inset 0 -3px 0 rgb(0 0 0 / 0.35),
+    0 18px 40px rgb(0 0 0 / 0.35);
+  font-family: var(--font-ui);
+}
+
+.brandline {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 0 0.25rem 0.4rem;
+  color: #c9cfda;
+}
+
+.brand {
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  font-size: 0.85rem;
+}
+
+.model {
+  font-size: 0.55rem;
+  letter-spacing: 0.14em;
+  color: #8e97a8;
+}
+
+.lcd {
+  display: grid;
+  grid-template-rows: 0.9rem 1.2rem minmax(0, 1fr) 3.4rem 1rem 1.05rem;
+  /* Fixed size like a real display: content never moves the keypad. */
+  height: 15.5rem;
+  overflow: hidden;
+  padding: 0.3rem 0.45rem 0.25rem;
+  border: 6px solid var(--dev-bezel);
+  border-radius: 8px;
+  background: linear-gradient(180deg, var(--lcd-bg-top), var(--lcd-bg-bottom));
+  box-shadow: inset 0 2px 6px rgb(0 0 0 / 0.35);
+  color: var(--lcd-ink);
+  font-family: var(--font-mono);
+}
+
+.annunciators {
+  display: flex;
+  gap: 0.6rem;
+  font-size: 0.62rem;
+  font-weight: 700;
+  height: 0.9rem;
+}
+
+.ann {
+  color: var(--lcd-dim);
+}
+
+.ann.on {
+  color: var(--lcd-ink);
+}
+
+.path {
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.stack {
+  /* Level 1 sits at the bottom; a tall entry pushes the upper levels out of view. */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: 0;
+  overflow: hidden;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.level {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex: none;
+  min-height: 1.7rem;
+  font-size: 1.05rem;
+  border-bottom: 1px dotted var(--lcd-dim);
+}
+
+.num {
+  flex: none;
+}
+
+.val {
+  margin-left: auto;
+  font-size: 0.95rem;
+  white-space: nowrap;
+  overflow: hidden;
+  padding: 0.1rem 0;
+  --primary-color: var(--lcd-ink);
+}
+
+.line {
+  overflow: auto;
+  border-top: 1px solid var(--lcd-ink);
+}
+
+.placeholder {
+  align-self: center;
+  margin: 0;
+  font-size: 0.85rem;
+}
+
+.msg {
+  min-height: 1rem;
+  margin: 0;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.menu {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 3px;
+}
+
+.menu-label {
+  padding: 0.05rem 0;
+  text-align: center;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--lcd-bg-top);
+  background: var(--lcd-ink);
+  border-radius: 0 0 3px 3px;
+}
+
+.menu-label.active::after {
+  content: '■';
+  font-size: 0.5rem;
+  margin-left: 2px;
+  vertical-align: 1px;
+}
+
+.menu-label.planned {
+  opacity: 0.55;
+}
+
+.softkeys {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  column-gap: 0.55rem;
+  margin: 0.55rem 0 0.35rem;
+}
+
+.soft-cell {
+  position: relative;
+}
+
+.soft {
+  display: block;
+  width: 100%;
+  height: 1.15rem;
+  padding: 0;
+  border: 0;
+  border-radius: 5px 5px 7px 7px;
+  background: linear-gradient(180deg, #f4f5f7, #c9ccd3);
+  box-shadow:
+    0 2px 0 #7d828e,
+    0 3px 4px rgb(0 0 0 / 0.45);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.soft:active,
+.soft.lit {
+  transform: translateY(2px);
+  box-shadow: 0 0 0 #7d828e;
+}
+
+.soft-cell .letter {
+  position: absolute;
+  right: -0.5rem;
+  bottom: -0.1rem;
+  font-size: 0.5rem;
+  font-weight: 700;
+  color: var(--dev-alpha);
+}
+
+@media (max-width: 420px) {
+  .device {
+    padding: 0.6rem 0.6rem 0.9rem;
+  }
+}

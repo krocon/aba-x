@@ -1,0 +1,74 @@
+<div class="device">
+  <div class="brandline">
+    <span class="brand">ABA-X1</span>
+    <span class="model">SCIENTIFIC · SYMBOLIC · GRAPHING</span>
+  </div>
+
+  <section class="lcd" aria-label="Display">
+    <div class="annunciators" aria-live="polite">
+      <span class="ann" [class.on]="calc.shift() === 'left'" aria-label="Left shift">◀⇧</span>
+      <span class="ann" [class.on]="calc.shift() === 'right'" aria-label="Right shift">⇧▶</span>
+      <span class="ann" [class.on]="calc.alpha()" aria-label="Alpha">α</span>
+      <span class="ann on">RAD</span>
+      <span class="ann on">EXACT</span>
+    </div>
+    <div class="path">{{ '{ ' + title() + ' }' }}</div>
+
+    @switch (ui.mode()) {
+      @case ('standard') {
+        <ol class="stack" aria-label="Stack">
+          @for (row of levels(); track row.level) {
+            <li class="level">
+              <span class="num">{{ row.level }}:</span>
+              @if (row.entry; as entry) {
+                <math-span class="val">{{ entry.latex }}</math-span>
+              }
+            </li>
+          }
+        </ol>
+        <div class="line">
+          <app-math-input ariaLabel="Input line" />
+        </div>
+      }
+      @case ('cas') {
+        <p class="placeholder">Symbolic algebra, equations, derivatives and integrals follow.</p>
+      }
+      @case ('graph') {
+        <p class="placeholder">The function plotter follows.</p>
+      }
+    }
+
+    <p class="msg" role="status">{{ calc.message() }}</p>
+
+    <div class="menu" aria-hidden="true">
+      @for (key of menu; track key.label; let i = $index) {
+        <span
+          class="menu-label"
+          [class.active]="isActive(key)"
+          [class.planned]="key.kind === 'planned'"
+          >{{ key.label }}</span
+        >
+      }
+    </div>
+  </section>
+
+  <div class="softkeys" role="group" aria-label="Soft menu (F1–F6)">
+    @for (key of menu; track key.label; let i = $index) {
+      <div class="soft-cell">
+        <button
+          type="button"
+          class="soft"
+          [class.lit]="calc.litKey() === 'soft-' + i"
+          [attr.aria-pressed]="key.kind === 'mode' ? isActive(key) : null"
+          [attr.aria-label]="key.label + ' (F' + (i + 1) + ')'"
+          tabindex="-1"
+          (pointerdown)="$event.preventDefault()"
+          (click)="softkey(i)"
+        ></button>
+        <span class="letter" aria-hidden="true">F{{ i + 1 }}</span>
+      </div>
+    }
+  </div>
+
+  <app-keypad />
+</div>

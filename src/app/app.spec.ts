@@ -6,9 +6,20 @@ import { PlatformApi } from './core/platform/platform-api';
 import { StorageApi } from './core/storage/storage-api';
 import { MATH_FIELD_FACTORY, MathFieldLike } from './features/calculator/math-input';
 
+/** A stand-in for `<math-field>`: keeps the inserted LaTeX as its value. */
 function fakeMathField(): MathFieldLike {
-  const el = document.createElement('div') as unknown as MathFieldLike;
-  el.getValue = (format) => (format === 'ascii-math' ? '(x+1)/2' : '\\frac{x+1}{2}');
+  const el = document.createElement('div') as unknown as MathFieldLike & { v: string };
+  el.v = '';
+  Object.defineProperty(el, 'value', {
+    get: () => el.v,
+    set: (v: string) => (el.v = v),
+  });
+  el.getValue = () => el.v;
+  el.insert = (latex: string) => {
+    el.v += latex;
+    return true;
+  };
+  el.executeCommand = () => true;
   return el;
 }
 
@@ -32,42 +43,76 @@ describe('App', () => {
     await fixture.whenStable();
     fixture.detectChanges();
     await fixture.whenStable();
-    return { fixture, el: fixture.nativeElement as HTMLElement };
+    const el = fixture.nativeElement as HTMLElement;
+    const settle = async () => {
+      fixture.detectChanges();
+      await fixture.whenStable();
+    };
+    return { fixture, el, settle };
   }
 
-  const tabs = (el: HTMLElement) => [...el.querySelectorAll<HTMLButtonElement>('[role=tab]')];
+  const softkeys = (el: HTMLElement) => [...el.querySelectorAll<HTMLButtonElement>('.soft')];
+  const key = (el: HTMLElement, name: string) =>
+    el.querySelector<HTMLButtonElement>(`.key[aria-label="${name}"]`)!;
+  const press = (key: string) =>
+    document.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true }));
 
-  it('shows the brand, three mode tabs and the web version', async () => {
+  it('shows the device, the soft menu and the web version', async () => {
     const { el } = await render();
-    expect(el.querySelector('.name')?.textContent).toContain('ABA-X1');
-    expect(tabs(el).map((t) => t.textContent?.trim())).toEqual(['Standard', 'CAS', 'Graph']);
+    expect(el.querySelector('.brand')?.textContent).toContain('ABA-X1');
+    expect([...el.querySelectorAll('.menu-label')].map((m) => m.textContent?.trim())).toEqual([
+      'STD',
+      'CAS',
+      'GRAPH',
+      'VARS',
+      'HIST',
+      'SETUP',
+    ]);
+    expect(el.querySelector('.path')?.textContent).toContain('STANDARD');
     expect(el.querySelector('.status')?.textContent).toContain('v9.9.9');
   });
 
   it('restores the stored mode', async () => {
     storage.docs.set('ui-state', { schemaVersion: 1, mode: 'graph' });
     const { el } = await render();
-    expect(tabs(el)[2].getAttribute('aria-selected')).toBe('true');
-    expect(el.querySelector('[role=tabpanel]')?.id).toBe('panel-graph');
+    expect(el.querySelector('.path')?.textContent).toContain('GRAPH');
+    expect(softkeys(el)[2].getAttribute('aria-pressed')).toBe('true');
   });
 
-  it('switches modes by click and arrow keys and persists the choice', async () => {
-    const { fixture, el } = await render();
-    tabs(el)[1].click();
-    await fixture.whenStable();
-    expect(el.querySelector('[role=tabpanel] h2')?.textContent).toContain('CAS');
-    tabs(el)[1].dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true }));
-    await fixture.whenStable();
-    expect(tabs(el)[2].getAttribute('aria-selected')).toBe('true');
-    expect(tabs(el)[2].tabIndex).toBe(0);
+  it('switches modes with the softkeys and F1–F6, and persists the choice', async () => {
+    const { el, settle } = await render();
+    softkeys(el)[1].click();
+    await settle();
+    expect(el.querySelector('.path')?.textContent).toContain('CAS');
+    press('F3');
+    await settle();
+    expect(el.querySelector('.path')?.textContent).toContain('GRAPH');
     expect(storage.docs.get('ui-state')).toEqual({ schemaVersion: 1, mode: 'graph' });
+    press('F4');
+    await settle();
+    expect(el.querySelector('.msg')?.textContent).toContain('VARS');
   });
 
-  it('shows LaTeX and ASCII-Math of the input', async () => {
-    const { fixture, el } = await render();
-    el.querySelector('app-math-input div')!.firstElementChild!.dispatchEvent(new Event('input'));
-    await fixture.whenStable();
-    expect(el.textContent).toContain('\\frac{x+1}{2}');
-    expect(el.textContent).toContain('(x+1)/2');
+  it('keypad and ENTER put an expression onto stack level 1', async () => {
+    const { el, settle } = await render();
+    key(el, '7').click();
+    key(el, 'Add').click();
+    key(el, '2').click();
+    key(el, 'Enter').click();
+    await settle();
+    const levels = [...el.querySelectorAll('.level')].map((l) =>
+      l.textContent?.replace(/\s+/g, ''),
+    );
+    expect(levels).toEqual(['4:', '3:', '2:', '1:7+2']);
+  });
+
+  it('typing on the hardware keyboard outside the line goes to the line', async () => {
+    const { el, settle } = await render();
+    press('3');
+    press('*');
+    press('4');
+    press('Enter');
+    await settle();
+    expect(el.querySelector('.level:last-child')?.textContent).toContain('3\\cdot4');
   });
 });

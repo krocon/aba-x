@@ -1,51 +1,6 @@
-<header class="topbar">
-  <div class="brand">
-    <img class="logo" src="logo.svg" alt="" width="28" height="28" />
-    <span class="name">ABA-X1</span>
-    <span class="tagline">Scientific &amp; Symbolic Calculator</span>
-  </div>
-  <div class="modes" role="tablist" aria-label="Mode">
-    @for (mode of modes; track mode) {
-      <button
-        #tab
-        type="button"
-        role="tab"
-        [id]="'tab-' + mode"
-        [attr.aria-selected]="ui.mode() === mode"
-        [attr.aria-controls]="'panel-' + mode"
-        [tabIndex]="ui.mode() === mode ? 0 : -1"
-        (click)="select(mode)"
-        (keydown)="onTabKey($event)"
-      >
-        {{ labels[mode] }}
-      </button>
-    }
-  </div>
-</header>
-
-<main
-  class="content"
-  role="tabpanel"
-  [id]="'panel-' + ui.mode()"
-  [attr.aria-labelledby]="'tab-' + ui.mode()"
->
-  @switch (ui.mode()) {
-    @case ('standard') {
-      <app-calculator-page />
-    }
-    @case ('cas') {
-      <app-mode-placeholder
-        title="CAS"
-        text="Symbolic algebra, equations, derivatives and integrals follow (prompts 009–012)."
-      />
-    }
-    @case ('graph') {
-      <app-mode-placeholder
-        title="Graph"
-        text="The interactive function plotter follows (prompts 014–016)."
-      />
-    }
-  }
+<main class="content">
+  <h1 class="visually-hidden">ABA-X1 – Scientific &amp; Symbolic Calculator</h1>
+  <app-calculator-device />
 </main>
 
 <footer class="status" aria-live="polite">
