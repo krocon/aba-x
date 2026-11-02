@@ -1,14 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
   <title>ABA-X1</title>
-  <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#2a7bf0"/>
-      <stop offset="1" stop-color="#173e8f"/>
-    </linearGradient>
-  </defs>
-  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
-  <!-- integral sign -->
-  <path d="M206 404c-14 30-44 40-68 28 M206 404 L262 116 c14-30 44-40 68-28" fill="none" stroke="#fff" stroke-width="34" stroke-linecap="round" stroke-linejoin="round"/>
-  <!-- x -->
-  <path d="M300 236 L380 332 M380 236 L300 332" stroke="#9cd2ff" stroke-width="30" stroke-linecap="round"/>
+  <!-- full-bleed variant: favicon, PWA, web (macOS app icon: src-tauri/icons/app-icon.svg) -->
+  <rect width="1024" height="1024" rx="224" fill="#262b37"/>
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <!-- integral sign -->
+    <path d="M300 812c-30 62-96 78-142 40M300 812 L462 212c28-62 94-78 140-40" stroke="#a98fdb" stroke-width="84"/>
+    <!-- x -->
+    <path d="M566 470 L780 730 M780 470 L566 730" stroke="#68cac3" stroke-width="76"/>
+  </g>
 </svg>
