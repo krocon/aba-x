@@ -478,31 +478,40 @@ Rust ist bewusst dünn – nach Vorbild von FnF (`src-tauri/`), aber ohne dessen
 
 Entwickle eine moderne, hochwertige Oberfläche, die sich an wissenschaftlichen Taschenrechnern orientiert.
 
-### 5.1 Grundlayout
+### 5.1 Grundlayout: Rechner-Gerät
 
-Vorgeschlagen:
+> Entscheidung Marc (02.11.2026, ADR `docs/decisions/0006-geraete-look.md`): Die Oberfläche ist ein **Rechner-Gerät**
+> im Stil klassischer Grafikrechner – eigenständig gestaltet, ohne Herstellernamen, Logos oder kopierte Grafiken.
 
 ```text
-┌────────────────────────────────────────────────────┐
-│ ABA-X1                           Standard CAS Graph │
-├────────────────────────────────────────────────────┤
-│                                                    │
-│  Eingabe / mathematischer Ausdruck                 │
-│                                                    │
-│  Ergebnis                                          │
-│                                                    │
-├────────────────────────────────────────────────────┤
-│  Verlauf / Variablen / gespeicherte Funktionen     │
-├────────────────────────────────────────────────────┤
-│                                                    │
-│  Wissenschaftliche Tastatur                        │
-│                                                    │
-└────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────┐
+│ ABA-X1        SCIENTIFIC · SYMBOLIC · …  │
+│ ┌──────────────────────────────────────┐ │
+│ │ ◀⇧ ⇧▶ α  RAD EXACT                   │ │  Annunciators
+│ │ { STANDARD }                         │ │  Modus/Pfad
+│ │ 4:                                   │ │
+│ │ 3:                            x² − 4 │ │  Stack (Ebene 1 unten),
+│ │ 2:                    ∫₀¹ x²/√(1+x)dx│ │  natürliche Darstellung
+│ │ 1:                            sin(x) │ │
+│ │ ──────────────────────────────────── │ │
+│ │ Eingabezeile (MathLive)              │ │
+│ │ STD■│ CAS │GRAPH│ VARS│ HIST│SETUP   │ │  Softmenü (invertiert)
+│ └──────────────────────────────────────┘ │
+│ [F1] [F2] [F3] [F4] [F5] [F6]            │  Softkeys
+│ Funktionstasten 6 Spalten, Shift-Funk-   │  Links-Shift violett,
+│ tionen darüber, Alpha-Buchstaben rechts  │  Rechts-Shift türkis
+│ ENTER  +/−  EEX  DEL  ⌫                  │
+│ α  7 8 9 ÷ / ◀⇧ 4 5 6 × / ⇧▶ 1 2 3 − /   │  Ziffernblock 5 Spalten
+│ ON 0 . SPC +                             │
+└──────────────────────────────────────────┘
 ```
 
-Die Oberfläche muss auf dem Desktop (App und großes Browserfenster) gut funktionieren. Mobile Browser sind
-ebenfalls vorzusehen, aber die Desktop-Bedienung hat zunächst Priorität. In der Desktop-App gehören Befehle wie
-Export/Import, Einstellungen und About ins native Menü; im Web in ein HTML-Menü – beide aus **einem** Menümodell.
+Das Display hat eine feste Größe (das Tastenfeld darf nie springen). Am PC ist die **Hardware-Tastatur
+gleichwertig**: Tippen geht in die Eingabezeile, `Enter` = ENTER, `Esc` = Zeile leeren, `F1`–`F6` = Softkeys, die
+passende virtuelle Taste leuchtet auf. Die Seite um das Gerät folgt hell/dunkel; das Gerät selbst hat feste Farben.
+Mobile Browser (ab 375 px) werden unterstützt, die Desktop-Bedienung hat Priorität. In der Desktop-App gehören
+Befehle wie Export/Import, Einstellungen und About ins native Menü; im Web in ein HTML-Menü – beide aus **einem**
+Menümodell.
 
 ### 5.2 Rechner-Tastatur
 
@@ -768,22 +777,22 @@ Problemfälle nachvollziehbar.
   wie „004 E3“ in Code und Doku gültig bleiben.
 - Dieser Master-Prompt bleibt als `prompts/000-ABA-X1-Master-Prompt.md` die Produktvision.
 
-Vorgeschlagene erste Folge-Prompts (anpassen, wenn Phase 0 etwas anderes ergibt):
+Folge-Prompts (Stand nach Phase 0; Index und Status in `prompts/README.md`):
 
 ```text
 /prompts
   000-arbeitsweise.md
-  README.md
-  001-walking-skeleton-tauri-web.md
-  002-plattform-fassaden-persistenz.md
-  003-expression-ast-und-parser.md
+  README.md                                   (Index mit Status – maßgeblich)
+  done/001-walking-skeleton-tauri-web.md      ✅
+  002-plattform-fassaden.md
+  003-expression-ast-parser.md
   004-worker-protokoll.md
-  005-rechner-oberflaeche.md
-  006-natuerliche-eingabe-mathlive.md
-  007-virtuelle-tastatur-aktionen.md
-  008-variablen-und-funktionen.md
+  005-auswertung-standardmodus.md
+  006-natuerliche-ausgabe.md
+  007-aktionssystem-tastatur.md
+  008-variablen-funktionen.md
   009-cas-adapter-nerdamer.md
-  010-algebra-und-gleichungen.md
+  010-cas-modus-algebra-gleichungen.md
   011-ableitungen.md
   012-symbolische-integration.md
   013-numerische-verfahren.md

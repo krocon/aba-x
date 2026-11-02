@@ -1,0 +1,42 @@
+# TEMPLATE – not active. Deploys the web build to GitHub Pages. Copy to .github/workflows/ only after
+# Marc has chosen the target (GitHub Pages vs. krocon.de) – prompt 020. Adjust --base-href to the path.
+name: Web (GitHub Pages)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm test
+      - run: pnpm build:web --base-href /aba-x/
+      - run: cp dist/web/browser/index.html dist/web/browser/404.html
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist/web/browser
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
