@@ -9,8 +9,9 @@
       <span class="ann" [class.on]="calc.shift() === 'left'" aria-label="Left shift">◀⇧</span>
       <span class="ann" [class.on]="calc.shift() === 'right'" aria-label="Right shift">⇧▶</span>
       <span class="ann" [class.on]="calc.alpha()" aria-label="Alpha">α</span>
-      <span class="ann on">RAD</span>
-      <span class="ann on">EXACT</span>
+      <span class="ann on">{{ calc.angle() === 'rad' ? 'RAD' : 'DEG' }}</span>
+      <span class="ann on">{{ calc.approxMode() ? 'APPROX' : 'EXACT' }}</span>
+      <span class="ann busy" [class.on]="calc.busy()" aria-label="Busy">⧗</span>
     </div>
     <div class="path">{{ '{ ' + title() + ' }' }}</div>
 
@@ -21,7 +22,15 @@
             <li class="level">
               <span class="num">{{ row.level }}:</span>
               @if (row.entry; as entry) {
-                <math-span class="val">{{ entry.latex }}</math-span>
+                <span
+                  class="val"
+                  [attr.aria-label]="entry.input ? entry.input + ' = ' + entry.latex : entry.latex"
+                >
+                  <math-span class="main">{{ entry.latex }}</math-span>
+                  @if (entry.approx) {
+                    <math-span class="approx">{{ '\\approx ' + entry.approx }}</math-span>
+                  }
+                </span>
               }
             </li>
           }

@@ -93,17 +93,19 @@ describe('App', () => {
     expect(el.querySelector('.msg')?.textContent).toContain('VARS');
   });
 
-  it('keypad and ENTER put an expression onto stack level 1', async () => {
+  it('keypad and ENTER evaluate onto stack level 1', async () => {
     const { el, settle } = await render();
     key(el, '7').click();
     key(el, 'Add').click();
     key(el, '2').click();
     key(el, 'Enter').click();
-    await settle();
-    const levels = [...el.querySelectorAll('.level')].map((l) =>
-      l.textContent?.replace(/\s+/g, ''),
-    );
-    expect(levels).toEqual(['4:', '3:', '2:', '1:7+2']);
+    await vi.waitFor(async () => {
+      await settle();
+      const levels = [...el.querySelectorAll('.level')].map(
+        (l) => l.querySelector('.main')?.textContent?.trim() ?? '',
+      );
+      expect(levels).toEqual(['', '', '', '9']);
+    });
   });
 
   it('typing on the hardware keyboard outside the line goes to the line', async () => {
@@ -112,7 +114,9 @@ describe('App', () => {
     press('*');
     press('4');
     press('Enter');
-    await settle();
-    expect(el.querySelector('.level:last-child')?.textContent).toContain('3\\cdot4');
+    await vi.waitFor(async () => {
+      await settle();
+      expect(el.querySelector('.level:last-child')?.textContent).toContain('12');
+    });
   });
 });

@@ -5,6 +5,7 @@
  */
 import type { Expr } from '../ast/nodes';
 import { parseText } from '../parser/text-parser';
+import { prettify } from '../pretty';
 import { type MathResult, fail, ok } from '../result';
 
 /** Our name → Nerdamer name. Missing here = not available in the CAS. */
@@ -152,7 +153,7 @@ export function fromNerdamer(text: string, integerParam = 'n'): MathResult<Parse
   src = rewriteCall(src, 'factorial', (a) => `(${a})!`);
   const r = parseText(src);
   if (!r.ok) return fail('unsupported', `cannot read the CAS result "${text}"`);
-  return ok({ expr: r.value, approximate: /\d\.\d/.test(text) });
+  return ok({ expr: prettify(r.value), approximate: /\d\.\d/.test(text) });
 }
 
 /** Replaces name(arg) with balanced parentheses. */

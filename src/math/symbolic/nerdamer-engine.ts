@@ -18,12 +18,22 @@ interface Entity {
   text(): string;
 }
 
+class DefiniteFailed extends Error {
+  constructor(
+    readonly code: MathErrorCode,
+    message: string,
+  ) {
+    super(message);
+  }
+}
+
 function run<T>(f: () => T): MathResult<T> {
   try {
     return ok(f());
   } catch (e) {
     if (e instanceof NotExpressible)
       return fail('unsupported', `the CAS cannot handle ${e.message}`);
+    if (e instanceof DefiniteFailed) return fail(e.code, e.message);
     const msg = e instanceof Error ? e.message : String(e);
     const code: MathErrorCode = /division by zero/i.test(msg) ? 'division-by-zero' : 'not-solvable';
     return fail(code, `CAS: ${msg}`);
@@ -48,8 +58,40 @@ function parameterName(e: Expr): string {
 }
 
 export class NerdamerEngine implements SymbolicEngine {
+  /** Nerdamer input; definite integrals inside an expression are resolved first (exactly if possible). */
   private n(e: Expr): string {
-    return toNerdamer(e);
+    return toNerdamer(this.resolveDefinite(e));
+  }
+
+  private resolveDefinite(e: Expr): Expr {
+    const go = (x: Expr): Expr => {
+      switch (x.type) {
+        case 'int': {
+          const body = go(x.expr);
+          if (!x.lower || !x.upper) return { ...x, expr: body };
+          const r = this.integrateDefinite(body, x.variable, go(x.lower), go(x.upper));
+          if (!r.ok) throw new DefiniteFailed(r.error.code, r.error.message);
+          return r.value.expr;
+        }
+        case 'neg':
+        case 'post':
+          return { ...x, arg: go(x.arg) };
+        case 'bin':
+        case 'rel':
+          return { ...x, left: go(x.left), right: go(x.right) };
+        case 'call':
+          return { ...x, args: x.args.map(go) };
+        case 'deriv':
+          return { ...x, expr: go(x.expr) };
+        case 'series':
+          return { ...x, expr: go(x.expr), lower: go(x.lower), upper: go(x.upper) };
+        case 'limit':
+          return { ...x, expr: go(x.expr), to: go(x.to) };
+        default:
+          return x;
+      }
+    };
+    return go(e);
   }
 
   simplify(e: Expr): MathResult<CasValue> {

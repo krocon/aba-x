@@ -82,4 +82,7 @@ prompts/                     000-ABA-X1-Master-Prompt.md (Vision), 000-arbeitswe
 
 - `{` und `}` sind in Angular-Templates Block-Syntax → Literale als Ausdruck schreiben (`{{ '{ ' + x + ' }' }}`).
 - Service Worker im Web-Build cacht aggressiv → beim lokalen Testen abmelden.
-- Hintergrund-Automation (computer-use) kann im WKWebView nicht tippen; Klicks auf Buttons gehen.
+- Hintergrund-Automation (computer-use) kann im WKWebView nicht tippen; Klicks auf Buttons gehen. Ein Fenster im
+  Hintergrund zeichnet asynchrone Ergebnisse (Worker) oft erst beim nächsten Ereignis neu – kein App-Fehler; der
+  Zustand lässt sich mit Playwright-WebKit gegen den Web-Build prüfen.
+- Klicks per Automation verändern manchmal die Fenstergröße: nach jedem Klick-Batch neu `app_screenshot`/`app_ax_find`.

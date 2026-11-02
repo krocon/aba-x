@@ -13,4 +13,4 @@
 
 ## Fortschritt
 - [x] Protokoll, Host, `ComputeClient` mit Specs (Timeout, Neustart, Abbruch, In-Thread-Fallback)
-- [ ] Ende-zu-Ende im Browser und in der App → mit Prompt 005 (erste Nutzung)
+- [x] Ende-zu-Ende im Browser (Chromium, WebKit) und in der macOS-App unter der Tauri-CSP (mit Prompt 005)

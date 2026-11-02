@@ -145,7 +145,10 @@ export function toLatex(e: Expr): string {
         const juxtapose =
           e.left.type === 'num' &&
           (e.right.type === 'sym' ||
-            (e.right.type === 'bin' && e.right.op === '^' && e.right.left.type === 'sym'));
+            e.right.type === 'call' ||
+            (e.right.type === 'bin' &&
+              e.right.op === '^' &&
+              (e.right.left.type === 'sym' || e.right.left.type === 'call')));
         return juxtapose ? `${left}${right}` : `${left}\\cdot ${right}`;
       }
       return `${left}${e.op}${right}`;

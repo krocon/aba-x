@@ -22,6 +22,8 @@ export type KeyAction =
   | { kind: 'insert'; latex: string }
   | { kind: 'command'; command: EditCommand }
   | { kind: 'enter' }
+  /** →NUM: evaluate to a decimal value. */
+  | { kind: 'approx' }
   | { kind: 'clear' }
   | { kind: 'shift'; shift: 'left' | 'right' }
   | { kind: 'alpha' }
@@ -241,6 +243,7 @@ export const FUNCTION_ROWS: readonly (readonly KeyDef[])[] = [
       name: 'Enter',
       action: { kind: 'enter' },
       left: fn('ANS', ins('\\mathrm{Ans}')),
+      right: fn('→NUM', { kind: 'approx' }),
       variant: 'enter',
       span: 2,
     },

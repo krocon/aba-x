@@ -114,11 +114,11 @@ export class MathInput implements OnInit, OnDestroy, MathEditor {
     if (e.key === 'Enter' && !e.shiftKey && !e.altKey && !e.metaKey && !e.ctrlKey) {
       e.preventDefault();
       e.stopPropagation();
-      this.store.enter();
+      void this.store.enter();
     } else if (e.key === 'Escape') {
       e.preventDefault();
       e.stopPropagation();
-      this.clear();
+      this.store.run({ kind: 'clear' });
     }
   };
 

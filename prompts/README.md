@@ -21,9 +21,9 @@ können parallel laufen, sobald jemand Zeit hat. Die Nummern bleiben stabil, dam
 | 002 | [plattform-fassaden](002-plattform-fassaden.md) | Dateien, Menü, Fensterzustand, About | 001 | M | ⬜ |
 | 003 | [expression-ast-parser](done/003-expression-ast-parser.md) | AST, Text- und LaTeX-Parser, Serializer | 001 | L | ✅ 02.11.2026 |
 | 004 | [worker-protokoll](done/004-worker-protokoll.md) | Web Worker, Abbruch, Timeout | 003 | M | ✅ 02.11.2026 |
-| 005 | [auswertung-standardmodus](005-auswertung-standardmodus.md) | ENTER rechnet: exakt/numerisch, Grad/Bogenmaß | 003 | L | ⬜ |
-| 006 | [natuerliche-ausgabe](006-natuerliche-ausgabe.md) | Lehrbuchdarstellung im Display, Stack-Navigation, Kopieren | 005 | M | ⬜ |
-| 007 | [aktionssystem-tastatur](007-aktionssystem-tastatur.md) | Aktionskatalog, Keymaps je OS, Alpha-Modus | 005 | M | ⬜ |
+| 005 | [auswertung-standardmodus](done/005-auswertung-standardmodus.md) | ENTER rechnet: exakt/numerisch, Grad/Bogenmaß | 003 | L | ✅ 02.11.2026 |
+| 006 | [natuerliche-ausgabe](006-natuerliche-ausgabe.md) | Lehrbuchdarstellung im Display, Stack-Navigation, Kopieren | 005 | M | ✅ 02.11.2026 |
+| 007 | [aktionssystem-tastatur](007-aktionssystem-tastatur.md) | Aktionskatalog, Keymaps je OS, Alpha-Modus | 005 | M | ✅ 02.11.2026 |
 | 008 | [variablen-funktionen](008-variablen-funktionen.md) | Variablen, Funktionen, STO/RCL, VARS | 005, 007 | M | ⬜ |
 | 009 | [cas-adapter-nerdamer](done/009-cas-adapter-nerdamer.md) | SymbolicEngine mit Nerdamer 2 im Worker | 003, 004 | L | ✅ 02.11.2026 |
 | 010 | [cas-modus-algebra-gleichungen](010-cas-modus-algebra-gleichungen.md) | CAS-Modus: Vereinfachen, Faktorisieren, Lösen | 009, 006 | M | ⬜ |
@@ -36,7 +36,7 @@ können parallel laufen, sobald jemand Zeit hat. Die Nummern bleiben stabil, dam
 | 017 | [verlauf-export-import](017-verlauf-export-import.md) | Verlauf, Favoriten, Export/Import | 002, 008 | M | ⬜ |
 | 018 | [einstellungen-i18n](018-einstellungen-i18n.md) | SETUP, Deutsch/Englisch | 007 | M | ⬜ |
 | 019 | [menue-tastenkuerzel-je-os](019-menue-tastenkuerzel-je-os.md) | Menüleiste, Kürzel je OS | 002, 007 | S | ⬜ |
-| 020 | [pwa-offline-web-deployment](020-pwa-offline-web-deployment.md) | PWA, Offline-E2E, Deployment vorbereiten | 005 | S | ⬜ |
+| 020 | [pwa-offline-web-deployment](020-pwa-offline-web-deployment.md) | PWA, Offline-E2E, Deployment vorbereiten | 005 | S | ✅ 02.11.2026 |
 | 021 | [barrierefreiheit](021-barrierefreiheit.md) | Barrierefreiheit, Performance | 006, 007 | M | ⬜ |
 | 022 | [release-distribution](022-release-distribution.md) | Pakete, Release-Workflow, Signierung vorbereiten | 017, 019 | M | ⬜ |
 | 023 | [readme-screenshots-werbeseite](023-readme-screenshots-werbeseite.md) | README, Screenshots, Werbeseite | 010, 014 | S | ⬜ |

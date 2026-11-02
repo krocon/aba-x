@@ -27,7 +27,7 @@ describe('Nerdamer syntax bridge', () => {
   });
 
   it('reads results back and flags what it cannot show', () => {
-    expect(value(fromNerdamer('x^-2-x^-2*log(x)')).expr).toEqual(p('x^-2 - x^-2*ln(x)'));
+    expect(toText(value(fromNerdamer('x^-2-x^-2*log(x)')).expr)).toBe('1/x^2 - ln(x)/x^2');
     expect(value(fromNerdamer('cbrt(2)')).expr).toEqual(p('root(2, 3)'));
     expect(value(fromNerdamer('1.1673')).approximate).toBe(true);
     expect(fromNerdamer('Si(x)')).toMatchObject({ ok: false, error: { code: 'unsupported' } });
@@ -149,5 +149,12 @@ describe('regressions from the technical evaluation', () => {
   it('refuses what it cannot represent', () => {
     expect(cas.simplify(p('[1, 2]'))).toMatchObject({ ok: false, error: { code: 'unsupported' } });
     expect(cas.simplify(p('1/0'))).toMatchObject({ ok: false });
+  });
+});
+
+describe('definite integrals inside expressions', () => {
+  it('are resolved exactly before simplifying', () => {
+    expect(toText(value(cas.simplify(p('integrate(x^2, x, 0, 1) + 1'))).expr)).toBe('4/3');
+    expect(cas.simplify(p('integrate(1/x, x, -1, 1)')).ok).toBe(false);
   });
 });

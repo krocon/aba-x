@@ -73,7 +73,7 @@ export class CalculatorDevice {
     if (!inEditor && this.ui.mode() === 'standard') {
       if (e.key === 'Enter') {
         e.preventDefault();
-        this.calc.enter();
+        void this.calc.enter();
       } else if (e.key.length === 1 && /[\w+\-*/.^()=,|!]/.test(e.key) && !e.repeat) {
         e.preventDefault();
         this.calc.run({ kind: 'insert', latex: e.key === '*' ? '\\cdot' : e.key });
