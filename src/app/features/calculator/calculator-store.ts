@@ -18,6 +18,7 @@ import {
   drop,
   dropLevel,
   dropN,
+  replaceEntry,
   level,
   moveSelection,
   push,
@@ -73,6 +74,8 @@ export class CalculatorStore {
   readonly busy = signal(false);
   /** Selected stack level while browsing the stack (▲ on an empty line), else null. */
   readonly selected = signal<number | null>(null);
+  /** Id of the stack entry being edited (its input is in the line; ENTER replaces it in place). */
+  readonly editing = signal<number | null>(null);
   private readonly settings = inject(SettingsStore);
   private readonly i18n = inject(I18n);
   /** RAD/DEG and EXACT/APPROX come from the settings (prompt 018). */
@@ -141,7 +144,7 @@ export class CalculatorStore {
       return true;
     }
     if (action.kind === 'enter') {
-      this.recallSelected();
+      this.editLevel(sel);
       return true;
     }
     if (action.kind === 'clear') {
@@ -300,6 +303,28 @@ export class CalculatorStore {
     return level(this.stack(), this.selected() ?? 1);
   }
 
+  /**
+   * Edit a stack level (click on it, or ENTER while browsing): its input goes into the line,
+   * ENTER then replaces the level in place, Esc/ON cancels.
+   */
+  editLevel(n: number): void {
+    const e = level(this.stack(), n);
+    if (!e) return;
+    this.selected.set(null);
+    this.editing.set(e.id);
+    this.editor?.clear();
+    this.editor?.insert(e.input ?? e.latex);
+    this.message.set(this.i18n.t('msg.editing', { n }));
+    this.editor?.focus();
+  }
+
+  cancelEdit(): void {
+    if (this.editing() === null) return;
+    this.editing.set(null);
+    this.editor?.clear();
+    this.message.set(null);
+  }
+
   recallSelected(): void {
     const e = this.current();
     this.selected.set(null);
@@ -338,6 +363,7 @@ export class CalculatorStore {
         break;
       case 'clear':
         if (this.busy()) this.cancel();
+        else if (this.editing() !== null) this.cancelEdit();
         else this.editor?.clear();
         break;
       case 'shift':
@@ -401,7 +427,10 @@ export class CalculatorStore {
       return;
     }
     const o = r.value;
-    if (o.kind === 'value') this.pushEvaluation(o.evaluation);
+    const edited = this.editing();
+    this.editing.set(null);
+    if (o.kind === 'value' && edited !== null) this.pushEvaluation(o.evaluation, edited);
+    else if (o.kind === 'value') this.pushEvaluation(o.evaluation);
     else if (o.kind === 'assign') {
       this.vars.setVariable(o.name, o.evaluation.expr);
       this.message.set(`${o.name} := ${toText(o.evaluation.expr)}`);
@@ -588,16 +617,22 @@ export class CalculatorStore {
     this.pushEvaluation(r.value);
   }
 
-  private pushEvaluation(v: Evaluation): void {
+  private pushEvaluation(v: Evaluation, replaceId?: number): void {
     this.history.add(v.input, v.latex, toText(v.expr));
-    this.pushEntry({
+    const text = toText(v.expr);
+    const typed = this.engine.parse(v.input, { functions: this.vars.functions() });
+    const entry = {
       expr: v.expr,
       latex: v.latex,
       approximate: v.approximate,
       input: v.input,
-      text: toText(v.expr),
+      showInput: !typed.ok || toText(typed.value) !== text,
+      text,
       ...(v.approx && !this.approxMode() ? { approx: v.approx.latex } : {}),
-    });
+    };
+    if (replaceId !== undefined) {
+      this.stack.update((s) => replaceEntry(s, replaceId, entry, this.nextId++));
+    } else this.pushEntry(entry);
   }
 
   private pushEntry(e: Omit<StackEntry, 'id'>): void {

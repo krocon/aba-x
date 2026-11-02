@@ -13,8 +13,10 @@ export interface StackEntry {
   readonly approx?: string;
   /** The result is itself an approximation. */
   readonly approximate: boolean;
-  /** What was typed (LaTeX, for HIST). */
+  /** What was typed (LaTeX) – for editing and HIST. */
   readonly input?: string;
+  /** Show the input next to the result (it says something the result does not). */
+  readonly showInput?: boolean;
   /** Plain text of the result for the screen reader and the clipboard. */
   readonly text?: string;
 }
@@ -81,4 +83,18 @@ export function moveSelection(selected: number | null, delta: number, size: numb
 export function dropLevel(stack: readonly StackEntry[], n: number): StackEntry[] {
   const i = stack.length - n;
   return i < 0 ? [...stack] : [...stack.slice(0, i), ...stack.slice(i + 1)];
+}
+
+/** Replaces the entry with this id in place (edit, prompt 006 addendum); unknown id → push. */
+export function replaceEntry(
+  stack: readonly StackEntry[],
+  id: number,
+  entry: NewEntry,
+  newId: number,
+): StackEntry[] {
+  const i = stack.findIndex((e) => e.id === id);
+  if (i < 0) return push(stack, entry, newId);
+  const s = [...stack];
+  s[i] = { ...entry, id: newId };
+  return s;
 }

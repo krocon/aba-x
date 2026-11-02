@@ -11,3 +11,9 @@
   MathLive.
 - E4 Screenreader: jede Ebene „Level n: <Text>“; die ausgewählte Ebene trägt `aria-current`.
 - Lehrbuchform der CAS-Ergebnisse kam schon mit 005 (`prettify`).
+
+## Nachtrag 02.11.2026 (Wunsch Marc)
+- E5 Jede Ebene zeigt Eingabe (klein, links, nur wenn sie sich vom Ergebnis unterscheidet), exaktes Ergebnis und
+  Dezimalwert – auch für Ergebnisse aus dem CAS-Menü (vorher fehlte dort „≈ …“).
+- E6 Bearbeiten: Klick auf eine Ebene oder ↑ + ENTER legt ihre Eingabe in die Zeile; ENTER ersetzt die Ebene an
+  ihrer Stelle, ESC/ON bricht ab. RECALL (◀⇧ ▲) holt weiterhin das Ergebnis.

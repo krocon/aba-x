@@ -26,6 +26,8 @@ levels, annunciators, soft menu and six softkeys, keypad with left/right shift f
 - **Natural input** (MathLive): fractions, roots, powers, integrals, derivatives, sums, limits, matrices.
 - **RPN on demand**: operators and functions on an empty line work on the stack; ENTER duplicates, DROP, SWAP, browse
   the stack with ↑.
+- **Every stack level shows input, exact result and decimal value**; click a level (or ↑ + Enter) to edit its input –
+  ENTER replaces the level in place.
 - **Variables and functions**: `a = 5`, `f(x) = x² − 3x + 2`, `f(a)`, STO, VARS menu – saved between sessions.
 
 **CAS** (Nerdamer behind a verified adapter) – simplify, expand, factor, solve equations (also general solutions like
@@ -47,7 +49,7 @@ desktop, installable offline web app (PWA).
 | any character | goes to the input line |
 | `Enter` / `⇧Enter` | ENTER / →NUM (decimal value) |
 | `Esc` | clear the line, cancel a computation, leave the stack |
-| `↑` on an empty line | browse the stack (↑ ↓, Enter = recall, Delete = drop) |
+| `↑` on an empty line | browse the stack (↑ ↓, Enter = edit, Delete = drop); click a level to edit it |
 | `F1`–`F6` | softkeys (mode menu: Standard, CAS, Graph, VARS, HIST, SETUP) |
 | `⌥R` / `⌥E` | radians ↔ degrees / exact ↔ decimal |
 | `⌥⌫` / `⌥S` | DROP / SWAP |

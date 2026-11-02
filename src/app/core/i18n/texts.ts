@@ -39,7 +39,7 @@ export const EN = {
   'action.modeGraph': 'Graph mode',
   'line.enter': 'ENTER – evaluate, push onto the stack (empty line: duplicate level 1)',
   'line.esc': 'Clear the input line / cancel a running computation / leave the stack',
-  'line.up': 'Browse the stack (↑ ↓, Enter = recall, Delete = drop)',
+  'line.up': 'Browse the stack (↑ ↓, Enter = edit, Delete = drop; a click on a level edits it too)',
   'line.tab': 'Next placeholder in a fraction, root, integral …',
   'line.struct': 'Fraction, power, subscript',
   'line.upKey': '↑ on an empty line',
@@ -84,6 +84,8 @@ export const EN = {
   'msg.enterFirst': 'enter an expression first',
   'msg.purged': '{name} purged',
   'update.ready': 'A new version is available.',
+  'msg.editing': 'EDIT level {n} – ENTER replaces it, ESC cancels',
+  'stack.edit': 'Edit level {n}',
   'update.reload': 'Reload',
 } as const;
 
@@ -125,7 +127,8 @@ export const DE: Record<TextKey, string> = {
   'action.modeGraph': 'Graph-Modus',
   'line.enter': 'ENTER – ausrechnen, auf den Stack legen (leere Zeile: Ebene 1 verdoppeln)',
   'line.esc': 'Eingabezeile leeren / Rechnung abbrechen / Stack verlassen',
-  'line.up': 'Im Stack blättern (↑ ↓, Enter = übernehmen, Entf = löschen)',
+  'line.up':
+    'Im Stack blättern (↑ ↓, Enter = bearbeiten, Entf = löschen; Klick auf eine Ebene bearbeitet sie auch)',
   'line.tab': 'Nächster Platzhalter in Bruch, Wurzel, Integral …',
   'line.struct': 'Bruch, Potenz, Index',
   'line.upKey': '↑ in leerer Zeile',
@@ -170,5 +173,7 @@ export const DE: Record<TextKey, string> = {
   'msg.enterFirst': 'erst einen Ausdruck eingeben',
   'msg.purged': '{name} gelöscht',
   'update.ready': 'Eine neue Version ist verfügbar.',
+  'msg.editing': 'Ebene {n} bearbeiten – ENTER ersetzt sie, ESC bricht ab',
+  'stack.edit': 'Ebene {n} bearbeiten',
   'update.reload': 'Neu laden',
 };

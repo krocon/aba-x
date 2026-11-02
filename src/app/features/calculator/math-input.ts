@@ -166,7 +166,7 @@ export class MathInput implements OnInit, OnDestroy, MathEditor {
         this.store.moveSelection(-1);
         return true;
       case 'Enter':
-        this.store.recallSelected();
+        this.store.editLevel(this.store.selected()!);
         return true;
       case 'Backspace':
       case 'Delete':

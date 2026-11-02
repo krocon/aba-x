@@ -193,8 +193,19 @@ export class CalculatorEngine {
     if (!prepared.ok) return prepared;
     const e = prepared.value;
     const input = toLatex(target);
-    const done = (expr: Expr, approximate: boolean, note?: string, latex = toLatex(expr)) =>
-      ok<Evaluation>({ input, expr, latex, approximate, ...(note ? { note } : {}) });
+    const done = (expr: Expr, approximate: boolean, note?: string, latex = toLatex(expr)) => {
+      // decimal value of closed results (785√5/6 ≈ 292.53…), as for ENTER
+      const n = isPlainNumber(expr) ? null : evaluateNumeric(expr, { functions: ctx.functions });
+      const approx = n?.ok ? formatNumber(n.value, ctx.digits) : undefined;
+      return ok<Evaluation>({
+        input,
+        expr,
+        latex,
+        approximate,
+        ...(approx ? { approx } : {}),
+        ...(note ? { note } : {}),
+      });
+    };
 
     if (op === 'simplify' || op === 'expand' || op === 'factor') {
       if (e.type === 'rel' || e.type === 'list')

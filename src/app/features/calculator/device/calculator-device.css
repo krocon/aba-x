@@ -129,23 +129,67 @@
   color: var(--lcd-bg-top);
 }
 
+.level.sel .val:hover {
+  background: none;
+}
+
 .num {
   flex: none;
 }
 
 .val {
+  /* a button: click edits the level */
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  padding: 0.1rem 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: right;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.val:hover {
+  background: var(--lcd-dim);
+}
+
+.val .input {
+  flex: 0 1 auto;
+  min-width: 0;
+  max-width: 55%;
+  overflow: hidden;
+  font-size: 0.72rem;
+  opacity: 0.6;
+  text-align: left;
+  white-space: nowrap;
+  mask-image: linear-gradient(to right, #000 85%, transparent);
+}
+
+.val .input::after {
+  content: ' =';
+}
+
+.results {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
   margin-left: auto;
-  font-size: 0.95rem;
-  white-space: nowrap;
+  min-width: 0;
+  max-width: 100%;
   overflow-x: auto;
-  overflow-y: hidden;
   scrollbar-width: none;
-  max-width: calc(100% - 2rem);
-  padding: 0.1rem 0;
-  --primary-color: var(--lcd-ink);
+  font-size: 0.95rem;
+}
+
+.level.editing {
+  outline: 1px dashed var(--lcd-ink);
+  outline-offset: -1px;
 }
 
 .approx {

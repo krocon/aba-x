@@ -144,6 +144,33 @@ describe('CalculatorStore', () => {
     expect(levels()).toEqual(['2']);
   });
 
+  it('edits a level: its input goes to the line, ENTER replaces it in place, ESC cancels', async () => {
+    await type('1+1');
+    await type('\\sqrt{8}');
+    await type('3');
+    store.editLevel(2);
+    expect(editor.line).toBe('\\sqrt{8}');
+    expect(store.message()).toContain('level 2');
+    editor.line = '\\sqrt{18}';
+    await store.enter();
+    expect(levels()).toEqual(['2', '3\\sqrt{2}', '3']);
+    expect(store.stack()[1].approx).toBe('4.24264068712');
+    expect(store.stack()[1].showInput).toBe(true); // √18 → 3√2
+    expect(store.stack()[2].showInput).toBe(false); // 3 → 3
+    store.editLevel(1);
+    store.press(key('on'));
+    expect(store.editing()).toBeNull();
+    expect(editor.line).toBe('');
+    await type('5');
+    expect(levels()).toEqual(['2', '3\\sqrt{2}', '3', '5']);
+  });
+
+  it('CAS-menu results get a decimal value too', async () => {
+    editor.line = '\\frac{785\\sqrt{5}}{6}';
+    await store.casOp('simplify');
+    expect(store.stack().at(-1)?.approx).toBe('292.552227056');
+  });
+
   it('browses the stack: ▲ on an empty line, recall, drop, leave', async () => {
     await type('1');
     await type('2');
@@ -156,9 +183,11 @@ describe('CalculatorStore', () => {
     store.press(key('bksp'));
     expect(levels()).toEqual(['1', '3']);
     expect(store.selected()).toBe(2);
-    store.press(key('enter'));
+    store.press(key('enter')); // ENTER while browsing edits the level
     expect(editor.line).toBe('1');
     expect(store.selected()).toBeNull();
+    expect(store.editing()).not.toBeNull();
+    store.cancelEdit();
     editor.line = '';
     store.press(key('up'));
     store.press(key('down'));

@@ -69,19 +69,31 @@
               <li
                 class="level"
                 [class.sel]="calc.selected() === row.level"
+                [class.editing]="!!row.entry && calc.editing() === row.entry.id"
                 [attr.aria-current]="calc.selected() === row.level ? 'true' : null"
               >
                 <span class="num">{{ row.level }}:</span>
                 @if (row.entry; as entry) {
-                  <span class="val">
-                    <span class="visually-hidden">{{
-                      'Level ' + row.level + ': ' + (entry.text ?? entry.latex)
-                    }}</span>
-                    <app-math class="main" [latex]="entry.latex" />
-                    @if (entry.approx) {
-                      <app-math class="approx" [latex]="'\\approx ' + entry.approx" />
+                  <button
+                    type="button"
+                    class="val"
+                    tabindex="-1"
+                    [attr.aria-label]="
+                      i18n.t('stack.edit', { n: row.level }) + ': ' + (entry.text ?? entry.latex)
+                    "
+                    (pointerdown)="$event.preventDefault()"
+                    (click)="calc.editLevel(row.level)"
+                  >
+                    @if (entry.input && entry.showInput) {
+                      <app-math class="input" [latex]="entry.input" />
                     }
-                  </span>
+                    <span class="results">
+                      <app-math class="main" [latex]="entry.latex" />
+                      @if (entry.approx) {
+                        <app-math class="approx" [latex]="'\\approx ' + entry.approx" />
+                      }
+                    </span>
+                  </button>
                 }
               </li>
             }
