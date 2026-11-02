@@ -18,8 +18,8 @@
 | Desktop | **Tauri 2.12**, Rust nur für Persistenz/Plattform | Walking Skeleton läuft auf macOS; Windows/Linux über CI-Matrix |
 | Web | gleicher Angular-Build, Konfiguration `web` mit Service Worker | Offline nach dem ersten Laden geprüft |
 
-Keine grundlegende technische oder lizenzrechtliche Entscheidung ist offen, die Phase 1 blockiert. Offen und vor
-einer Veröffentlichung zu bestätigen: die **Projektlizenz** (MIT vorgeschlagen, §6).
+Keine grundlegende technische oder lizenzrechtliche Entscheidung ist offen. Die **Projektlizenz MIT** hat Marc am
+02.11.2026 bestätigt.
 
 ## 2. MathLive (Eingabe)
 
@@ -126,4 +126,4 @@ einzusetzen; sie bleibt Kandidat für einen **zweiten CAS-Adapter** hinter derse
 | fake-indexeddb (nur Tests) | Apache-2.0 | nicht im Produkt |
 
 MIT für ABA-X1 ist mit allen eingesetzten Lizenzen verträglich (Apache-2.0-Komponenten bleiben Apache-2.0 und
-werden mit Lizenztext ausgeliefert). **Vor der Veröffentlichung von Marc zu bestätigen.**
+werden mit Lizenztext ausgeliefert). **Von Marc am 02.11.2026 bestätigt.**

@@ -3,7 +3,7 @@
 > Leitfaden für Claude (und Menschen) zur Arbeit an **ABA-X1** – Advanced Browser Algebra, Scientific & Symbolic
 > Calculator: wissenschaftlicher Rechner mit CAS, natürlicher Darstellung und Funktionsplotter als **Desktop-App**
 > (Tauri 2: macOS, Windows, Linux) **und** als **Webseite** (statisch, PWA) aus einer Codebasis.
-> Autor: Marc Kronberg · Repo: https://github.com/krocon/aba-x · Lizenz: MIT (vor Veröffentlichung bestätigen)
+> Autor: Marc Kronberg · Repo: https://github.com/krocon/aba-x · Lizenz: MIT (bestätigt von Marc, 02.11.2026)
 > Produktvision: [`prompts/000-ABA-X1-Master-Prompt.md`](prompts/000-ABA-X1-Master-Prompt.md).
 > Vorbild für Aufbau und Arbeitsweise: Files and Folders (FnF), lokal `../files-and-folders-tauri` (nur lesen).
 

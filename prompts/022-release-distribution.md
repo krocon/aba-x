@@ -20,7 +20,7 @@ Pakete je OS, Release-Workflow (Tag → Matrix-Build → Entwurf eines GitHub-Re
 
 ### Entscheidungsfragen (im Design-Dokument beantworten)
 
-- **Lizenz final?** MIT bestätigen lassen (Master-Prompt §9).
+- **Lizenz:** MIT ist von Marc bestätigt (02.11.2026).
 
 ## 4. Erwartete Dateien und Schnittstellen
 
