@@ -9,6 +9,7 @@ import { BackupStore } from './features/backup/backup-store';
 import { ImportDialog } from './features/backup/import-dialog';
 import { CalculatorDevice } from './features/calculator/device/calculator-device';
 import { ShortcutsDialog } from './features/help/shortcuts-dialog';
+import { GraphStore } from './features/graph/graph-store';
 import { HistoryStore } from './features/history/history-store';
 import { MenuBar } from './features/menus/menu-bar';
 import { SettingsDialog } from './features/settings/settings-dialog';
@@ -32,6 +33,7 @@ export class App implements OnInit {
   protected readonly keys = inject(KeyboardDispatcher);
   protected readonly vars = inject(VarsStore);
   protected readonly history = inject(HistoryStore);
+  private readonly graph = inject(GraphStore);
   protected readonly backup = inject(BackupStore);
   protected readonly menu = inject(MenuApi);
   protected readonly info = signal<AppInfo | null>(null);
@@ -56,6 +58,7 @@ export class App implements OnInit {
       this.vars.restore(),
       this.history.restore(),
     ]);
+    await this.graph.restore();
     this.info.set(await this.platform.appInfo().catch(() => null));
     await this.menu.install().catch((e: unknown) => console.error('menu', e));
     this.ready = true;

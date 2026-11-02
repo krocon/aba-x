@@ -30,9 +30,9 @@ können parallel laufen, sobald jemand Zeit hat. Die Nummern bleiben stabil, dam
 | 011 | [ableitungen](done/011-ableitungen.md) | Ableitungen, Grenzwerte | 009, 010 | S | ✅ 02.11.2026 |
 | 012 | [symbolische-integration](done/012-symbolische-integration.md) | Integrale exakt/numerisch | 009, 013 | M | ✅ 02.11.2026 |
 | 013 | [numerische-verfahren](done/013-numerische-verfahren.md) | Nullstellen, Ableitung, Quadratur | 003 | L | ✅ 02.11.2026 |
-| 014 | [funktionsplotter](014-funktionsplotter.md) | Graph-Modus | 005, 008, 013 | L | ⬜ |
-| 015 | [nullstellen-extrema-schnittpunkte](015-nullstellen-extrema-schnittpunkte.md) | Analyse im Graph | 014 | M | ⬜ |
-| 016 | [integralflaechen](016-integralflaechen.md) | Flächen im Graph | 012, 015 | S | ⬜ |
+| 014 | [funktionsplotter](done/014-funktionsplotter.md) | Graph-Modus | 005, 008, 013 | L | ✅ 02.11.2026 |
+| 015 | [nullstellen-extrema-schnittpunkte](done/015-nullstellen-extrema-schnittpunkte.md) | Analyse im Graph | 014 | M | ✅ 02.11.2026 |
+| 016 | [integralflaechen](done/016-integralflaechen.md) | Flächen im Graph | 012, 015 | S | ✅ 02.11.2026 |
 | 017 | [verlauf-export-import](done/017-verlauf-export-import.md) | Verlauf, Favoriten, Export/Import | 002, 008 | M | ✅ 02.11.2026 |
 | 018 | [einstellungen-i18n](done/018-einstellungen-i18n.md) | SETUP, Deutsch/Englisch | 007 | M | ✅ 02.11.2026 |
 | 019 | [menue-tastenkuerzel-je-os](done/019-menue-tastenkuerzel-je-os.md) | Menüleiste, Kürzel je OS | 002, 007 | S | ✅ 02.11.2026 |

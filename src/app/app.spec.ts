@@ -84,7 +84,7 @@ describe('App', () => {
     storage.docs.set('ui-state', { schemaVersion: 1, mode: 'graph' });
     const { el } = await render();
     expect(el.querySelector('.path')?.textContent).toContain('GRAPH');
-    expect(softkeys(el)[2].getAttribute('aria-pressed')).toBe('true');
+    expect(el.querySelector('.menu-label')?.textContent?.trim()).toBe('Y=');
   });
 
   it('switches modes with the softkeys and F1–F6, and persists the choice', async () => {
@@ -100,12 +100,14 @@ describe('App', () => {
     await settle();
     expect(el.querySelector('.path')?.textContent).toContain('GRAPH');
     expect(storage.docs.get('ui-state')).toEqual({ schemaVersion: 1, mode: 'graph' });
+    press('F6'); // MODE▸ back to the mode menu
+    await settle();
     press('F4');
     await settle();
     expect([...el.querySelectorAll('.menu-label')].at(-1)?.textContent?.trim()).toBe('EXIT');
     press('F6');
     await settle();
-    expect(el.querySelector('.menu-label')?.textContent?.trim()).toBe('STD');
+    expect(el.querySelector('.menu-label')?.textContent?.trim()).toBe('Y=');
   });
 
   it('keypad and ENTER evaluate onto stack level 1', async () => {
@@ -223,5 +225,27 @@ describe('App', () => {
     });
     radio('English').click();
     await settle();
+  });
+
+  it('graph mode: ENTER adds a function, ANLYZ ROOT finds the zeros', async () => {
+    storage.docs.set('ui-state', { schemaVersion: 1, mode: 'graph' });
+    const { el, settle } = await render();
+    const mf = el.querySelector('app-math-input div')!.firstElementChild as unknown as {
+      value: string;
+    };
+    mf.value = 'x^2-4';
+    key(el, 'Enter').click();
+    await settle();
+    expect(storage.docs.get('graph')).toMatchObject({ functions: ['x^2-4'] });
+    expect(el.querySelector('canvas')?.getAttribute('aria-label')).toContain('y1 = x^2 - 4');
+    press('F4'); // ANLYZ▸
+    await settle();
+    press('F1'); // ROOT
+    await settle();
+    expect(el.querySelector('.msg')?.textContent).toContain('x = -2, x = 2');
+    mf.value = 'q+1';
+    key(el, 'Enter').click();
+    await settle();
+    expect(el.querySelector('.msg')?.textContent).toContain('unknown name');
   });
 });

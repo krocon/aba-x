@@ -2,7 +2,7 @@ import { Injectable, InjectionToken, inject } from '@angular/core';
 import { INVOKE } from '../platform/platform-api';
 
 /** Document keys – the same on both platforms (file `<key>.json` on desktop, IndexedDB row on web). */
-export type StorageKey = 'ui-state' | 'settings' | 'history' | 'variables' | 'functions';
+export type StorageKey = 'ui-state' | 'settings' | 'history' | 'variables' | 'functions' | 'graph';
 
 export interface LoadedDoc<T> {
   /** `null` when the document does not exist yet (or was unreadable and set aside). */

@@ -82,10 +82,13 @@ const item = (label: string, run: () => void): MenuItem => ({
 });
 
 /** What the CAS menus need from the calculator store. */
+export type MenuName =
+  'mode' | 'main' | 'vars' | 'cas-calc' | 'hist' | 'graph-zoom' | 'graph-anlz' | 'graph-exprt';
+
 export interface CasMenuTarget {
   casOp(op: 'simplify' | 'expand' | 'factor' | 'solve' | 'deriv' | 'integ'): Promise<void>;
   insertTemplate(latex: string): void;
-  menu: { set(m: 'mode' | 'main' | 'vars' | 'cas-calc'): void };
+  menu: { set(m: MenuName): void };
 }
 
 /** CAS mode menu (prompt 010): algebra on the line or level 1, CALC submenu, MODE back to the mode menu. */
@@ -143,5 +146,87 @@ export function histMenu(c: HistMenuTarget): MenuItem[] {
     ),
     item('CLEAR', () => c.history.clear()),
     item('EXIT', () => c.closeHistory()),
+  ];
+}
+
+/** What the graph menus need (prompts 014–016). */
+export interface GraphMenuTarget {
+  menu: { set(m: MenuName): void };
+  graph: {
+    listOpen: { set(v: boolean): void; (): boolean };
+    startTrace(): void;
+    endTrace(): void;
+    trace(): number | null;
+    zoomBy(f: number): void;
+    auto(): void;
+    standard(): void;
+    trig(): void;
+    analyse(kind: 'root' | 'extr' | 'isect' | 'tang' | 'area'): void;
+    clearMarks(): void;
+    remove(i: number): void;
+    clear(): void;
+    selected(): number;
+  };
+  exportPng(): void;
+  exportSvg(): void;
+  editFunction(): void;
+}
+
+export function graphMenu(c: GraphMenuTarget): MenuItem[] {
+  if (c.graph.listOpen()) {
+    return [
+      item('EDIT', () => c.editFunction()),
+      item('DEL', () => c.graph.remove(c.graph.selected())),
+      item('CLEAR', () => c.graph.clear()),
+      item('', () => undefined),
+      item('', () => undefined),
+      item('EXIT', () => c.graph.listOpen.set(false)),
+    ];
+  }
+  return [
+    item('Y=', () => c.graph.listOpen.set(true)),
+    item('ZOOM▸', () => c.menu.set('graph-zoom')),
+    item(c.graph.trace() === null ? 'TRACE' : 'TRACE■', () =>
+      c.graph.trace() === null ? c.graph.startTrace() : c.graph.endTrace(),
+    ),
+    item('ANLYZ▸', () => c.menu.set('graph-anlz')),
+    item('EXPRT▸', () => c.menu.set('graph-exprt')),
+    item('MODE▸', () => c.menu.set('main')),
+  ];
+}
+
+export function graphZoomMenu(c: GraphMenuTarget): MenuItem[] {
+  return [
+    item('IN', () => c.graph.zoomBy(0.5)),
+    item('OUT', () => c.graph.zoomBy(2)),
+    item('AUTO', () => c.graph.auto()),
+    item('STD', () => c.graph.standard()),
+    item('TRIG', () => c.graph.trig()),
+    item('BACK', () => c.menu.set('mode')),
+  ];
+}
+
+export function graphAnalyseMenu(c: GraphMenuTarget): MenuItem[] {
+  return [
+    item('ROOT', () => c.graph.analyse('root')),
+    item('EXTR', () => c.graph.analyse('extr')),
+    item('ISECT', () => c.graph.analyse('isect')),
+    item('TANG', () => c.graph.analyse('tang')),
+    item('∫AREA', () => c.graph.analyse('area')),
+    item('BACK', () => {
+      c.graph.clearMarks();
+      c.menu.set('mode');
+    }),
+  ];
+}
+
+export function graphExportMenu(c: GraphMenuTarget): MenuItem[] {
+  return [
+    item('PNG', () => c.exportPng()),
+    item('SVG', () => c.exportSvg()),
+    item('', () => undefined),
+    item('', () => undefined),
+    item('', () => undefined),
+    item('BACK', () => c.menu.set('mode')),
   ];
 }

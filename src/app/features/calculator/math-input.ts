@@ -12,7 +12,7 @@ import {
   viewChild,
 } from '@angular/core';
 import { CalculatorStore, MathEditor } from './calculator-store';
-import { EditCommand } from './keypad/keypad-model';
+import { EditCommand, KeyAction } from './keypad/keypad-model';
 
 /** The parts of a MathLive `<math-field>` this component uses. */
 export interface MathFieldLike extends HTMLElement {
@@ -130,6 +130,20 @@ export class MathInput implements OnInit, OnDestroy, MathEditor {
   /** Stack browsing with the hardware keyboard (prompt 006): ↑ on an empty line, ↑/↓, Enter, Del, Esc, copy. */
   private stackKey(e: KeyboardEvent): boolean {
     const empty = this.latex().trim() === '';
+    if (empty && this.store.isGraphMode() && !e.metaKey && !e.ctrlKey && !e.altKey) {
+      const map: Record<string, KeyAction> = {
+        ArrowUp: { kind: 'command', command: 'moveUp' },
+        ArrowDown: { kind: 'command', command: 'moveDown' },
+        ArrowLeft: { kind: 'command', command: 'moveToPreviousChar' },
+        ArrowRight: { kind: 'command', command: 'moveToNextChar' },
+        '+': { kind: 'insert', latex: '+' },
+        '-': { kind: 'insert', latex: '-' },
+        Escape: { kind: 'clear' },
+        Enter: { kind: 'enter' },
+      };
+      const action = map[e.key];
+      if (action) return this.store.graphKey(action);
+    }
     const browsing = this.store.selected() !== null;
     const mod = e.metaKey || e.ctrlKey;
     if (mod && e.key.toLowerCase() === 'c' && (browsing || empty)) {

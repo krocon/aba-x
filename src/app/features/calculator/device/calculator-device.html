@@ -23,7 +23,28 @@
 
     @switch (ui.mode()) {
       @case ('graph') {
-        <p class="placeholder">The function plotter follows.</p>
+        @if (calc.graph.listOpen()) {
+          <ol class="hist" aria-label="Functions">
+            @for (f of calc.graph.functions(); track f.id; let i = $index) {
+              <li
+                [class.sel]="calc.graph.selected() === i"
+                (click)="calc.graph.selected.set(i)"
+                (keydown.enter)="calc.graph.selected.set(i)"
+                tabindex="-1"
+              >
+                <span class="in">y{{ i + 1 }} =</span>
+                <math-span class="out">{{ f.latex }}</math-span>
+              </li>
+            } @empty {
+              <li class="empty">Type a function of x and press ENTER.</li>
+            }
+          </ol>
+        } @else {
+          <app-graph-view class="plot" />
+        }
+        <div class="line">
+          <app-math-input ariaLabel="Function of x" />
+        </div>
       }
       @default {
         @if (calc.menu() === 'hist') {
@@ -72,7 +93,9 @@
       }
     }
 
-    <p class="msg" role="status">{{ calc.message() }}</p>
+    <p class="msg" role="status">
+      {{ calc.message() ?? (ui.mode() === 'graph' ? calc.graph.readout() : '') }}
+    </p>
 
     <div class="menu" aria-hidden="true">
       @for (key of menu(); track $index) {

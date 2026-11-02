@@ -6,6 +6,8 @@ import type { BinaryOp, Expr } from '../../../math/ast/nodes';
 import type { MathResult } from '../../../math/result';
 import { isFreeName } from '../../../math/parser/statement';
 import type { VarsMenuEntry } from '../vars/vars-logic';
+import type { MenuName } from './device/softkeys';
+import { GraphStore } from '../graph/graph-store';
 import { VarsStore } from '../vars/vars-store';
 import { HistoryStore } from '../history/history-store';
 import { UiStateStore } from '../../core/ui-state/ui-state-store';
@@ -54,6 +56,7 @@ export class CalculatorStore {
   readonly vars = inject(VarsStore);
   private readonly ui = inject(UiStateStore);
   readonly history = inject(HistoryStore);
+  readonly graph = inject(GraphStore);
   private editor: MathEditor | null = null;
   private nextId = 1;
   private flashTimer: ReturnType<typeof setTimeout> | null = null;
@@ -79,7 +82,7 @@ export class CalculatorStore {
    * Soft menu: `mode` = the menu of the current mode (Standard: the main menu, CAS: CAS functions),
    * `main` = mode selection, `vars` = the user's variables, `cas-calc` = calculus submenu.
    */
-  readonly menu = signal<'mode' | 'main' | 'vars' | 'cas-calc' | 'hist'>('mode');
+  readonly menu = signal<MenuName>('mode');
   readonly varsPage = signal(0);
 
   attach(editor: MathEditor | null): void {
@@ -112,6 +115,9 @@ export class CalculatorStore {
   /** ▲ on an empty line starts browsing the stack; while browsing, keys act on the selection. */
   private browse(action: KeyAction): boolean {
     if (this.menu() === 'hist') return this.histKey(action);
+    if (this.ui.mode() === 'graph' && (this.editor?.latex().trim() ?? '') === '') {
+      return this.graphKey(action);
+    }
     const sel = this.selected();
     if (sel === null) {
       const empty = (this.editor?.latex().trim() ?? '') === '';
@@ -166,6 +172,64 @@ export class CalculatorStore {
       return true;
     }
     return false;
+  }
+
+  /**
+   * Graph mode with an empty line (prompt 014): arrows pan (or move the trace cursor / switch the
+   * traced function), + and − zoom, ON ends trace and clears marks.
+   */
+  graphKey(action: KeyAction): boolean {
+    const g = this.graph;
+    const tracing = g.trace() !== null;
+    if (action.kind === 'command') {
+      switch (action.command) {
+        case 'moveUp':
+          if (tracing) g.selectNext(-1);
+          else g.panBy(0, 0.1);
+          return true;
+        case 'moveDown':
+          if (tracing) g.selectNext(1);
+          else g.panBy(0, -0.1);
+          return true;
+        case 'moveToPreviousChar':
+          if (tracing) g.traceStep(-1);
+          else g.panBy(-0.1, 0);
+          return true;
+        case 'moveToNextChar':
+          if (tracing) g.traceStep(1);
+          else g.panBy(0.1, 0);
+          return true;
+        default:
+          return false;
+      }
+    }
+    if (action.kind === 'insert' && (action.latex === '+' || action.latex === '-')) {
+      g.zoomBy(action.latex === '+' ? 0.7 : 1 / 0.7);
+      return true;
+    }
+    if (action.kind === 'clear') {
+      g.endTrace();
+      g.clearMarks();
+      g.listOpen.set(false);
+      return true;
+    }
+    // ENTER on an empty line does nothing in graph mode (no stack here)
+    return action.kind === 'enter';
+  }
+
+  isGraphMode(): boolean {
+    return this.ui.mode() === 'graph';
+  }
+
+  /** Y= EDIT: the selected function goes back into the line for editing. */
+  editFunction(): void {
+    const f = this.graph.current();
+    if (!f) return;
+    this.graph.remove(this.graph.selected());
+    this.graph.listOpen.set(false);
+    this.editor?.clear();
+    this.editor?.insert(f.latex);
+    this.editor?.focus();
   }
 
   openHistory(): void {
@@ -316,6 +380,15 @@ export class CalculatorStore {
         return;
       }
       await this.apply(t.expr, 1, true);
+      return;
+    }
+    if (this.ui.mode() === 'graph') {
+      const err = this.graph.add(latex);
+      if (err) this.message.set(err);
+      else {
+        this.message.set(null);
+        this.editor?.clear();
+      }
       return;
     }
     const mode = this.ui.mode() === 'cas' ? 'cas' : 'standard';

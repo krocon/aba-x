@@ -16,12 +16,18 @@ import { Keypad } from '../keypad/keypad';
 import { keyIdForPhysical } from '../keypad/keypad-model';
 import { MathInput } from '../math-input';
 import { varsMenu } from '../../vars/vars-logic';
+import { GraphExportService } from '../../graph/graph-export-service';
+import { GraphView } from '../../graph/graph-view';
 import {
   MAIN_MENU,
   MODE_TITLES,
   type MenuItem,
   casCalcMenu,
   casMenu,
+  graphAnalyseMenu,
+  graphExportMenu,
+  graphMenu,
+  graphZoomMenu,
   histMenu,
   mainItems,
 } from './softkeys';
@@ -37,7 +43,7 @@ const LEVELS = 4;
 @Component({
   selector: 'app-calculator-device',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Keypad, MathInput],
+  imports: [Keypad, MathInput, GraphView],
   // <math-span> (static MathLive rendering) is registered when MathLive loads.
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './calculator-device.html',
@@ -54,7 +60,7 @@ export class CalculatorDevice {
   protected readonly menu = computed<MenuItem[]>(() => {
     const m = this.calc.menu();
     const mode = this.ui.mode();
-    if (m === 'main' || (m === 'mode' && mode !== 'cas')) {
+    if (m === 'main' || (m === 'mode' && mode === 'standard')) {
       return mainItems(MAIN_MENU, mode, {
         setMode: (next) => {
           this.ui.setMode(next);
@@ -67,6 +73,17 @@ export class CalculatorDevice {
       });
     }
     if (m === 'hist') return histMenu(this.calc);
+    const graphTarget = {
+      menu: this.calc.menu,
+      graph: this.calc.graph,
+      exportPng: () => void this.exportPlot('png'),
+      exportSvg: () => void this.exportPlot('svg'),
+      editFunction: () => this.calc.editFunction(),
+    };
+    if (m === 'mode' && mode === 'graph') return graphMenu(graphTarget);
+    if (m === 'graph-zoom') return graphZoomMenu(graphTarget);
+    if (m === 'graph-anlz') return graphAnalyseMenu(graphTarget);
+    if (m === 'graph-exprt') return graphExportMenu(graphTarget);
     if (m === 'mode') return casMenu(this.calc);
     if (m === 'cas-calc') return casCalcMenu(this.calc);
     const vars = this.calc.vars;
@@ -127,6 +144,17 @@ export class CalculatorDevice {
     ];
     const off = handlers.map(([id, h]) => keys.register(id, h));
     inject(DestroyRef).onDestroy(() => off.forEach((f) => f()));
+  }
+
+  private readonly exporter = inject(GraphExportService);
+
+  private async exportPlot(kind: 'png' | 'svg'): Promise<void> {
+    try {
+      const name = kind === 'png' ? await this.exporter.png() : await this.exporter.svg();
+      if (name) this.calc.message.set(`saved ${name}`);
+    } catch (e) {
+      this.calc.message.set(`export failed: ${(e as { message?: string }).message ?? e}`);
+    }
   }
 
   private setMode(mode: 'standard' | 'cas' | 'graph'): void {
