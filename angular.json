@@ -65,7 +65,7 @@
             },
             "web": {
               "outputPath": "dist/web",
-              "baseHref": "/",
+              "baseHref": "/products/aba-x1/",
               "serviceWorker": "ngsw-config.json",
               "budgets": [
                 {

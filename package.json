@@ -38,7 +38,8 @@
     "check": "pnpm version:check && pnpm scripts:test && pnpm format:check && pnpm lint && pnpm test && pnpm build && pnpm build:web && pnpm rust:fmt && pnpm rust:lint && pnpm rust:test && pnpm notices:check",
     "e2e": "pnpm build:web && node scripts/e2e/run.mjs",
     "release:notes": "node scripts/release-notes.mjs",
-    "screenshots": "pnpm build:web && node scripts/screenshots/run.mjs"
+    "screenshots": "pnpm build:web && node scripts/screenshots/run.mjs",
+    "serve:web": "node scripts/e2e/run.mjs --serve 4300"
   },
   "private": true,
   "packageManager": "pnpm@10.25.0",

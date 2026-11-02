@@ -26,7 +26,7 @@
 | Desktop-Dev | `pnpm tauri dev` |
 | Tests | `pnpm test` (Vitest + jsdom über `ng test`), `pnpm test:watch` |
 | Lint / Format | `pnpm lint` (inkl. Import-Sperre `src/math`), `pnpm format`, `pnpm format:check` |
-| Build Desktop-Frontend / Web | `pnpm build` → `dist/desktop`, `pnpm build:web` → `dist/web` (Service Worker) |
+| Build Desktop-Frontend / Web | `pnpm build` → `dist/desktop` (base `/`), `pnpm build:web` → `dist/web` (Service Worker, base `/products/aba-x1/` = Ziel krocon.de) |
 | Rust | `pnpm rust:fmt`, `pnpm rust:lint` (clippy `-D warnings`), `pnpm rust:test` |
 | Desktop-Debug-Build | `pnpm tauri build --debug --no-bundle` bzw. `--bundles app` (macOS, für Automation mit Bundle-ID `io.github.krocon.abax`) |
 | Pakete | `pnpm tauri:build:mac` · `pnpm tauri:build:windows` · `pnpm tauri:build:linux` (nur mit Freigabe) |
@@ -37,8 +37,9 @@
 | Screenshots | `pnpm screenshots` → `docs/screenshots/` (README-Bilder) |
 | Release Notes | `pnpm release:notes` (Conventional Commits seit dem letzten Tag) |
 
-Web-Build lokal ansehen: `python3 -m http.server 4300 -d dist/web/browser` (Konfiguration `web-dist` in
-`.claude/launch.json`). Service Worker beim Testen ggf. abmelden, sonst sieht man den alten Stand.
+Web-Build lokal ansehen: `pnpm serve:web` → http://localhost:4300/products/aba-x1/ (wie gehostet; Konfiguration
+`web-dist` in `.claude/launch.json`). Service Worker beim Testen ggf. abmelden, sonst sieht man den alten Stand.
+Im Web-Code nie absolute Pfade (`/…`) verwenden – immer relativ zum `<base href>`.
 
 ## 3. Layout
 

@@ -6,7 +6,7 @@ import { mkdir } from 'node:fs/promises';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { chromium } from 'playwright';
-import { serve } from '../e2e/run.mjs';
+import { BASE, serve } from '../e2e/run.mjs';
 
 const OUT = join(fileURLToPath(new URL('.', import.meta.url)), '../../docs/screenshots');
 
@@ -65,7 +65,7 @@ const scenes = [
 async function main() {
   await mkdir(OUT, { recursive: true });
   const server = await serve();
-  const url = `http://127.0.0.1:${server.address().port}/`;
+  const url = `http://127.0.0.1:${server.address().port}${BASE}`;
   const browser = await chromium.launch();
   for (const scheme of ['light', 'dark']) {
     for (const scene of scenes) {

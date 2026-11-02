@@ -24,12 +24,18 @@ const TYPES = {
   '.woff2': 'font/woff2',
 };
 
-export function serve(root = ROOT) {
+/** Where the web version is hosted (angular.json, configuration `web`): krocon.de/products/aba-x1/. */
+export const BASE = '/products/aba-x1/';
+
+/** Serves the build under BASE only – like the real server, so wrong absolute paths show up as 404. */
+export function serve(root = ROOT, base = BASE) {
   const server = createServer(async (req, res) => {
-    const path = normalize(decodeURIComponent(new URL(req.url, 'http://x').pathname)).replace(
-      /^(\.\.[/\\])+/,
-      '',
-    );
+    const url = decodeURIComponent(new URL(req.url, 'http://x').pathname);
+    if (!url.startsWith(base)) {
+      res.writeHead(404).end();
+      return;
+    }
+    const path = normalize(url.slice(base.length - 1)).replace(/^(\.\.[/\\])+/, '');
     const file = join(root, path === '/' ? 'index.html' : path);
     try {
       const body = await readFile(file);
@@ -182,7 +188,7 @@ async function offline(browser, url) {
 
 async function main() {
   const server = await serve();
-  const url = `http://127.0.0.1:${server.address().port}/`;
+  const url = `http://127.0.0.1:${server.address().port}${BASE}`;
   const wanted = (process.env.E2E_BROWSERS ?? 'chromium,webkit,firefox').split(',');
   const engines = { chromium, webkit, firefox };
   let failed = 0;
@@ -197,6 +203,10 @@ async function main() {
     const page = await browser.newPage({ viewport: { width: 1000, height: 900 } });
     const errors = [];
     page.on('pageerror', (e) => errors.push(e.message));
+    // every request must stay below the base path (krocon.de/products/aba-x1/)
+    page.on('response', (r) => {
+      if (r.status() === 404) errors.push(`404 ${new URL(r.url()).pathname}`);
+    });
     const t0 = Date.now();
     await page.goto(url);
     for (const [check, run] of Object.entries(checks)) {
@@ -245,4 +255,16 @@ async function main() {
   process.exitCode = failed ? 1 : 0;
 }
 
-if (process.argv[1] === fileURLToPath(import.meta.url)) await main();
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  if (process.argv[2] === '--serve') {
+    // local preview exactly as hosted: http://localhost:<port>/products/aba-x1/
+    const port = Number(process.argv[3] ?? 4300);
+    const server = await serve();
+    server.close();
+    createServer((req, res) => server.emit('request', req, res)).listen(port, () =>
+      console.log(`web build at http://localhost:${port}${BASE}`),
+    );
+  } else {
+    await main();
+  }
+}

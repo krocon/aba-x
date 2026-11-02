@@ -26,8 +26,8 @@ Geprüft: 341 Unit-/Komponenten-Specs, 12 Rust-Tests, E2E in Chromium und WebKit
 
 ## Offen / nächste Schritte
 
-- **Freigaben (Marc):** Push, CI-Lauf auf Windows/Linux, erstes Release (Signierung), Web-Ziel (GitHub Pages oder
-  krocon.de) – `docs/release.md`, `docs/deployment.md`.
+- **Freigaben (Marc):** Push, CI-Lauf auf Windows/Linux, erstes Release (Signierung), Hochladen nach
+  https://krocon.de/products/aba-x1/ (Build ist darauf eingestellt) – `docs/release.md`, `docs/deployment.md`.
 - **Nicht von Hand geprüft:** Windows, Linux (CI-Matrix vorhanden), Firefox (Playwright startet hier nicht),
   Screenreader-Durchgang (VoiceOver/NVDA/Orca).
 - Meldungen des Mathe-Kerns sind englisch, auch in der deutschen Oberfläche.
