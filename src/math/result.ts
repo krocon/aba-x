@@ -15,7 +15,8 @@ export type MathErrorCode =
   | 'unsupported'
   | 'not-solvable'
   | 'not-evaluable'
-  | 'timeout';
+  | 'timeout'
+  | 'cancelled';
 
 export interface MathError {
   readonly code: MathErrorCode;

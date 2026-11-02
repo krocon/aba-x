@@ -20,16 +20,16 @@ können parallel laufen, sobald jemand Zeit hat. Die Nummern bleiben stabil, dam
 | 001 | [walking-skeleton-tauri-web](done/001-walking-skeleton-tauri-web.md) | Gerüst Desktop + Web, Fassaden, Gerät, Hardware-Tastatur | – | L | ✅ 02.11.2026 |
 | 002 | [plattform-fassaden](002-plattform-fassaden.md) | Dateien, Menü, Fensterzustand, About | 001 | M | ⬜ |
 | 003 | [expression-ast-parser](done/003-expression-ast-parser.md) | AST, Text- und LaTeX-Parser, Serializer | 001 | L | ✅ 02.11.2026 |
-| 004 | [worker-protokoll](004-worker-protokoll.md) | Web Worker, Abbruch, Timeout | 003 | M | ⬜ |
+| 004 | [worker-protokoll](done/004-worker-protokoll.md) | Web Worker, Abbruch, Timeout | 003 | M | ✅ 02.11.2026 |
 | 005 | [auswertung-standardmodus](005-auswertung-standardmodus.md) | ENTER rechnet: exakt/numerisch, Grad/Bogenmaß | 003 | L | ⬜ |
 | 006 | [natuerliche-ausgabe](006-natuerliche-ausgabe.md) | Lehrbuchdarstellung im Display, Stack-Navigation, Kopieren | 005 | M | ⬜ |
 | 007 | [aktionssystem-tastatur](007-aktionssystem-tastatur.md) | Aktionskatalog, Keymaps je OS, Alpha-Modus | 005 | M | ⬜ |
 | 008 | [variablen-funktionen](008-variablen-funktionen.md) | Variablen, Funktionen, STO/RCL, VARS | 005, 007 | M | ⬜ |
-| 009 | [cas-adapter-nerdamer](009-cas-adapter-nerdamer.md) | SymbolicEngine mit Nerdamer 2 im Worker | 003, 004 | L | ⬜ |
+| 009 | [cas-adapter-nerdamer](done/009-cas-adapter-nerdamer.md) | SymbolicEngine mit Nerdamer 2 im Worker | 003, 004 | L | ✅ 02.11.2026 |
 | 010 | [cas-modus-algebra-gleichungen](010-cas-modus-algebra-gleichungen.md) | CAS-Modus: Vereinfachen, Faktorisieren, Lösen | 009, 006 | M | ⬜ |
 | 011 | [ableitungen](011-ableitungen.md) | Ableitungen, Grenzwerte | 009, 010 | S | ⬜ |
 | 012 | [symbolische-integration](012-symbolische-integration.md) | Integrale exakt/numerisch | 009, 013 | M | ⬜ |
-| 013 | [numerische-verfahren](013-numerische-verfahren.md) | Nullstellen, Ableitung, Quadratur | 003 | L | ⬜ |
+| 013 | [numerische-verfahren](done/013-numerische-verfahren.md) | Nullstellen, Ableitung, Quadratur | 003 | L | ✅ 02.11.2026 |
 | 014 | [funktionsplotter](014-funktionsplotter.md) | Graph-Modus | 005, 008, 013 | L | ⬜ |
 | 015 | [nullstellen-extrema-schnittpunkte](015-nullstellen-extrema-schnittpunkte.md) | Analyse im Graph | 014 | M | ⬜ |
 | 016 | [integralflaechen](016-integralflaechen.md) | Flächen im Graph | 012, 015 | S | ⬜ |

@@ -41,6 +41,10 @@
             ],
             "styles": [
               "src/styles.css"
+            ],
+            "webWorkerTsConfig": "tsconfig.worker.json",
+            "allowedCommonJsDependencies": [
+              "nerdamer"
             ]
           },
           "configurations": {
