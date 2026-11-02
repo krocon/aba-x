@@ -13,6 +13,11 @@ every answer of the computer algebra system is checked numerically before it is 
   <img src="docs/screenshots/graph-light.png" alt="Graph mode: tan x and a parabola with marked zeros" width="260">
 </p>
 
+Worked examples (regenerated with `pnpm screenshots:examples`):
+[8.5 · 88 · 1.19](docs/screenshots/examples/a-calculation.png) ·
+[∫₀¹ sin(2x) dx exact, numeric and antiderivative](docs/screenshots/examples/b-integral.png) ·
+[plot of sin((x−1)(x+2)) with zeros](docs/screenshots/examples/c-graph.png)
+
 > **Status: v0.1.0, feature-complete first version.** Not yet released; packages are built by the release workflow
 > on demand. See [`docs/roadmap.md`](docs/roadmap.md).
 
@@ -68,6 +73,7 @@ pnpm tauri dev      # desktop app
 pnpm check          # versions, scripts, format, lint, unit tests, desktop + web build, Rust, licences
 pnpm e2e            # web build in Chromium and WebKit: calculation, CAS, graph, typing, offline, axe
 pnpm screenshots    # the images in docs/screenshots/
+pnpm screenshots:examples   # worked examples in docs/screenshots/examples/
 ```
 
 More: [`CLAUDE.md`](CLAUDE.md) (commands, layout, rules), [`docs/architecture.md`](docs/architecture.md),

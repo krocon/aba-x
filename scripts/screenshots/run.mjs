@@ -1,7 +1,10 @@
 #!/usr/bin/env node
-// Reproducible screenshots for README and docs (prompt 023): renders the web build in Chromium,
-// sets up a few scenes and writes PNGs to docs/screenshots/. Needs `pnpm build:web` first
-// (`pnpm screenshots` does both).
+// Reproducible screenshots (prompt 023): renders the web build in Chromium, sets up scenes and
+// writes PNGs. Needs `pnpm build:web` first (the pnpm scripts do both).
+//
+//   node scripts/screenshots/run.mjs            # README images (light + dark) → docs/screenshots/
+//   node scripts/screenshots/run.mjs examples   # worked examples (light)       → docs/screenshots/examples/
+//   node scripts/screenshots/run.mjs all
 import { mkdir } from 'node:fs/promises';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -10,15 +13,76 @@ import { BASE, serve } from '../e2e/run.mjs';
 
 const OUT = join(fileURLToPath(new URL('.', import.meta.url)), '../../docs/screenshots');
 
-async function enter(page, latex) {
+/** Waits until no computation is running (busy annunciator off). */
+async function idle(page) {
+  await page.waitForFunction(() => !document.querySelector('.ann.busy.on'), null, {
+    timeout: 15000,
+  });
+  await page.waitForTimeout(250);
+}
+
+async function type(page, latex) {
   await page.evaluate((l) => {
     document.querySelector('math-field').value = l;
   }, latex);
-  await page.click('.key[aria-label="Enter"]');
-  await page.waitForTimeout(700);
 }
 
-const scenes = [
+async function enter(page, latex) {
+  await type(page, latex);
+  await page.click('.key[aria-label="Enter"]');
+  await page.waitForTimeout(400);
+  await idle(page);
+}
+
+/** Presses softkey n (1–6). */
+async function soft(page, n) {
+  await page.click(`.soft-cell:nth-child(${n}) .soft`);
+  await page.waitForTimeout(150);
+  await idle(page);
+}
+
+/** Worked examples: easy to repeat after changes (`pnpm screenshots:examples`). */
+const examples = [
+  {
+    name: 'a-calculation',
+    // 8.5 · 88 · 1.19 in the standard mode
+    async setup(page) {
+      await enter(page, '8.5\\cdot88\\cdot1.19');
+    },
+  },
+  {
+    name: 'b-integral',
+    // ∫₀¹ sin(2x) dx: exact (with ≈), the same with →NUM, and the antiderivative from CAS ▸ CALC ▸ INTEG
+    async setup(page) {
+      await page.keyboard.press('F2');
+      await enter(page, '\\int_0^1\\sin\\left(2x\\right)\\,dx');
+      await type(page, '\\int_0^1\\sin\\left(2x\\right)\\,dx');
+      await page.keyboard.press('Shift+Enter');
+      await page.waitForTimeout(400);
+      await idle(page);
+      await type(page, '\\sin\\left(2x\\right)');
+      await soft(page, 5); // CALC▸
+      await soft(page, 2); // INTEG
+    },
+  },
+  {
+    name: 'c-graph',
+    // y = sin((x − 1)(x + 2)), window −5 … 5 with automatic y-range, zeros marked
+    async setup(page) {
+      await page.keyboard.press('F3');
+      await page.waitForSelector('app-graph-view canvas');
+      await enter(page, '\\sin\\left(\\left(x-1\\right)\\left(x+2\\right)\\right)');
+      await soft(page, 2); // ZOOM▸
+      await soft(page, 1); // IN  → x −5 … 5
+      await soft(page, 3); // AUTO
+      await soft(page, 6); // BACK
+      await soft(page, 4); // ANLYZ▸
+      await soft(page, 1); // ROOT
+    },
+  },
+];
+
+const readme = [
   {
     name: 'standard',
     async setup(page) {
@@ -62,32 +126,41 @@ const scenes = [
   },
 ];
 
-async function main() {
-  await mkdir(OUT, { recursive: true });
+async function shoot(browser, url, scene, scheme, dir) {
+  const ctx = await browser.newContext({
+    viewport: { width: 520, height: 980 },
+    deviceScaleFactor: 2,
+    colorScheme: scheme,
+    locale: 'en-US',
+  });
+  const page = await ctx.newPage();
+  await page.goto(url);
+  await page.waitForSelector('math-field');
+  await scene.setup(page);
+  await page.waitForTimeout(500);
+  await mkdir(dir, { recursive: true });
+  const file = join(
+    dir,
+    `${scene.name}${scheme === 'light' && dir !== OUT ? '' : `-${scheme}`}.png`,
+  );
+  await page.locator('.device').screenshot({ path: file });
+  console.log(`✔ ${file}`);
+  await ctx.close();
+}
+
+async function main(group = 'readme') {
   const server = await serve();
   const url = `http://127.0.0.1:${server.address().port}${BASE}`;
   const browser = await chromium.launch();
-  for (const scheme of ['light', 'dark']) {
-    for (const scene of scenes) {
-      const ctx = await browser.newContext({
-        viewport: { width: 520, height: 980 },
-        deviceScaleFactor: 2,
-        colorScheme: scheme,
-        locale: 'en-US',
-      });
-      const page = await ctx.newPage();
-      await page.goto(url);
-      await page.waitForSelector('math-field');
-      await scene.setup(page);
-      await page.waitForTimeout(500);
-      const file = join(OUT, `${scene.name}-${scheme}.png`);
-      await page.locator('.device').screenshot({ path: file });
-      console.log(`✔ ${file}`);
-      await ctx.close();
-    }
+  if (group === 'readme' || group === 'all') {
+    for (const scheme of ['light', 'dark'])
+      for (const s of readme) await shoot(browser, url, s, scheme, OUT);
+  }
+  if (group === 'examples' || group === 'all') {
+    for (const s of examples) await shoot(browser, url, s, 'light', join(OUT, 'examples'));
   }
   await browser.close();
   server.close();
 }
 
-await main();
+await main(process.argv[2]);

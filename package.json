@@ -39,7 +39,8 @@
     "e2e": "pnpm build:web && node scripts/e2e/run.mjs",
     "release:notes": "node scripts/release-notes.mjs",
     "screenshots": "pnpm build:web && node scripts/screenshots/run.mjs",
-    "serve:web": "node scripts/e2e/run.mjs --serve 4300"
+    "serve:web": "node scripts/e2e/run.mjs --serve 4300",
+    "screenshots:examples": "pnpm build:web && node scripts/screenshots/run.mjs examples"
   },
   "private": true,
   "packageManager": "pnpm@10.25.0",

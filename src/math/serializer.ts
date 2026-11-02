@@ -130,7 +130,8 @@ export function toLatex(e: Expr): string {
     case 'sym':
       return latexSymbol(e.name);
     case 'neg':
-      return `-${wrap(e.arg, prec(e.arg) < 30)}`;
+      // a fraction is a block of its own: −\frac{a}{b} needs no parentheses
+      return `-${wrap(e.arg, prec(e.arg) < 30 && !(e.arg.type === 'bin' && e.arg.op === '/'))}`;
     case 'post':
       return `${wrap(e.arg, prec(e.arg) < 40)}${e.op === '%' ? '\\%' : '!'}`;
     case 'bin': {

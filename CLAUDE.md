@@ -34,7 +34,7 @@
 | Lizenzen | `pnpm notices` nach jeder Abhängigkeitsänderung; `pnpm notices:check` |
 | Alles prüfen | `pnpm check` |
 | Ende-zu-Ende | `pnpm e2e` (Web-Build in Chromium + WebKit: Rechnen, CAS, Graph, echtes Tippen, gerenderter Stack, 375 px, axe, offline); `E2E_BROWSERS=chromium` für einen Browser |
-| Screenshots | `pnpm screenshots` → `docs/screenshots/` (README-Bilder) |
+| Screenshots | `pnpm screenshots` → `docs/screenshots/` (README-Bilder), `pnpm screenshots:examples` → `docs/screenshots/examples/` (a: 8.5·88·1.19, b: ∫₀¹ sin 2x exakt/numerisch/Stammfunktion, c: Plot sin((x−1)(x+2))); neue Beispiele in `scripts/screenshots/run.mjs` (`examples`) |
 | Release Notes | `pnpm release:notes` (Conventional Commits seit dem letzten Tag) |
 
 Web-Build lokal ansehen: `pnpm serve:web` → http://localhost:4300/products/aba-x1/ (wie gehostet; Konfiguration
