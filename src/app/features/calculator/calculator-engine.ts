@@ -7,6 +7,7 @@ import { parseLatexStatement } from '../../../math/parser/statement';
 import { type MathResult, fail, ok } from '../../../math/result';
 import { toLatex } from '../../../math/serializer';
 import { ComputeClient } from '../../core/compute/compute-client';
+import { pickVariable, solutionsDisplay, variablesOf, withConstant } from '../cas/cas-logic';
 import {
   type FormattedNumber,
   becameComplex,
@@ -35,7 +36,11 @@ export interface Evaluation {
   readonly approx?: FormattedNumber;
   /** The result itself is an approximation (decimals from numerics or the CAS). */
   readonly approximate: boolean;
+  /** Extra information for the message line (n ∈ ℤ, unchecked solutions, + C). */
+  readonly note?: string;
 }
+
+export type CasOp = 'simplify' | 'expand' | 'factor' | 'solve' | 'deriv' | 'integ';
 
 export type Outcome =
   | { readonly kind: 'value'; readonly evaluation: Evaluation }
@@ -80,12 +85,29 @@ export class CalculatorEngine {
    * The input line in Standard mode: an expression, `a = …` (assignment, value evaluated now) or
    * `f(x) = …` (definition, kept symbolic).
    */
-  async evaluateStatement(latex: string, ctx: EvalContext): Promise<MathResult<Outcome>> {
+  async evaluateStatement(
+    latex: string,
+    ctx: EvalContext,
+    mode: 'standard' | 'cas' = 'standard',
+  ): Promise<MathResult<Outcome>> {
     const st = parseLatexStatement(latex, { functions: new Set(ctx.functions?.keys() ?? []) });
     if (!st.ok) return st;
     const s = st.value;
-    if (s.kind === 'define')
+    if (s.kind === 'define') {
       return ok({ kind: 'define', name: s.name, params: s.params, body: s.body });
+    }
+    // CAS mode: `x = 5` and `x^2 = 4` are equations, lists are systems – they go onto the stack
+    const asIs = (expr: Expr) =>
+      ok<Outcome>({
+        kind: 'value',
+        evaluation: { input: latex, expr, latex: toLatex(expr), approximate: false },
+      });
+    if (mode === 'cas') {
+      if (s.kind === 'assign') {
+        return asIs({ type: 'rel', op: '=', left: { type: 'sym', name: s.name }, right: s.value });
+      }
+      if (s.expr.type === 'rel' || s.expr.type === 'list') return asIs(s.expr);
+    }
     if (s.kind === 'assign') {
       const v = await this.evaluateExpr(s.value, ctx, latex);
       return v.ok ? ok({ kind: 'assign', name: s.name, evaluation: v.value }) : v;
@@ -157,6 +179,84 @@ export class CalculatorEngine {
     }
     // the numeric error is usually the more precise one (division by zero, domain)
     return numeric.error.code === 'unknown-symbol' ? cas : numeric;
+  }
+
+  /** CAS menu operations (prompts 010–012) on an expression, equation or list of equations. */
+  async casOperation(op: CasOp, target: Expr, ctx: EvalContext): Promise<MathResult<Evaluation>> {
+    const prepared = this.prepare(target, ctx);
+    if (!prepared.ok) return prepared;
+    const e = prepared.value;
+    const input = toLatex(target);
+    const done = (expr: Expr, approximate: boolean, note?: string, latex = toLatex(expr)) =>
+      ok<Evaluation>({ input, expr, latex, approximate, ...(note ? { note } : {}) });
+
+    if (op === 'simplify' || op === 'expand' || op === 'factor') {
+      if (e.type === 'rel' || e.type === 'list')
+        return fail('unsupported', `${op.toUpperCase()} needs an expression`);
+      const r = await this.compute.run({ op, expr: e });
+      return r.ok ? done(r.value.expr, r.value.approximate) : r;
+    }
+    if (op === 'solve') {
+      if (e.type === 'list') {
+        if (!e.items.every((x) => x.type === 'rel' && x.op === '=')) {
+          return fail('syntax', 'SOLVE: a system is a list of equations [a = b, c = d]');
+        }
+        const variables = variablesOf(e);
+        const r = await this.compute.run({ op: 'solveSystem', equations: [...e.items], variables });
+        if (!r.ok) return r;
+        if (r.value.length === 0) return fail('not-solvable', 'no solution found');
+        const sets = r.value.map((set) =>
+          set.assignments.map((a) => `${a.variable}=${toLatex(a.value.expr)}`).join(',\\;'),
+        );
+        const exprs: Expr[] = r.value.map((set) => ({
+          type: 'list',
+          items: set.assignments.map((a) => ({
+            type: 'rel',
+            op: '=',
+            left: { type: 'sym', name: a.variable },
+            right: a.value.expr,
+          })),
+        }));
+        const expr: Expr = exprs.length === 1 ? exprs[0] : { type: 'list', items: exprs };
+        return done(expr, false, undefined, sets.join('\\quad\\vert\\quad '));
+      }
+      const equation: Expr =
+        e.type === 'rel'
+          ? e
+          : { type: 'rel', op: '=', left: e, right: { type: 'num', value: '0' } };
+      if (equation.type === 'rel' && equation.op !== '=')
+        return fail('unsupported', 'inequalities are not supported');
+      const variable = pickVariable(equation);
+      if (!variable) return fail('syntax', 'SOLVE: the equation needs exactly one unknown (or x)');
+      const r = await this.compute.run({ op: 'solve', equation, variable });
+      if (!r.ok) return r;
+      if (r.value.solutions.length === 0)
+        return fail('not-solvable', `no solution for ${variable}`);
+      const d = solutionsDisplay(r.value);
+      return done(
+        d.expr,
+        r.value.solutions.some((v) => v.approximate),
+        d.note ?? undefined,
+        d.latex,
+      );
+    }
+    if (e.type === 'rel' || e.type === 'list') return fail('unsupported', 'needs an expression');
+    const variable = pickVariable(e);
+    if (!variable) return fail('syntax', 'the expression needs exactly one variable (or x)');
+    if (op === 'deriv') {
+      const r = await this.compute.run({ op: 'differentiate', expr: e, variable, order: 1 });
+      return r.ok ? done(r.value.expr, r.value.approximate) : r;
+    }
+    const r = await this.compute.run({ op: 'integrate', expr: e, variable });
+    if (!r.ok) {
+      return r.error.code === 'not-solvable'
+        ? fail(
+            'not-solvable',
+            'no elementary antiderivative found (definite integrals work numerically)',
+          )
+        : r;
+    }
+    return done(withConstant(r.value.expr), false, 'C: integration constant');
   }
 
   cancel(): void {

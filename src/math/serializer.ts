@@ -18,7 +18,8 @@ function prec(e: Expr): number {
     case 'series':
     case 'limit':
     case 'deriv':
-      return 20;
+      // they take everything up to the next + or − (in LaTeX), so they bind like a sum
+      return 10;
     default:
       return 50;
   }
@@ -116,9 +117,9 @@ function latexNumber(v: string): string {
 
 const paren = (s: string) => `\\left(${s}\\right)`;
 
-/** Operand of Σ, lim, d/dx: they take one term, so sums and products need parentheses. */
+/** Operand of Σ, lim, d/dx: they take one term (up to + or −), so sums need parentheses. */
 function latexTerm(e: Expr): string {
-  return prec(e) >= 30 ? toLatex(e) : paren(toLatex(e));
+  return prec(e) > 10 && e.type !== 'neg' ? toLatex(e) : paren(toLatex(e));
 }
 
 export function toLatex(e: Expr): string {

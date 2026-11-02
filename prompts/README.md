@@ -26,9 +26,9 @@ können parallel laufen, sobald jemand Zeit hat. Die Nummern bleiben stabil, dam
 | 007 | [aktionssystem-tastatur](done/007-aktionssystem-tastatur.md) | Aktionskatalog, Keymaps je OS, Alpha-Modus | 005 | M | ✅ 02.11.2026 |
 | 008 | [variablen-funktionen](done/008-variablen-funktionen.md) | Variablen, Funktionen, STO/RCL, VARS | 005, 007 | M | ✅ 02.11.2026 |
 | 009 | [cas-adapter-nerdamer](done/009-cas-adapter-nerdamer.md) | SymbolicEngine mit Nerdamer 2 im Worker | 003, 004 | L | ✅ 02.11.2026 |
-| 010 | [cas-modus-algebra-gleichungen](010-cas-modus-algebra-gleichungen.md) | CAS-Modus: Vereinfachen, Faktorisieren, Lösen | 009, 006 | M | ⬜ |
-| 011 | [ableitungen](011-ableitungen.md) | Ableitungen, Grenzwerte | 009, 010 | S | ⬜ |
-| 012 | [symbolische-integration](012-symbolische-integration.md) | Integrale exakt/numerisch | 009, 013 | M | ⬜ |
+| 010 | [cas-modus-algebra-gleichungen](done/010-cas-modus-algebra-gleichungen.md) | CAS-Modus: Vereinfachen, Faktorisieren, Lösen | 009, 006 | M | ✅ 02.11.2026 |
+| 011 | [ableitungen](done/011-ableitungen.md) | Ableitungen, Grenzwerte | 009, 010 | S | ✅ 02.11.2026 |
+| 012 | [symbolische-integration](done/012-symbolische-integration.md) | Integrale exakt/numerisch | 009, 013 | M | ✅ 02.11.2026 |
 | 013 | [numerische-verfahren](done/013-numerische-verfahren.md) | Nullstellen, Ableitung, Quadratur | 003 | L | ✅ 02.11.2026 |
 | 014 | [funktionsplotter](014-funktionsplotter.md) | Graph-Modus | 005, 008, 013 | L | ⬜ |
 | 015 | [nullstellen-extrema-schnittpunkte](015-nullstellen-extrema-schnittpunkte.md) | Analyse im Graph | 014 | M | ⬜ |

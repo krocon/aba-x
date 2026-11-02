@@ -156,7 +156,8 @@ export class Pratt {
       case 'expr':
         return t.x;
       case 'prefix':
-        return t.make(this.expr(20));
+        // Σ, lim, d/dx take one term: products and quotients, up to the next + or −
+        return t.make(this.expr(10));
       case 'id':
         return this.identifier(t);
       case 'fn':

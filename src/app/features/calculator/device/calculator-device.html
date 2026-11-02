@@ -22,7 +22,10 @@
     <div class="path">{{ '{ ' + title() + ' }' }}</div>
 
     @switch (ui.mode()) {
-      @case ('standard') {
+      @case ('graph') {
+        <p class="placeholder">The function plotter follows.</p>
+      }
+      @default {
         <ol class="stack" aria-label="Stack">
           @for (row of levels(); track row.level) {
             <li
@@ -48,12 +51,6 @@
         <div class="line">
           <app-math-input ariaLabel="Input line" />
         </div>
-      }
-      @case ('cas') {
-        <p class="placeholder">Symbolic algebra, equations, derivatives and integrals follow.</p>
-      }
-      @case ('graph') {
-        <p class="placeholder">The function plotter follows.</p>
       }
     }
 

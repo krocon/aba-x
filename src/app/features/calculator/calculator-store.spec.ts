@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { FakeStorageApi } from '../../../testing/fake-storage-api';
 import { StorageApi } from '../../core/storage/storage-api';
 import { VarsStore } from '../vars/vars-store';
+import { UiStateStore } from '../../core/ui-state/ui-state-store';
 import { CalculatorStore, MathEditor } from './calculator-store';
 import { ALL_KEYS } from './keypad/keypad-model';
 
@@ -220,7 +221,31 @@ describe('CalculatorStore', () => {
     store.varsSoftkey({ kind: 'var', name: 'r' });
     expect(store.vars.variables().size).toBe(0);
     store.varsSoftkey({ kind: 'exit' });
-    expect(store.menu()).toBe('main');
+    expect(store.menu()).toBe('mode');
+  });
+
+  it('CAS mode: equations go onto the stack, SOLVE / FACT / DERIV / INTEG', async () => {
+    TestBed.inject(UiStateStore).mode.set('cas');
+    await type('x^2-4=0');
+    expect(levels()).toEqual(['x^{2}-4=0']);
+    await store.casOp('solve');
+    expect(levels()).toEqual(['x=-2,\\;x=2']);
+    editor.line = 'x^2-1';
+    await store.casOp('factor');
+    expect(store.stack().at(-1)?.text).toBe('(x + 1)*(x - 1)');
+    editor.line = '\\sin(x^2)';
+    await store.casOp('deriv');
+    expect(store.stack().at(-1)?.text).toBe('2*x*cos(x^2)');
+    await store.casOp('integ');
+    expect(store.stack().at(-1)?.text).toMatch(/sin\(x\^2\) \+ C|C/);
+    expect(store.message()).toContain('integration constant');
+    editor.line = '[x+y=3, x-y=1]';
+    await store.enter();
+    await store.casOp('solve');
+    expect(levels().at(-1)).toBe('x=2,\\;y=1');
+    editor.line = 'a+b';
+    await store.casOp('deriv');
+    expect(store.message()).toContain('one variable');
   });
 
   it('STO without a name explains itself', () => {

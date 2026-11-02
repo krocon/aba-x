@@ -158,3 +158,13 @@ describe('definite integrals inside expressions', () => {
     expect(cas.simplify(p('integrate(1/x, x, -1, 1)')).ok).toBe(false);
   });
 });
+
+describe('operator nodes inside expressions are computed and verified', () => {
+  it('d/dx, indefinite ∫ and lim', () => {
+    same(value(cas.simplify(p('diff(x^3, x) + 1'))).expr, '3*x^2 + 1');
+    same(value(cas.simplify(p('integrate(2*x, x)'))).expr, 'x^2');
+    expect(toText(value(cas.simplify(p('limit(sin(x)/x, x, 0) + 1'))).expr)).toBe('2');
+    expect(cas.simplify(p('limit(1/x, x, 0)')).ok).toBe(false);
+    same(value(cas.simplify(p('diff(x^2*y^3, y)'))).expr, '3*x^2*y^2');
+  });
+});

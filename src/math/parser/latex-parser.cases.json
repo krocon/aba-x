@@ -55,7 +55,10 @@
     ["x^2-4=0", "x^2 - 4 = 0"],
     ["90^{\\circ}", "90*(pi/180)"],
     ["90^\\circ", "90*(pi/180)"],
-    ["\\frac{\\pi}{6}", "pi/6"]
+    ["\\frac{\\pi}{6}", "pi/6"],
+    ["\\frac{\\partial}{\\partial y}x^2y^3", "diff(x^2*y^3, y)"],
+    ["\\left(\\sum_{k=1}^{n}k\\right)\\cdot2", "(sum(k, k, 1, n))*2"],
+    ["\\sum_{k=1}^{n}2k", "sum(2*k, k, 1, n)"]
   ],
   "errors": [
     ["\\frac{1}{\\placeholder{}}", "syntax"],

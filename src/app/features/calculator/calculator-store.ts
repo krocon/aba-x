@@ -6,7 +6,8 @@ import type { MathResult } from '../../../math/result';
 import { isFreeName } from '../../../math/parser/statement';
 import type { VarsMenuEntry } from '../vars/vars-logic';
 import { VarsStore } from '../vars/vars-store';
-import { CalculatorEngine, type Evaluation } from './calculator-engine';
+import { UiStateStore } from '../../core/ui-state/ui-state-store';
+import { CalculatorEngine, type CasOp, type Evaluation } from './calculator-engine';
 import { toText } from '../../../math/serializer';
 import {
   type StackEntry,
@@ -49,6 +50,7 @@ const RPN_BINARY: Record<string, BinaryOp> = { add: '+', sub: '-', mul: '*', div
 export class CalculatorStore {
   private readonly engine = inject(CalculatorEngine);
   readonly vars = inject(VarsStore);
+  private readonly ui = inject(UiStateStore);
   private editor: MathEditor | null = null;
   private nextId = 1;
   private flashTimer: ReturnType<typeof setTimeout> | null = null;
@@ -68,8 +70,11 @@ export class CalculatorStore {
   readonly angle = signal<AngleMode>('rad');
   /** EXACT (default) or APPROX annunciator. */
   readonly approxMode = signal(false);
-  /** Soft menu: the main menu or the user's variables (VARS, page). */
-  readonly menu = signal<'main' | 'vars'>('main');
+  /**
+   * Soft menu: `mode` = the menu of the current mode (Standard: the main menu, CAS: CAS functions),
+   * `main` = mode selection, `vars` = the user's variables, `cas-calc` = calculus submenu.
+   */
+  readonly menu = signal<'mode' | 'main' | 'vars' | 'cas-calc'>('mode');
   readonly varsPage = signal(0);
 
   attach(editor: MathEditor | null): void {
@@ -152,7 +157,7 @@ export class CalculatorStore {
     this.message.set(null);
     switch (entry.kind) {
       case 'exit':
-        this.menu.set('main');
+        this.menu.set('mode');
         return;
       case 'next':
         this.varsPage.update((p) => p + 1);
@@ -235,7 +240,7 @@ export class CalculatorStore {
         this.sto();
         break;
       case 'vars':
-        this.menu.set(this.menu() === 'vars' ? 'main' : 'vars');
+        this.menu.set(this.menu() === 'vars' ? 'mode' : 'vars');
         this.varsPage.set(0);
         break;
       case 'planned':
@@ -265,7 +270,10 @@ export class CalculatorStore {
       await this.apply(t.expr, 1, true);
       return;
     }
-    const r = await this.guardAny(() => this.engine.evaluateStatement(latex, this.context(approx)));
+    const mode = this.ui.mode() === 'cas' ? 'cas' : 'standard';
+    const r = await this.guardAny(() =>
+      this.engine.evaluateStatement(latex, this.context(approx), mode),
+    );
     if (!r) return;
     if (!r.ok) {
       this.message.set(r.error.message);
@@ -281,6 +289,52 @@ export class CalculatorStore {
       this.message.set(`${o.name}(${o.params.join(', ')}) := ${toText(o.body)}`);
     }
     this.editor?.clear();
+    this.editor?.focus();
+  }
+
+  /**
+   * CAS menu operation on the input line, or on level 1 when the line is empty (the result
+   * replaces it). The note (n ∈ ℤ, + C, unchecked) goes to the message line.
+   */
+  async casOp(op: CasOp): Promise<void> {
+    if (this.busy()) {
+      this.queue.push(() => void this.casOp(op));
+      return;
+    }
+    this.message.set(null);
+    const line = this.editor?.latex().trim() ?? '';
+    let target: Expr;
+    if (line) {
+      const parsed = this.engine.parse(line, { functions: this.vars.functions() });
+      if (!parsed.ok) {
+        this.message.set(parsed.error.message);
+        return;
+      }
+      target = parsed.value;
+    } else {
+      const t = top(this.stack());
+      if (!t) {
+        this.message.set('enter an expression first');
+        return;
+      }
+      target = t.expr;
+    }
+    const r = await this.guard(() => this.engine.casOperation(op, target, this.context(false)));
+    if (!r) return;
+    if (!r.ok) {
+      this.message.set(r.error.message);
+      return;
+    }
+    if (line) this.editor?.clear();
+    else this.stack.update(drop);
+    this.pushEvaluation(r.value);
+    if (r.value.note) this.message.set(r.value.note);
+    this.editor?.focus();
+  }
+
+  /** Inserts a template into the line (CALC menu: ∫, d/dx, lim). */
+  insertTemplate(latex: string): void {
+    this.editor?.insert(latex);
     this.editor?.focus();
   }
 

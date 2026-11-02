@@ -132,7 +132,7 @@ class LatexLexer {
     const r = this.raw[i];
     let j = -1;
     if (r?.t === 'char' && r.c === 'd') j = i + 1;
-    else if (r?.t === 'cmd' && r.name === 'differentialD') j = i + 1;
+    else if (r?.t === 'cmd' && (r.name === 'differentialD' || r.name === 'partial')) j = i + 1;
     else if (r?.t === 'cmd' && (r.name === 'mathrm' || r.name === 'operatorname')) {
       const [a, b, n] = this.group(i + 1, to);
       if (this.text(a, b) === 'd') j = n;
@@ -360,7 +360,10 @@ class LatexLexer {
   private differentialSymbol(a: number, b: number): number | null {
     const r = this.raw[a];
     if (a >= b) return null;
-    if ((r.t === 'char' && r.c === 'd') || (r.t === 'cmd' && r.name === 'differentialD'))
+    if (
+      (r.t === 'char' && r.c === 'd') ||
+      (r.t === 'cmd' && (r.name === 'differentialD' || r.name === 'partial'))
+    )
       return a + 1;
     if (r.t === 'cmd' && (r.name === 'mathrm' || r.name === 'operatorname')) {
       const [x, y, next] = this.group(a + 1, b);

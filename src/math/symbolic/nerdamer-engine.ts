@@ -58,7 +58,10 @@ function parameterName(e: Expr): string {
 }
 
 export class NerdamerEngine implements SymbolicEngine {
-  /** Nerdamer input; definite integrals inside an expression are resolved first (exactly if possible). */
+  /**
+   * Nerdamer input. Operator nodes inside an expression (d/dx, ∫, lim) are resolved first by the
+   * engine methods – so they are verified like a direct call.
+   */
   private n(e: Expr): string {
     return toNerdamer(this.resolveDefinite(e));
   }
@@ -68,7 +71,11 @@ export class NerdamerEngine implements SymbolicEngine {
       switch (x.type) {
         case 'int': {
           const body = go(x.expr);
-          if (!x.lower || !x.upper) return { ...x, expr: body };
+          if (!x.lower || !x.upper) {
+            const F = this.integrate(body, x.variable);
+            if (!F.ok) throw new DefiniteFailed(F.error.code, F.error.message);
+            return F.value.expr;
+          }
           const r = this.integrateDefinite(body, x.variable, go(x.lower), go(x.upper));
           if (!r.ok) throw new DefiniteFailed(r.error.code, r.error.message);
           return r.value.expr;
@@ -81,12 +88,19 @@ export class NerdamerEngine implements SymbolicEngine {
           return { ...x, left: go(x.left), right: go(x.right) };
         case 'call':
           return { ...x, args: x.args.map(go) };
-        case 'deriv':
-          return { ...x, expr: go(x.expr) };
+        case 'deriv': {
+          // every operator node is computed by its own (verified) engine method
+          const r = this.differentiate(go(x.expr), x.variable, x.order);
+          if (!r.ok) throw new DefiniteFailed(r.error.code, r.error.message);
+          return r.value.expr;
+        }
         case 'series':
           return { ...x, expr: go(x.expr), lower: go(x.lower), upper: go(x.upper) };
-        case 'limit':
-          return { ...x, expr: go(x.expr), to: go(x.to) };
+        case 'limit': {
+          const r = this.limit(go(x.expr), x.variable, go(x.to), x.direction);
+          if (!r.ok) throw new DefiniteFailed(r.error.code, r.error.message);
+          return r.value.expr;
+        }
         default:
           return x;
       }

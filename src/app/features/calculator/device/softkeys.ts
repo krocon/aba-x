@@ -70,3 +70,42 @@ export function mainItems(
     };
   });
 }
+
+const item = (label: string, run: () => void): MenuItem => ({
+  label,
+  run,
+  active: false,
+  planned: false,
+  pressed: null,
+});
+
+/** What the CAS menus need from the calculator store. */
+export interface CasMenuTarget {
+  casOp(op: 'simplify' | 'expand' | 'factor' | 'solve' | 'deriv' | 'integ'): Promise<void>;
+  insertTemplate(latex: string): void;
+  menu: { set(m: 'mode' | 'main' | 'vars' | 'cas-calc'): void };
+}
+
+/** CAS mode menu (prompt 010): algebra on the line or level 1, CALC submenu, MODE back to the mode menu. */
+export function casMenu(c: CasMenuTarget): MenuItem[] {
+  return [
+    item('SIMP', () => void c.casOp('simplify')),
+    item('EXPA', () => void c.casOp('expand')),
+    item('FACT', () => void c.casOp('factor')),
+    item('SOLVE', () => void c.casOp('solve')),
+    item('CALC▸', () => c.menu.set('cas-calc')),
+    item('MODE▸', () => c.menu.set('main')),
+  ];
+}
+
+/** Calculus submenu (prompts 011/012). */
+export function casCalcMenu(c: CasMenuTarget): MenuItem[] {
+  return [
+    item('DERIV', () => void c.casOp('deriv')),
+    item('INTEG', () => void c.casOp('integ')),
+    item('∫ab', () => c.insertTemplate('\\int_{#?}^{#?}#0\\,dx')),
+    item('d/dx', () => c.insertTemplate('\\frac{d}{dx}#0')),
+    item('LIM', () => c.insertTemplate('\\lim_{x\\to#?}#0')),
+    item('BACK', () => c.menu.set('mode')),
+  ];
+}

@@ -15,7 +15,7 @@ import { Keypad } from '../keypad/keypad';
 import { keyIdForPhysical } from '../keypad/keypad-model';
 import { MathInput } from '../math-input';
 import { varsMenu } from '../../vars/vars-logic';
-import { MAIN_MENU, MODE_TITLES, type MenuItem, mainItems } from './softkeys';
+import { MAIN_MENU, MODE_TITLES, type MenuItem, casCalcMenu, casMenu, mainItems } from './softkeys';
 
 /** Visible stack levels in the display. */
 const LEVELS = 4;
@@ -43,13 +43,20 @@ export class CalculatorDevice {
 
   /** The six soft-menu labels: main menu or VARS. */
   protected readonly menu = computed<MenuItem[]>(() => {
-    if (this.calc.menu() === 'main') {
-      return mainItems(MAIN_MENU, this.ui.mode(), {
-        setMode: (m) => this.ui.setMode(m),
+    const m = this.calc.menu();
+    const mode = this.ui.mode();
+    if (m === 'main' || (m === 'mode' && mode !== 'cas')) {
+      return mainItems(MAIN_MENU, mode, {
+        setMode: (next) => {
+          this.ui.setMode(next);
+          this.calc.menu.set('mode');
+        },
         openVars: () => this.calc.run({ kind: 'vars' }),
         planned: (what) => this.calc.run({ kind: 'planned', what }),
       });
     }
+    if (m === 'mode') return casMenu(this.calc);
+    if (m === 'cas-calc') return casCalcMenu(this.calc);
     const vars = this.calc.vars;
     const fns = [...vars.functions()].map(([name, f]) => ({ name, arity: f.params.length }));
     const items = varsMenu([...vars.variables().keys()], fns, this.calc.varsPage()).map((e) => ({

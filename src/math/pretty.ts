@@ -21,6 +21,79 @@ function negativePart(e: Expr): Expr | null {
 }
 
 export function prettify(e: Expr): Expr {
+  const p = prettifyNode(e);
+  return p.type === 'bin' && (p.op === '+' || p.op === '-') ? orderSum(p) : p;
+}
+
+interface Term {
+  neg: boolean;
+  term: Expr;
+}
+
+function flatten(e: Expr, neg: boolean, out: Term[]): void {
+  if (e.type === 'bin' && (e.op === '+' || e.op === '-')) {
+    flatten(e.left, neg, out);
+    flatten(e.right, e.op === '-' ? !neg : neg, out);
+  } else if (e.type === 'neg') {
+    flatten(e.arg, !neg, out);
+  } else out.push({ neg, term: e });
+}
+
+/** Degree of a monomial c·xⁿ / xⁿ / c in its single variable, else null. */
+function degree(e: Expr): { v: string | null; d: number } | null {
+  switch (e.type) {
+    case 'num':
+      return { v: null, d: 0 };
+    case 'sym':
+      return { v: e.name, d: 1 };
+    case 'bin':
+      if (
+        e.op === '^' &&
+        e.left.type === 'sym' &&
+        e.right.type === 'num' &&
+        /^\d+$/.test(e.right.value)
+      ) {
+        return { v: e.left.name, d: Number(e.right.value) };
+      }
+      if (e.op === '*' || e.op === '/') {
+        const a = degree(e.left);
+        const b =
+          e.op === '*' ? degree(e.right) : e.right.type === 'num' ? { v: null, d: 0 } : null;
+        if (!a || !b || (a.v && b.v && a.v !== b.v)) return null;
+        return { v: a.v ?? b.v, d: a.d + b.d };
+      }
+      return null;
+    default:
+      return null;
+  }
+}
+
+/**
+ * Textbook order of a sum: polynomials in one variable by falling degree (x² + 2x + 1), otherwise
+ * constants last (sin x + 1). Rebuilt with − for negative terms.
+ */
+function orderSum(e: Expr): Expr {
+  const terms: Term[] = [];
+  flatten(e, false, terms);
+  const degs = terms.map((t) => degree(t.term));
+  const vars = new Set(degs.map((d) => d?.v).filter((v) => v));
+  let order: number[];
+  if (degs.every((d) => d) && vars.size <= 1) {
+    order = terms.map((_, i) => i).sort((a, b) => degs[b]!.d - degs[a]!.d || a - b);
+  } else {
+    const isConst = (t: Term) => t.term.type === 'num';
+    order = terms
+      .map((_, i) => i)
+      .sort((a, b) => Number(isConst(terms[a])) - Number(isConst(terms[b])) || a - b);
+  }
+  const sorted = order.map((i) => terms[i]);
+  let acc: Expr = sorted[0].neg ? { type: 'neg', arg: sorted[0].term } : sorted[0].term;
+  for (const t of sorted.slice(1))
+    acc = { type: 'bin', op: t.neg ? '-' : '+', left: acc, right: t.term };
+  return acc;
+}
+
+function prettifyNode(e: Expr): Expr {
   switch (e.type) {
     case 'neg': {
       const a = prettify(e.arg);

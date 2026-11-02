@@ -84,6 +84,10 @@ describe('App', () => {
     softkeys(el)[1].click();
     await settle();
     expect(el.querySelector('.path')?.textContent).toContain('CAS');
+    // the CAS menu replaces the mode menu; MODE▸ (F6) brings it back
+    expect(el.querySelector('.menu-label')?.textContent?.trim()).toBe('SIMP');
+    press('F6');
+    await settle();
     press('F3');
     await settle();
     expect(el.querySelector('.path')?.textContent).toContain('GRAPH');
