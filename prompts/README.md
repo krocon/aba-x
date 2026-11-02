@@ -19,7 +19,7 @@ können parallel laufen, sobald jemand Zeit hat. Die Nummern bleiben stabil, dam
 |---|---|---|---|---|---|
 | 001 | [walking-skeleton-tauri-web](done/001-walking-skeleton-tauri-web.md) | Gerüst Desktop + Web, Fassaden, Gerät, Hardware-Tastatur | – | L | ✅ 02.11.2026 |
 | 002 | [plattform-fassaden](002-plattform-fassaden.md) | Dateien, Menü, Fensterzustand, About | 001 | M | ⬜ |
-| 003 | [expression-ast-parser](003-expression-ast-parser.md) | AST, Text- und LaTeX-Parser, Serializer | 001 | L | ⬜ |
+| 003 | [expression-ast-parser](done/003-expression-ast-parser.md) | AST, Text- und LaTeX-Parser, Serializer | 001 | L | ✅ 02.11.2026 |
 | 004 | [worker-protokoll](004-worker-protokoll.md) | Web Worker, Abbruch, Timeout | 003 | M | ⬜ |
 | 005 | [auswertung-standardmodus](005-auswertung-standardmodus.md) | ENTER rechnet: exakt/numerisch, Grad/Bogenmaß | 003 | L | ⬜ |
 | 006 | [natuerliche-ausgabe](006-natuerliche-ausgabe.md) | Lehrbuchdarstellung im Display, Stack-Navigation, Kopieren | 005 | M | ⬜ |
