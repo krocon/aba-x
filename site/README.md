@@ -18,7 +18,7 @@ No build step: copy `index.html`, `favicon.svg` and `img/` into the target folde
 
 **Target:** `https://krocon.de/products/aba-x/` (decided by Marc, 02.11.2026) – the web app itself is at
 `https://krocon.de/products/aba-x1/` (Angular `baseHref`). `og:url` and `og:image` in the head point to the page's
-folder; All links to the app are absolute.
+folder; all links to the app are absolute.
 
 ## Pictures
 
