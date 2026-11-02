@@ -4,6 +4,7 @@
 //
 //   node scripts/screenshots/run.mjs            # README images (light + dark) → docs/screenshots/
 //   node scripts/screenshots/run.mjs examples   # worked examples (light)       → docs/screenshots/examples/
+//   node scripts/screenshots/run.mjs site       # pictures of the product page       → site/img/
 //   node scripts/screenshots/run.mjs all
 import { mkdir } from 'node:fs/promises';
 import { join } from 'node:path';
@@ -82,6 +83,78 @@ const examples = [
   },
 ];
 
+/** Product page (site/): wide full-size shots and the device. Viewport per scene. */
+const SITE = join(fileURLToPath(new URL('.', import.meta.url)), '../../site/img');
+
+async function fullSize(page) {
+  // the floating web menu button is not part of the calculator picture
+  await page.addStyleTag({
+    content:
+      'app-menu-bar { display: none !important; } .device.full .brandline { padding-left: 0.25rem !important; }',
+  });
+  await page.click('.size');
+  await page.waitForSelector('.device.full');
+  await page.waitForTimeout(300);
+}
+
+const site = [
+  {
+    name: 'hero',
+    viewport: { width: 1280, height: 720 },
+    selector: '.device',
+    async setup(page) {
+      await fullSize(page);
+      await page.keyboard.press('F2');
+      for (const l of [
+        '8.5\\cdot88\\cdot1.19',
+        '\\sqrt{12}+\\frac{\\pi}{3}',
+        '\\int_0^1\\sin\\left(2x\\right)\\,dx',
+        '\\frac{d}{dx}\\left(x^3\\sin(x)\\right)',
+        '\\sum_{k=1}^{n}k^2',
+      ]) {
+        await enter(page, l);
+      }
+      await enter(page, 'x^3-6x^2+11x-6=0');
+      await soft(page, 4); // SOLVE
+    },
+  },
+  {
+    name: 'graph',
+    viewport: { width: 1280, height: 720 },
+    selector: '.device',
+    async setup(page) {
+      await fullSize(page);
+      await page.keyboard.press('F3');
+      await page.waitForSelector('app-graph-view canvas');
+      await enter(page, '\\sin\\left(\\left(x-1\\right)\\left(x+2\\right)\\right)');
+      await enter(page, '\\frac{x^2}{6}-1');
+      await soft(page, 2); // ZOOM▸
+      await soft(page, 1); // IN
+      await soft(page, 6); // BACK
+      await soft(page, 4); // ANLYZ▸
+      await soft(page, 3); // ISECT
+    },
+  },
+  {
+    name: 'device-calc',
+    viewport: { width: 520, height: 980 },
+    selector: '.device',
+    setup: (p) => examples[0].setup(p),
+  },
+  {
+    name: 'device-cas',
+    viewport: { width: 520, height: 980 },
+    selector: '.device',
+    setup: (p) => examples[1].setup(p),
+  },
+  {
+    name: 'device-graph',
+    viewport: { width: 520, height: 980 },
+    selector: '.device',
+    setup: (p) => examples[2].setup(p),
+  },
+];
+
 const readme = [
   {
     name: 'standard',
@@ -128,7 +201,7 @@ const readme = [
 
 async function shoot(browser, url, scene, scheme, dir) {
   const ctx = await browser.newContext({
-    viewport: { width: 520, height: 980 },
+    viewport: scene.viewport ?? { width: 520, height: 980 },
     deviceScaleFactor: 2,
     colorScheme: scheme,
     locale: 'en-US',
@@ -155,6 +228,9 @@ async function main(group = 'readme') {
   if (group === 'readme' || group === 'all') {
     for (const scheme of ['light', 'dark'])
       for (const s of readme) await shoot(browser, url, s, scheme, OUT);
+  }
+  if (group === 'site' || group === 'all') {
+    for (const s of site) await shoot(browser, url, s, 'light', SITE);
   }
   if (group === 'examples' || group === 'all') {
     for (const s of examples) await shoot(browser, url, s, 'light', join(OUT, 'examples'));

@@ -75,11 +75,13 @@ pnpm check          # versions, scripts, format, lint, unit tests, desktop + web
 pnpm e2e            # web build in Chromium and WebKit: calculation, CAS, graph, typing, offline, axe
 pnpm screenshots    # the images in docs/screenshots/
 pnpm screenshots:examples   # worked examples in docs/screenshots/examples/
+pnpm screenshots:site       # pictures of the product page in site/img/
 ```
 
 More: [`CLAUDE.md`](CLAUDE.md) (commands, layout, rules), [`docs/architecture.md`](docs/architecture.md),
 [`docs/technical-evaluation.md`](docs/technical-evaluation.md), [`docs/mathematics/`](docs/mathematics/),
-[`docs/decisions/`](docs/decisions/), [`docs/release.md`](docs/release.md). Development runs through feature
+[`docs/decisions/`](docs/decisions/), [`docs/release.md`](docs/release.md). The product page (static, no build step) is in
+[`site/`](site/README.md). Development runs through feature
 prompts in [`prompts/`](prompts/README.md).
 
 ## Licence

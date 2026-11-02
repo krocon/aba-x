@@ -35,6 +35,7 @@
 | Alles prüfen | `pnpm check` |
 | Ende-zu-Ende | `pnpm e2e` (Web-Build in Chromium + WebKit: Rechnen, CAS, Graph, echtes Tippen, gerenderter Stack, 375 px, axe, offline); `E2E_BROWSERS=chromium` für einen Browser |
 | Screenshots | `pnpm screenshots` → `docs/screenshots/` (README-Bilder), `pnpm screenshots:examples` → `docs/screenshots/examples/` (a: 8.5·88·1.19, b: ∫₀¹ sin 2x exakt/numerisch/Stammfunktion, c: Plot sin((x−1)(x+2))); neue Beispiele in `scripts/screenshots/run.mjs` (`examples`) |
+| Produktseite | `site/` – statische Werbeseite (eine `index.html`, CSS inline, kein JS, keine fremden Server; Vorbild comic-commander-tauri/site); Bilder mit `pnpm screenshots:site` → `site/img/`; Test `scripts/site.test.mjs`; ansehen: launch-Konfiguration `site` (Port 4310); Hochladen/Ziel-URL: `site/README.md` |
 | Release Notes | `pnpm release:notes` (Conventional Commits seit dem letzten Tag) |
 | App-Icons | Quellen: `src-tauri/icons/app-icon.svg` (Desktop, macOS-Raster mit Rand) und `public/logo.svg` (randlos: Favicon/PWA); Farben BG `#262b37`, ∫ `#a98fdb`, x `#68cac3`. Neu erzeugen: `pnpm tauri icon src-tauri/icons/app-icon.svg` (danach `src-tauri/icons/android`, `ios` löschen) und für das Web `pnpm tauri icon public/logo.svg -o <tmp> -p 32,180,192,512` → `public/icons/icon-<n>.png` |
 
