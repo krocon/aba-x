@@ -11,11 +11,11 @@
 
 ## 1. Stand
 
-- Phase 0 (Analyse, Bewertung, Architektur) und Phase 1 (Walking Skeleton, Prompt 001) sind fertig, dazu der
-  Geräte-Look mit Hardware-Tastatur (ADR 0006). **Es wird noch nichts ausgerechnet.**
-- Als Nächstes: Prompt 002 (Plattform-Fassaden Dateien/Menü) oder direkt 003 (AST + LaTeX-Parser) – Reihenfolge in
-  `prompts/README.md`.
-- Details: `docs/roadmap.md`, `docs/architecture.md`, `docs/technical-evaluation.md`, `docs/decisions/`.
+- Alle Prompts 001–023 sind umgesetzt (02.11.2026, Index `prompts/README.md`, erledigte unter `prompts/done/` mit
+  Design-Dokument). Offen sind nur Schritte mit Freigabe durch Marc: Push/CI auf Windows und Linux, Release mit
+  Signierung, Web-Deployment (`docs/roadmap.md` „Offen“).
+- Details: `docs/roadmap.md`, `docs/architecture.md`, `docs/technical-evaluation.md`, `docs/decisions/`,
+  `docs/mathematics/`.
 
 ## 2. Befehle (Root, pnpm 10 via `packageManager`, Node ≥ 22.22.3, Rust stable ≥ 1.90)
 
@@ -33,6 +33,9 @@
 | Version | `pnpm version:check`, `pnpm version:set X.Y.Z` (Quelle `package.json`) |
 | Lizenzen | `pnpm notices` nach jeder Abhängigkeitsänderung; `pnpm notices:check` |
 | Alles prüfen | `pnpm check` |
+| Ende-zu-Ende | `pnpm e2e` (Web-Build in Chromium + WebKit: Rechnen, CAS, Graph, echtes Tippen, gerenderter Stack, 375 px, axe, offline); `E2E_BROWSERS=chromium` für einen Browser |
+| Screenshots | `pnpm screenshots` → `docs/screenshots/` (README-Bilder) |
+| Release Notes | `pnpm release:notes` (Conventional Commits seit dem letzten Tag) |
 
 Web-Build lokal ansehen: `python3 -m http.server 4300 -d dist/web/browser` (Konfiguration `web-dist` in
 `.claude/launch.json`). Service Worker beim Testen ggf. abmelden, sonst sieht man den alten Stand.
@@ -40,24 +43,35 @@ Web-Build lokal ansehen: `python3 -m http.server 4300 -d dist/web/browser` (Konf
 ## 3. Layout
 
 ```
-src/
-  math/                      framework-frei (ESLint-Sperre): result.ts (MathResult); geplant ast/, parser/,
-                             symbolic/, numeric/, graph/, worker/
-  app/app.config.ts          einzige Stelle mit runsInTauri() → Tauri- oder Web-Fassaden, Service Worker nur Web
-  app/app.ts                 Seite: CalculatorDevice + Statuszeile (Plattform, Version, Speicherprobleme)
-  app/core/platform/         PlatformApi (Tauri/Web), INVOKE-Token (Tests ersetzen die IPC), WEB_VERSION aus package.json
-  app/core/storage/          StorageApi: TauriStorageApi (storage_*), IndexedDbStorageApi, IDB_FACTORY-Token
-  app/core/ui-state/         ui-state-logic.ts (rein: Modi, sanitize, neuere Schemaversion nie überschreiben), UiStateStore
-  app/features/calculator/   device/ (CalculatorDevice: LCD, Softkeys, document:keydown; softkeys.ts), keypad/
-                             (keypad-model.ts rein, Keypad), calculator-store.ts (Stack, Shift, Meldung, MathEditor),
-                             entry-stack.ts (rein), math-input.ts (MathLive, lazy, MATH_FIELD_FACTORY-Token)
-  testing/                   FakeStorageApi, FakePlatformApi – nie im Produktivcode importieren
-  styles.css                 Seiten-Tokens light/dark; Gerätefarben fest in calculator-device.css (--dev-*, --lcd-*)
-src-tauri/src/               lib.rs (Handler), commands.rs (dünn), storage.rs (rein, getestet), about.rs, error.rs
-public/                      logo.svg (Quelle aller Icons), icons/, manifest.webmanifest
-scripts/                     version.mjs, notices.mjs (+ Tests) – aus FnF übernommen
-docs/                        architecture, roadmap, technical-evaluation, decisions/, spikes/
-prompts/                     000-ABA-X1-Master-Prompt.md (Vision), 000-arbeitsweise.md, README.md (Index), NNN-*.md, done/
+src/math/                    framework-frei (ESLint-Sperre)
+  result.ts, functions.ts    MathResult/Fehlercodes; Funktionskatalog (einzige Quelle, auch CAS-Positivliste)
+  ast/                       Knoten (13 Typen), Builder, freeSymbols, substitute
+  parser/                    Pratt-Kern, Text- und LaTeX-Front-End, Statements (a = …, f(x) = …), *.cases.json
+  serializer.ts, pretty.ts   AST → Text/LaTeX (Round-Trip); Lehrbuchform von CAS-Ausgaben (√, Brüche, Polynomordnung)
+  numeric/                   evaluate (double, Fehlercodes, Grad), roots (Brent …), derivative (Ridders), quadrature (GK 7/15)
+  symbolic/                  SymbolicEngine, Nerdamer-Brücke + Engine, verify (numerische Stichprobe jedes Ergebnisses)
+  graph/                     viewport, sampler (Pol-/Sprungerkennung), analysis (Nullstellen, Extrema, Fläche …)
+  worker/                    Protokoll + Host (CAS im Web Worker)
+src/app/
+  app.config.ts              einzige Stelle mit runsInTauri(): Platform/Storage/Files/Menu-Fassaden, Service Worker nur Web
+  app.ts                     Seite: Menü, Gerät, Dialoge, Statuszeile; Handler für Export/Import/About/SETUP
+  core/actions/              keymap.ts (rein, je OS), KeyboardDispatcher (Capture-Listener, Aktionen)
+  core/compute/              ComputeClient (Worker, Timeout, Abbruch), compute.worker.ts
+  core/files/, core/menu/    FilesApi (Dialog/Download), menu-model.ts (ein Modell) + MenuApi (nativ/HTML)
+  core/i18n/                 I18n-Service, texts.ts (EN/DE, Vollständigkeits-Spec)
+  core/platform/, storage/, ui-state/   wie seit 001 (+ Dokument `graph`)
+  features/calculator/       device/ (Gerät, softkeys.ts = alle Softmenüs), keypad/, calculator-store.ts (Stack, RPN,
+                             Warteschlange, HIST/Graph-Tasten), calculator-engine.ts (Auswertung, CAS-Operationen),
+                             evaluation-logic.ts, entry-stack.ts, math-input.ts
+  features/cas/              cas-logic.ts (Variable wählen, Lösungen, + C)
+  features/graph/            GraphStore, GraphView (Canvas), graph-draw.ts, PNG/SVG-Export
+  features/vars|history|backup|settings|about|help|menus/   Variablen, Verlauf, Export/Import, SETUP, Dialoge, HTML-Menü
+  shared/                    Modal, MathStatic (`<math-span>` mit Neu-Rendern)
+  testing/                   Fakes (Storage, Platform, Files)
+src-tauri/src/               commands.rs (dünn), storage.rs, files.rs, app_menu.rs, about.rs, error.rs; Plugins dialog + window-state
+scripts/                     version, notices, release-notes (+ Tests), e2e/run.mjs, screenshots/run.mjs
+docs/                        architecture, roadmap, technical-evaluation, decisions/, mathematics/, deployment, release,
+                             distribution, macos-signing, accessibility, ci/, screenshots/
 ```
 
 ## 4. Regeln
@@ -80,6 +94,10 @@ prompts/                     000-ABA-X1-Master-Prompt.md (Vision), 000-arbeitswe
 
 ## 5. Bekannte Fallen
 
+- MathLives `<math-span>` rendert eine geänderte Textkante nicht neu → Formeln immer über `<app-math [latex]>`
+  (`shared/math-static.ts`) zeigen; E2E prüft das gerenderte Bild (`renderedStack`).
+- Jede CAS-Antwort läuft durch `symbolic/verify.ts`; neue Operationen brauchen eine passende Gegenprobe.
+- LaTeX in JS-Strings: `\\;` doppelt escapen oder `String.raw` (ein einfaches `\;` ist nur `;`).
 - `{` und `}` sind in Angular-Templates Block-Syntax → Literale als Ausdruck schreiben (`{{ '{ ' + x + ' }' }}`).
 - Service Worker im Web-Build cacht aggressiv → beim lokalen Testen abmelden.
 - Hintergrund-Automation (computer-use) kann im WKWebView nicht tippen; Klicks auf Buttons gehen. Ein Fenster im

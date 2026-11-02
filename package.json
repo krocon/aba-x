@@ -35,7 +35,10 @@
     "scripts:test": "node --test \"scripts/*.test.mjs\"",
     "notices": "node scripts/notices.mjs",
     "notices:check": "node scripts/notices.mjs --check",
-    "check": "pnpm version:check && pnpm scripts:test && pnpm format:check && pnpm lint && pnpm test && pnpm build && pnpm build:web && pnpm rust:fmt && pnpm rust:lint && pnpm rust:test && pnpm notices:check"
+    "check": "pnpm version:check && pnpm scripts:test && pnpm format:check && pnpm lint && pnpm test && pnpm build && pnpm build:web && pnpm rust:fmt && pnpm rust:lint && pnpm rust:test && pnpm notices:check",
+    "e2e": "pnpm build:web && node scripts/e2e/run.mjs",
+    "release:notes": "node scripts/release-notes.mjs",
+    "screenshots": "pnpm build:web && node scripts/screenshots/run.mjs"
   },
   "private": true,
   "packageManager": "pnpm@10.25.0",
@@ -60,6 +63,7 @@
     "@eslint/js": "^10.0.1",
     "@tauri-apps/cli": "^2.12.4",
     "angular-eslint": "22.6.0",
+    "axe-core": "4.11.0",
     "eslint": "^10.14.0",
     "fake-indexeddb": "^6.2.7",
     "jsdom": "^30.0.0",

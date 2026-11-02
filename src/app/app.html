@@ -29,6 +29,12 @@
   <button type="button" class="link" (click)="keys.helpOpen.set(true)">
     {{ i18n.t('status.shortcuts') }}
   </button>
+  @if (updateReady()) {
+    <span>
+      {{ i18n.t('update.ready') }}
+      <button type="button" class="link" (click)="reload()">{{ i18n.t('update.reload') }}</button>
+    </span>
+  }
   @if (backup.message(); as m) {
     <span>{{ m }}</span>
   }

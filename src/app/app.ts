@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnInit, effect, inject, signal } from '@angular/core';
+import { SwUpdate } from '@angular/service-worker';
 import { I18n } from './core/i18n/i18n';
 import { KeyboardDispatcher } from './core/actions/keyboard-dispatcher';
 import { MenuApi } from './core/menu/menu-api';
@@ -43,8 +44,16 @@ export class App implements OnInit {
   protected readonly settings = inject(SettingsStore);
   protected readonly i18n = inject(I18n);
   private ready = false;
+  /** PWA: a new version was downloaded in the background (prompt 020). */
+  protected readonly updateReady = signal(false);
 
   constructor() {
+    const sw = inject(SwUpdate);
+    if (sw.isEnabled) {
+      sw.versionUpdates.subscribe((e) => {
+        if (e.type === 'VERSION_READY') this.updateReady.set(true);
+      });
+    }
     this.keys.register('about', () => this.aboutOpen.set(true));
     this.keys.register('settings', () => this.settingsOpen.set(true));
     this.keys.register('exportData', () => void this.backup.exportData(this.settings.settings()));
@@ -69,6 +78,10 @@ export class App implements OnInit {
     this.i18n.lang();
     if (this.ready) void this.menu.install().catch(() => undefined);
   });
+
+  protected reload(): void {
+    document.location.reload();
+  }
 
   protected confirmImport(): void {
     this.backup.confirmImport((raw) => this.settings.importRaw(raw));

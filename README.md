@@ -2,39 +2,57 @@
 
 **Advanced Browser Algebra – Scientific & Symbolic Calculator**
 
-A scientific calculator with a computer algebra system, natural (textbook) math notation and an interactive function
-plotter – as a desktop app for **macOS, Windows and Linux** (Tauri 2) and as a **web app** that works offline, both
-built from one Angular 22 code base. All mathematics runs locally in TypeScript, so the desktop app and the web
-version give the same results.
+A scientific calculator with a computer algebra system, textbook math notation and an interactive function plotter –
+as a desktop app for **macOS, Windows and Linux** (Tauri 2) and as a **web app** that works offline, both built from
+one Angular 22 code base. All mathematics runs locally in TypeScript, so desktop and web give the same results – and
+every answer of the computer algebra system is checked numerically before it is shown.
 
-> **Status: early development (v0.1.0).** The calculator device, natural input, keypad, hardware keyboard and the
-> entry stack work. **Nothing is evaluated yet** – the expression core, CAS and plotter follow. See
-> [`docs/roadmap.md`](docs/roadmap.md).
+<p align="center">
+  <img src="docs/screenshots/standard-light.png" alt="Standard mode: exact results with approximations" width="260">
+  <img src="docs/screenshots/cas-light.png" alt="CAS mode: solved equation and antiderivative" width="260">
+  <img src="docs/screenshots/graph-light.png" alt="Graph mode: tan x and a parabola with marked zeros" width="260">
+</p>
 
-## What works today
+> **Status: v0.1.0, feature-complete first version.** Not yet released; packages are built by the release workflow
+> on demand. See [`docs/roadmap.md`](docs/roadmap.md).
 
-- A calculator device in the spirit of classic graphing calculators (own design): LCD with stack levels 4–1,
-  annunciators, an inverted soft menu and six softkeys, a 6 + 5 column keypad with left shift (violet), right shift
-  (teal) and alpha letters.
-- Natural math input (MathLive): fractions, roots, powers, integrals, sums, matrices – typed or from the keypad.
-- Full hardware keyboard support: type anywhere, `Enter` pushes onto the stack, `Esc` clears the line, `F1`–`F6`
-  press the softkeys, the matching on-screen key lights up.
-- Stack operations: ENTER (empty line duplicates level 1), DROP, SWAP, RECALL, UNDO/REDO.
-- Modes Standard / CAS / Graph (CAS and Graph are placeholders for now); the chosen mode is remembered.
-- Desktop: data in JSON files in the app data folder (written atomically). Web: IndexedDB, installable PWA, offline
-  after the first visit.
+## Features
+
+**Calculator** – a calculator device in the spirit of classic graphing calculators (own design): LCD with stack
+levels, annunciators, soft menu and six softkeys, keypad with left/right shift functions and alpha letters.
+
+- **Exact results** where possible (`1/3 + 1/6 = 1/2`, `√8 = 2√2`, `sin(π/6) = 1/2`, `∫₀¹ x² dx = 1/3`) with the
+  decimal approximation underneath; →NUM for decimals; degrees or radians.
+- **Natural input** (MathLive): fractions, roots, powers, integrals, derivatives, sums, limits, matrices.
+- **RPN on demand**: operators and functions on an empty line work on the stack; ENTER duplicates, DROP, SWAP, browse
+  the stack with ↑.
+- **Variables and functions**: `a = 5`, `f(x) = x² − 3x + 2`, `f(a)`, STO, VARS menu – saved between sessions.
+
+**CAS** (Nerdamer behind a verified adapter) – simplify, expand, factor, solve equations (also general solutions like
+`x = π/6 + 2nπ`) and systems, derivatives (also partial and higher order), antiderivatives with `+ C`, definite and
+improper integrals, limits. Results that fail the numerical spot check are not shown; non-elementary integrals and
+non-existing limits are reported honestly.
+
+**Graph** – up to six functions, LCD-style plot without false vertical lines at poles and jumps; zoom/pan with keys,
+mouse, wheel and pinch; TRACE; zeros, extrema, intersections, tangent, signed area; export as PNG or SVG.
+
+**Everywhere** – full hardware-keyboard support, history with favourites, export/import of all data (same file on
+desktop and web), settings (angle, exact/decimal, digits, time limit, theme), English and German, native menu on the
+desktop, installable offline web app (PWA).
 
 ## Keyboard
 
 | Key | Action |
 |---|---|
 | any character | goes to the input line |
-| `Enter` | ENTER – push the line onto the stack |
-| `Esc` | clear the input line |
-| `F1` `F2` `F3` | Standard, CAS, Graph mode |
-| `F4`–`F6` | VARS, HIST, SETUP (planned) |
-| `Tab` | next placeholder in a fraction, integral, … |
-| `Backspace` / `Delete` | delete backwards / forwards |
+| `Enter` / `⇧Enter` | ENTER / →NUM (decimal value) |
+| `Esc` | clear the line, cancel a computation, leave the stack |
+| `↑` on an empty line | browse the stack (↑ ↓, Enter = recall, Delete = drop) |
+| `F1`–`F6` | softkeys (mode menu: Standard, CAS, Graph, VARS, HIST, SETUP) |
+| `⌥R` / `⌥E` | radians ↔ degrees / exact ↔ decimal |
+| `⌥⌫` / `⌥S` | DROP / SWAP |
+| `⌘/` · `⌘,` · `⌘S` · `⌘O` | shortcuts · settings · export · import (Ctrl on Windows/Linux) |
+| Graph mode, empty line | arrows pan (TRACE: move/switch), `+`/`−` zoom |
 
 ## Development
 
@@ -45,12 +63,15 @@ Requirements: Node ≥ 22.22.3, pnpm 10, Rust stable (≥ 1.90) and the
 pnpm install
 pnpm start          # web version on http://localhost:1420
 pnpm tauri dev      # desktop app
-pnpm check          # everything: versions, scripts, format, lint, tests, both builds, Rust, licences
+pnpm check          # versions, scripts, format, lint, unit tests, desktop + web build, Rust, licences
+pnpm e2e            # web build in Chromium and WebKit: calculation, CAS, graph, typing, offline, axe
+pnpm screenshots    # the images in docs/screenshots/
 ```
 
 More: [`CLAUDE.md`](CLAUDE.md) (commands, layout, rules), [`docs/architecture.md`](docs/architecture.md),
-[`docs/technical-evaluation.md`](docs/technical-evaluation.md), [`docs/decisions/`](docs/decisions/).
-Development runs through feature prompts in [`prompts/`](prompts/README.md).
+[`docs/technical-evaluation.md`](docs/technical-evaluation.md), [`docs/mathematics/`](docs/mathematics/),
+[`docs/decisions/`](docs/decisions/), [`docs/release.md`](docs/release.md). Development runs through feature
+prompts in [`prompts/`](prompts/README.md).
 
 ## Licence
 

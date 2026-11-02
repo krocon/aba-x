@@ -83,6 +83,8 @@ export const EN = {
   'msg.sto': 'STO: put a value on the stack, type a name, then press STO',
   'msg.enterFirst': 'enter an expression first',
   'msg.purged': '{name} purged',
+  'update.ready': 'A new version is available.',
+  'update.reload': 'Reload',
 } as const;
 
 export type TextKey = keyof typeof EN;
@@ -167,4 +169,6 @@ export const DE: Record<TextKey, string> = {
   'msg.sto': 'STO: Wert auf den Stack legen, Namen eingeben, dann STO drücken',
   'msg.enterFirst': 'erst einen Ausdruck eingeben',
   'msg.purged': '{name} gelöscht',
+  'update.ready': 'Eine neue Version ist verfügbar.',
+  'update.reload': 'Neu laden',
 };

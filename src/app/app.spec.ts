@@ -5,6 +5,7 @@ import { FakeStorageApi } from '../testing/fake-storage-api';
 import { KeyboardDispatcher } from './core/actions/keyboard-dispatcher';
 import { FilesApi } from './core/files/files-api';
 import { MenuApi, WebMenuApi } from './core/menu/menu-api';
+import { provideServiceWorker } from '@angular/service-worker';
 import { App } from './app';
 import { PlatformApi } from './core/platform/platform-api';
 import { StorageApi } from './core/storage/storage-api';
@@ -40,6 +41,7 @@ describe('App', () => {
         { provide: StorageApi, useValue: storage },
         { provide: FilesApi, useValue: files },
         { provide: MenuApi, useClass: WebMenuApi },
+        provideServiceWorker('ngsw-worker.js', { enabled: false }),
         { provide: PlatformApi, useClass: FakePlatformApi },
         { provide: MATH_FIELD_FACTORY, useValue: () => Promise.resolve(fakeMathField()) },
       ],

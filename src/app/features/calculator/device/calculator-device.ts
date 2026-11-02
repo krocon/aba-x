@@ -18,6 +18,7 @@ import { MathInput } from '../math-input';
 import { varsMenu } from '../../vars/vars-logic';
 import { GraphExportService } from '../../graph/graph-export-service';
 import { GraphView } from '../../graph/graph-view';
+import { MathStatic } from '../../../shared/math-static';
 import {
   MAIN_MENU,
   MODE_TITLES,
@@ -43,7 +44,7 @@ const LEVELS = 4;
 @Component({
   selector: 'app-calculator-device',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Keypad, MathInput, GraphView],
+  imports: [Keypad, MathInput, GraphView, MathStatic],
   // <math-span> (static MathLive rendering) is registered when MathLive loads.
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './calculator-device.html',

@@ -1,6 +1,6 @@
 # Architektur – ABA-X1
 
-> Stand: 02.11.2026 (Phase 1 + Geräte-Look). Entscheidungen im Einzelnen: [`docs/decisions/`](decisions/).
+> Stand: 02.11.2026 (alle Prompts 001–023). Struktur im Detail: `CLAUDE.md` §3. Entscheidungen im Einzelnen: [`docs/decisions/`](decisions/).
 > Bewertung der Bibliotheken: [`technical-evaluation.md`](technical-evaluation.md).
 
 ## 1. Überblick
@@ -65,14 +65,24 @@ Die Auswahl der Implementierung je Plattform passiert **nur** in `src/app/app.co
   Nonce-Ergänzung (`dangerousDisableAssetCspModification`), weil Angular/MathLive Inline-Styles setzen.
 - Speicher-Schlüssel werden in Rust gegen `^[a-z][a-z0-9-]{0,31}$` geprüft – nie Pfade.
 
-## 6. Abhängigkeiten
+## 6. Rechenweg einer Eingabe
+
+```
+MathLive-Zeile ──LaTeX──► parseLatexStatement ──AST──► CalculatorEngine.prepare (Ans, Variablen, Funktionen inline, Grad)
+                                                         │
+                       numerisch (Hauptthread) ◄─────────┼─────────► CAS (Web Worker, ComputeClient, Zeitlimit)
+                       evaluateNumeric → „≈ …“, Fallback │            NerdamerEngine → verify (Stichprobe) → prettify
+                                                         ▼
+                                       Evaluation (exakt/genähert, Hinweise) → Stack, Verlauf, Display (<app-math>)
+```
+
+## 7. Abhängigkeiten
 
 | Paket | Zweck | Lizenz | Begründung |
 |---|---|---|---|
-| `@angular/*` 22.2 | UI | MIT | Vorgabe |
-| `@angular/service-worker` | PWA/offline (nur Web) | MIT | Master-Prompt §4.7 |
-| `@tauri-apps/api` 2.12 | IPC | MIT/Apache-2.0 | nur hinter Fassaden |
+| `@angular/*` 22.2, `@angular/service-worker` | UI, PWA | MIT | Vorgabe |
+| `@tauri-apps/api` 2.12, `@tauri-apps/plugin-dialog` 2.8 | IPC, Dateidialoge | MIT/Apache-2.0 | nur hinter Fassaden |
 | `mathlive` 0.111.4 | Eingabe, statische Formeln | MIT | ADR 0003, lazy |
-| Dev: `@tauri-apps/cli`, ESLint/angular-eslint, Prettier, Vitest, jsdom, `fake-indexeddb` | Werkzeuge | MIT/Apache-2.0 | wie FnF; fake-indexeddb nur für Specs |
-| Rust: `tauri` 2.12, `serde`, `serde_json`; Dev: `tempfile` | Desktop | MIT/Apache-2.0 | minimal |
-| geplant: `nerdamer` 2.0.1 | CAS | Apache-2.0 | ADR 0004, Prompt 009 |
+| `nerdamer` 2.0.1 | CAS | Apache-2.0 | ADR 0004, nur im Worker-Chunk |
+| Rust: `tauri` 2.12, `tauri-plugin-dialog` 2.8, `tauri-plugin-window-state` 2.5, `serde`, `serde_json` | Desktop | MIT/Apache-2.0 | minimal |
+| Dev: `@tauri-apps/cli`, ESLint/angular-eslint, Prettier, Vitest, jsdom, `fake-indexeddb` (Apache-2.0), `playwright` (Apache-2.0), `axe-core` (MPL-2.0), Rust `tempfile` | Werkzeuge, Tests | – | nicht im Produkt |

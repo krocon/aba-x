@@ -8,12 +8,13 @@ Produktvision: [000-ABA-X1-Master-Prompt.md](000-ABA-X1-Master-Prompt.md). Vorbi
 **So startet man einen Prompt:** neue Sitzung im Repo, dann z. B.
 „Lies `prompts/000-arbeitsweise.md` und führe `prompts/003-expression-ast-parser.md` aus.“
 
-**Erledigte Prompts** liegen unter [`done/`](done/).
+**Erledigte Prompts** liegen unter [`done/`](done/) – Stand 02.11.2026: **alle 001–023**. Neue Aufträge bekommen die
+nächste freie Nummer (024 …).
 
 ## Reihenfolge
 
-Empfohlen: **003 → 005 → 004 → 013 → 009 → 010 …** (der Rechner rechnet so am schnellsten wirklich); 002 und 007
-können parallel laufen, sobald jemand Zeit hat. Die Nummern bleiben stabil, damit Verweise gültig bleiben.
+Tatsächliche Reihenfolge: 001 → 003 → 013 → 009 → 004 → 005 → 006 → 007 → 008 → 010 → 011 → 012 → 002 → 017 →
+018 → 019 → 014 → 015 → 016 → 020 → 021 → 022 → 023. Die Nummern bleiben stabil, damit Verweise gültig bleiben.
 
 | Nr. | Prompt | Inhalt | Abhängig von | Aufwand | Status |
 |---|---|---|---|---|---|
@@ -36,7 +37,7 @@ können parallel laufen, sobald jemand Zeit hat. Die Nummern bleiben stabil, dam
 | 017 | [verlauf-export-import](done/017-verlauf-export-import.md) | Verlauf, Favoriten, Export/Import | 002, 008 | M | ✅ 02.11.2026 |
 | 018 | [einstellungen-i18n](done/018-einstellungen-i18n.md) | SETUP, Deutsch/Englisch | 007 | M | ✅ 02.11.2026 |
 | 019 | [menue-tastenkuerzel-je-os](done/019-menue-tastenkuerzel-je-os.md) | Menüleiste, Kürzel je OS | 002, 007 | S | ✅ 02.11.2026 |
-| 020 | [pwa-offline-web-deployment](020-pwa-offline-web-deployment.md) | PWA, Offline-E2E, Deployment vorbereiten | 005 | S | ✅ 02.11.2026 |
-| 021 | [barrierefreiheit](021-barrierefreiheit.md) | Barrierefreiheit, Performance | 006, 007 | M | ⬜ |
-| 022 | [release-distribution](022-release-distribution.md) | Pakete, Release-Workflow, Signierung vorbereiten | 017, 019 | M | ⬜ |
-| 023 | [readme-screenshots-werbeseite](023-readme-screenshots-werbeseite.md) | README, Screenshots, Werbeseite | 010, 014 | S | ⬜ |
+| 020 | [pwa-offline-web-deployment](done/020-pwa-offline-web-deployment.md) | PWA, Offline-E2E, Deployment vorbereiten | 005 | S | ✅ 02.11.2026 |
+| 021 | [barrierefreiheit](done/021-barrierefreiheit.md) | Barrierefreiheit, Performance | 006, 007 | M | ✅ 02.11.2026 |
+| 022 | [release-distribution](done/022-release-distribution.md) | Pakete, Release-Workflow, Signierung vorbereiten | 017, 019 | M | ✅ 02.11.2026 |
+| 023 | [readme-screenshots-werbeseite](done/023-readme-screenshots-werbeseite.md) | README, Screenshots, Werbeseite | 010, 014 | S | ✅ 02.11.2026 |

@@ -33,7 +33,7 @@
                 tabindex="-1"
               >
                 <span class="in">y{{ i + 1 }} =</span>
-                <math-span class="out">{{ f.latex }}</math-span>
+                <app-math class="out" [latex]="f.latex" />
               </li>
             } @empty {
               <li class="empty">Type a function of x and press ENTER.</li>
@@ -53,11 +53,11 @@
               <li
                 [class.sel]="calc.history.selected() === h.id"
                 [attr.aria-current]="calc.history.selected() === h.id ? 'true' : null"
-                [attr.aria-label]="h.text"
               >
-                <math-span class="in">{{ h.input }}</math-span>
+                <span class="visually-hidden">{{ h.text }}</span>
+                <app-math class="in" [latex]="h.input" />
                 <span class="arrow" aria-hidden="true">{{ h.fav ? '★' : '→' }}</span>
-                <math-span class="out">{{ h.result }}</math-span>
+                <app-math class="out" [latex]="h.result" />
               </li>
             } @empty {
               <li class="empty">{{ i18n.t('hist.empty') }}</li>
@@ -73,13 +73,13 @@
               >
                 <span class="num">{{ row.level }}:</span>
                 @if (row.entry; as entry) {
-                  <span
-                    class="val"
-                    [attr.aria-label]="'Level ' + row.level + ': ' + (entry.text ?? entry.latex)"
-                  >
-                    <math-span class="main">{{ entry.latex }}</math-span>
+                  <span class="val">
+                    <span class="visually-hidden">{{
+                      'Level ' + row.level + ': ' + (entry.text ?? entry.latex)
+                    }}</span>
+                    <app-math class="main" [latex]="entry.latex" />
                     @if (entry.approx) {
-                      <math-span class="approx">{{ '\\approx ' + entry.approx }}</math-span>
+                      <app-math class="approx" [latex]="'\\approx ' + entry.approx" />
                     }
                   </span>
                 }
