@@ -3,8 +3,11 @@
   ABA-X1 – product page (after the model of comic-commander-tauri/site).
   One static file: CSS inline, no JavaScript, no web fonts, no trackers, no external requests.
   Dark only, colours of the app: page #252936, LCD green, violet #a98fdb, teal #68cac3.
+  Motion is CSS only: load animations, scroll-driven animations (animation-timeline: view()/scroll()) where the
+  browser has them – elsewhere everything is simply visible – and nothing with prefers-reduced-motion.
   Pictures: img/*.png next to this file – regenerate with `pnpm screenshots:site`. See site/README.md.
-  The web app itself lives at https://krocon.de/products/aba-x1/ (APP_URL below).
+  The plot in "Plotted, not guessed" is sin((x−1)(x+2)) and x²/6 − 1 on [−5, 5] × [−3, 3] (viewBox 1000 × 400).
+  Downloads: https://github.com/krocon/aba-x/releases/ (RELEASES below).
 -->
 <html lang="en">
   <head>
@@ -16,21 +19,22 @@
     <meta name="theme-color" content="#252936">
     <meta property="og:type" content="website">
     <meta property="og:title" content="ABA-X1 – Scientific &amp; Symbolic Calculator">
-    <meta property="og:description" content="Exact results, a computer algebra system that checks its own answers, and a plotter – in a calculator you can hold with your keyboard. Desktop and web.">
+    <meta property="og:description" content="Exact results, a computer algebra system that checks its own answers, and a plotter – in a calculator you can drive with your keyboard. Desktop and web.">
     <meta property="og:url" content="https://krocon.de/products/aba-x/">
     <meta property="og:image" content="https://krocon.de/products/aba-x/img/hero.png">
     <meta property="og:image:width" content="2560">
-    <meta property="og:image:height" content="1394">
+    <meta property="og:image:height" content="1114">
     <meta name="twitter:card" content="summary_large_image">
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <style>
       :root {
-        /* colours of the app */
         --violet: #a98fdb;
+        --violet-hi: #c3a6ff;
         --teal: #68cac3;
-        --lcd: #b4c0a2;
+        --teal-hi: #8ae3de;
+        --lcd-top: #b9c4a6;
+        --lcd-bottom: #a7b394;
         --lcd-ink: #1d2417;
-        --amber: #e8c46a;
 
         --bg: #252936;
         --bg-2: #1f2330;
@@ -39,34 +43,36 @@
         --text: #eef0f5;
         --muted: #b0b7c6;
         --link: #8fe0d9;
-        --ink: #14161d;
 
         --sans: system-ui, -apple-system, 'Segoe UI', Roboto, Ubuntu, Cantarell, 'Noto Sans', sans-serif;
         --mono: ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas, 'DejaVu Sans Mono', monospace;
         --serif: 'Latin Modern Math', 'STIX Two Math', 'Cambria Math', 'Times New Roman', serif;
-        --measure: 62ch;
         --gutter: clamp(16px, 4vw, 40px);
+        --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+        --ease-io: cubic-bezier(0.7, 0, 0.2, 1);
       }
 
+      @property --n { syntax: '<integer>'; inherits: false; initial-value: 0; }
+
       *, *::before, *::after { box-sizing: border-box; }
-      html { scroll-behavior: smooth; scroll-padding-top: 72px; }
+      html { scroll-behavior: smooth; scroll-padding-top: 72px; interpolate-size: allow-keywords; }
       body {
         margin: 0;
         background: var(--bg);
         color: var(--text);
         font: 17px/1.6 var(--sans);
         -webkit-text-size-adjust: 100%;
-        overflow-x: hidden;
+        overflow-x: clip;
       }
       img { max-width: 100%; height: auto; display: block; }
       a { color: var(--link); text-underline-offset: 0.18em; }
       a:hover { text-decoration-thickness: 2px; }
       :focus-visible { outline: 3px solid var(--teal); outline-offset: 3px; border-radius: 4px; }
-      .skip { position: absolute; left: -999px; top: 0; background: var(--teal); color: var(--ink); padding: 8px 12px; z-index: 10; font-weight: 700; }
+      .skip { position: absolute; left: -999px; top: 0; background: var(--teal); color: #0b2a2a; padding: 8px 12px; z-index: 40; font-weight: 700; }
       .skip:focus { left: 8px; top: 8px; }
       .wrap { max-width: 1180px; margin: 0 auto; padding: 0 var(--gutter); }
       h1, h2, h3 { line-height: 1.1; font-weight: 900; letter-spacing: -0.02em; text-wrap: balance; }
-      p { max-width: var(--measure); }
+      p { text-wrap: pretty; }
       code { font: 0.9em var(--mono); background: var(--surface); padding: 0.1em 0.35em; border-radius: 4px; }
       kbd {
         font: 600 0.8em/1 var(--mono);
@@ -78,135 +84,192 @@
         border: 1px solid #191d26;
         box-shadow: 0 2px 0 #191d26;
         white-space: nowrap;
+        transition: transform 120ms, box-shadow 120ms;
       }
-      kbd.l { background: linear-gradient(#c7b1ee, #9a7fd0); color: #1c1430; }
-      kbd.r { background: linear-gradient(#8ae3de, #4fb8b1); color: #0b2a2a; }
-      .math { font-family: var(--serif); font-style: italic; }
+      kbd:hover { transform: translateY(2px); box-shadow: 0 0 0 #191d26; }
+      kbd.l { background: linear-gradient(var(--violet-hi), #9a7fd0); color: #1c1430; }
+      kbd.r { background: linear-gradient(var(--teal-hi), #4fb8b1); color: #0b2a2a; }
 
-      /* ---- graph paper: the texture of the page ------------------------------------------ */
-      .paper { position: relative; isolation: isolate; }
-      .paper::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        z-index: -1;
-        background-image:
-          linear-gradient(rgb(169 143 219 / 0.10) 1px, transparent 1px),
-          linear-gradient(90deg, rgb(169 143 219 / 0.10) 1px, transparent 1px),
-          linear-gradient(rgb(104 202 195 / 0.05) 1px, transparent 1px),
-          linear-gradient(90deg, rgb(104 202 195 / 0.05) 1px, transparent 1px);
-        background-size: 96px 96px, 96px 96px, 24px 24px, 24px 24px;
-        -webkit-mask-image: radial-gradient(ellipse 75% 65% at 70% 10%, #000 0%, transparent 72%);
-                mask-image: radial-gradient(ellipse 75% 65% at 70% 10%, #000 0%, transparent 72%);
-        pointer-events: none;
-      }
-
-      /* ---- hero -------------------------------------------------------------------------- */
-      .hero {
-        padding: clamp(36px, 7vw, 96px) 0 0;
-        background:
-          radial-gradient(ellipse 55% 50% at 10% 5%, rgb(169 143 219 / 0.30), transparent 70%),
-          radial-gradient(ellipse 50% 45% at 95% 25%, rgb(104 202 195 / 0.20), transparent 70%),
-          var(--bg);
-      }
-      .hero-top { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: clamp(20px, 4vw, 48px); align-items: center; }
-      .logo { width: clamp(96px, 15vw, 176px); height: auto; filter: drop-shadow(0 14px 34px rgb(169 143 219 / 0.45)); border-radius: 22%; }
-      .kicker {
+      /* an LCD label: kicker, section eyebrows, feature numbers */
+      .chip {
         display: inline-block;
-        margin: 0 0 14px;
-        padding: 5px 12px;
+        padding: 4px 12px;
         font: 800 0.78rem/1.4 var(--mono);
         letter-spacing: 0.14em;
         text-transform: uppercase;
+        text-decoration: none;
         color: var(--lcd-ink);
-        background: var(--lcd);
+        background: linear-gradient(var(--lcd-top), var(--lcd-bottom));
         border-radius: 4px;
         box-shadow: inset 0 1px 3px rgb(0 0 0 / 0.35);
       }
+      a.chip { transition: transform 200ms var(--ease-out), filter 200ms; }
+      a.chip:hover { transform: translateY(-2px); filter: brightness(1.08); }
+
+      /* ---- scroll progress (scroll-driven browsers only) ---------------------------------------- */
+      .progress { display: none; }
+
+      /* ---- hero ------------------------------------------------------------------------------- */
+      .hero { position: relative; isolation: isolate; overflow: clip; padding: clamp(48px, 8vw, 104px) 0 clamp(40px, 6vw, 72px); text-align: center; }
+      .hero::before {
+        /* graph paper, drifting slowly */
+        content: '';
+        position: absolute;
+        inset: -96px 0 0;
+        z-index: -1;
+        background-image:
+          linear-gradient(rgb(169 143 219 / 0.11) 1px, transparent 1px),
+          linear-gradient(90deg, rgb(169 143 219 / 0.11) 1px, transparent 1px),
+          linear-gradient(rgb(104 202 195 / 0.05) 1px, transparent 1px),
+          linear-gradient(90deg, rgb(104 202 195 / 0.05) 1px, transparent 1px);
+        background-size: 96px 96px, 96px 96px, 24px 24px, 24px 24px;
+        background-position: 50% 0;
+        -webkit-mask-image: radial-gradient(ellipse 70% 55% at 50% 30%, #000 0%, transparent 75%);
+                mask-image: radial-gradient(ellipse 70% 55% at 50% 30%, #000 0%, transparent 75%);
+        animation: drift 24s linear infinite;
+      }
+      @keyframes drift { to { transform: translateY(96px); } }
+      .orb { position: absolute; z-index: -1; width: 46vmax; aspect-ratio: 1; border-radius: 50%; filter: blur(70px); opacity: 0.45; pointer-events: none; }
+      .orb.a { background: radial-gradient(circle, var(--violet), transparent 65%); top: -22vmax; left: 50%; translate: -95% 0; animation: float-a 16s ease-in-out infinite alternate; }
+      .orb.b { background: radial-gradient(circle, var(--teal), transparent 65%); top: -16vmax; left: 50%; translate: -5% 0; opacity: 0.3; animation: float-b 19s ease-in-out infinite alternate; }
+      @keyframes float-a { to { transform: translate(8vmax, 6vmax) scale(1.1); } }
+      @keyframes float-b { to { transform: translate(-7vmax, 8vmax) scale(0.9); } }
+
+      .logo {
+        width: clamp(104px, 13vw, 156px);
+        height: auto;
+        margin: 0 auto 26px;
+        display: block;
+        border-radius: 22%;
+        filter: drop-shadow(0 18px 40px rgb(169 143 219 / 0.45));
+        animation: rise 900ms var(--ease-out) both, bob 6s ease-in-out 1.2s infinite alternate;
+      }
+      .logo .draw { stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw 1.3s var(--ease-io) 300ms forwards; }
+      .logo .draw.x { animation-delay: 1.15s; animation-duration: 0.8s; }
+      @keyframes draw { to { stroke-dashoffset: 0; } }
+      @keyframes bob { to { transform: translateY(-8px); } }
+      @keyframes rise { from { opacity: 0; transform: translateY(28px); filter: blur(6px); } }
+
+      .hero > .wrap > .chip { animation: rise 900ms var(--ease-out) 150ms both; }
       .hero h1 {
-        margin: 0;
-        font-size: clamp(3rem, 10vw, 7rem);
-        letter-spacing: -0.03em;
+        margin: 18px 0 0;
+        font-size: clamp(3.4rem, 12vw, 8rem);
+        letter-spacing: -0.035em;
         line-height: 0.9;
-        background: linear-gradient(100deg, #fff 30%, var(--violet) 62%, var(--teal) 95%);
+        background: linear-gradient(100deg, #fff 0%, #fff 30%, var(--violet-hi) 45%, var(--teal) 55%, #fff 70%, #fff 100%);
+        background-size: 250% 100%;
+        background-position: 100% 0;
         -webkit-background-clip: text;
                 background-clip: text;
         color: transparent;
+        animation: rise 1s var(--ease-out) 250ms both, shine 7s ease-in-out 1.4s infinite;
       }
-      .sub { margin: 10px 0 0; font: 700 clamp(1rem, 1.8vw, 1.25rem)/1.3 var(--sans); color: var(--muted); letter-spacing: 0.02em; }
-      .pitch { font-size: clamp(1.1rem, 2.2vw, 1.45rem); line-height: 1.45; margin: 26px 0 0; max-width: 38ch; color: var(--text); }
-      .actions { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; margin-top: 30px; }
+      @keyframes shine { 0% { background-position: 100% 0; } 45%, 100% { background-position: 0% 0; } }
+      .sub { margin: 14px 0 0; font: 700 clamp(1rem, 1.8vw, 1.2rem)/1.35 var(--sans); color: var(--muted); animation: rise 1s var(--ease-out) 350ms both; }
+      .pitch { margin: 26px auto 0; max-width: 40ch; font-size: clamp(1.1rem, 2.1vw, 1.4rem); line-height: 1.45; animation: rise 1s var(--ease-out) 450ms both; }
+      .actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px; margin-top: 32px; animation: rise 1s var(--ease-out) 550ms both; }
       .btn {
+        position: relative;
+        overflow: hidden;
         font: 800 1rem/1 var(--sans);
-        padding: 15px 22px;
+        padding: 15px 24px;
         border-radius: 10px 10px 13px 13px;
         text-decoration: none;
         border: 1px solid #191d26;
-        box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.25), 0 3px 0 #191d26, 0 8px 18px rgb(0 0 0 / 0.35);
-        transition: transform 80ms, box-shadow 80ms;
+        box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.25), 0 3px 0 #191d26, 0 10px 22px rgb(0 0 0 / 0.35);
+        transition: transform 160ms var(--ease-out), box-shadow 160ms, filter 160ms;
       }
-      .btn-primary { background: linear-gradient(#8ae3de, #4fb8b1); color: #0b2a2a; }
-      .btn-secondary { background: linear-gradient(#c7b1ee, #9a7fd0); color: #1c1430; }
-      .btn-ghost { background: linear-gradient(#4b5466, #343b4a); color: #f3f5f8; }
-      .btn:hover { text-decoration: none; filter: brightness(1.06); }
+      .btn::after {
+        /* a sheen runs over the key on hover */
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(105deg, transparent 35%, rgb(255 255 255 / 0.45) 50%, transparent 65%);
+        transform: translateX(-120%);
+        transition: transform 700ms var(--ease-out);
+      }
+      .btn:hover { transform: translateY(-2px); filter: brightness(1.06); }
+      .btn:hover::after { transform: translateX(120%); }
       .btn:active { transform: translateY(3px); box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.2), 0 0 0 #191d26, 0 3px 8px rgb(0 0 0 / 0.35); }
-      .note { margin: 18px 0 0; font-size: 0.95rem; color: var(--muted); }
+      .btn-primary { background: linear-gradient(var(--teal-hi), #4fb8b1); color: #0b2a2a; }
+      .btn-secondary { background: linear-gradient(var(--violet-hi), #9a7fd0); color: #1c1430; }
+      .btn-ghost { background: linear-gradient(#4b5466, #343b4a); color: #f3f5f8; }
+      .note { margin: 20px auto 0; max-width: 60ch; font-size: 0.95rem; color: var(--muted); animation: rise 1s var(--ease-out) 650ms both; }
 
-      /* the hero picture in a glowing device bezel, slightly tilted */
-      .hero-shot { margin: clamp(32px, 5vw, 64px) auto 0; max-width: 1140px; perspective: 1800px; }
-      .hero-shot .bezel {
-        padding: clamp(6px, 1vw, 12px);
-        border-radius: 18px;
-        background: linear-gradient(175deg, #3a4150, #1d212b);
-        box-shadow: 0 40px 90px rgb(0 0 0 / 0.55), 0 0 0 1px rgb(255 255 255 / 0.06), 0 0 120px rgb(169 143 219 / 0.18);
-        transform: rotateX(7deg);
-        transform-origin: 50% 100%;
-      }
-      .hero-shot img { border-radius: 10px; }
-
-      /* ---- the LCD ticker: a few results scroll by (CSS only) ------------------------------ */
+      /* the LCD ticker: results roll up like on the calculator */
       .ticker {
-        margin: 34px 0 0;
-        max-width: 560px;
+        --row: 2.2rem;
+        margin: 40px auto 0;
+        max-width: 600px;
         border: 6px solid #151820;
-        border-radius: 8px;
-        background: linear-gradient(180deg, #b9c4a6, #a7b394);
-        box-shadow: inset 0 2px 6px rgb(0 0 0 / 0.35), 0 12px 28px rgb(0 0 0 / 0.35);
+        border-radius: 10px;
+        background: linear-gradient(180deg, var(--lcd-top), var(--lcd-bottom));
+        box-shadow: inset 0 2px 6px rgb(0 0 0 / 0.35), 0 16px 36px rgb(0 0 0 / 0.4);
         color: var(--lcd-ink);
         font: 600 1rem/1 var(--mono);
-        height: calc(3 * 2.1rem + 1.4rem);
-        overflow: hidden;
-        padding: 0.7rem 0.9rem;
-        display: grid;
-        grid-template-columns: auto minmax(0, 1fr);
-        column-gap: 0.8rem;
+        padding: 0.6rem 0.9rem 0.5rem;
+        text-align: left;
+        animation: rise 1s var(--ease-out) 750ms both;
       }
+      .ticker .win { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 0.8rem; height: calc(3 * var(--row)); overflow: hidden; }
       .ticker .lvls { display: flex; flex-direction: column; opacity: 0.7; }
-      .ticker .lvls span { height: 2.1rem; display: flex; align-items: center; }
-      .ticker ol { list-style: none; margin: 0; padding: 0; animation: roll 16s steps(1) infinite; }
-      .ticker li { display: flex; align-items: center; gap: 0.8rem; height: 2.1rem; border-bottom: 1px dotted rgb(29 36 23 / 0.25); white-space: nowrap; }
+      .ticker .lvls span { height: var(--row); display: flex; align-items: center; }
+      .ticker ol { list-style: none; margin: 0; padding: 0; animation: roll 15s var(--ease-io) 1.6s infinite; }
+      .ticker li { display: flex; align-items: center; gap: 0.8rem; height: var(--row); border-bottom: 1px dotted rgb(29 36 23 / 0.25); white-space: nowrap; }
       .ticker .in { opacity: 0.55; font-weight: 400; overflow: hidden; text-overflow: ellipsis; }
       .ticker .out { margin-left: auto; font-family: var(--serif); font-size: 1.15rem; font-weight: 400; }
+      .ticker .cursor { border-top: 1px solid var(--lcd-ink); margin-top: 2px; padding-top: 5px; height: 1.6rem; }
+      .ticker .cursor::after { content: ''; display: inline-block; width: 0.55em; height: 1.05em; background: var(--lcd-ink); vertical-align: -0.15em; animation: blink 1.1s steps(1) infinite; }
+      @keyframes blink { 50% { opacity: 0; } }
       @keyframes roll {
-        0%, 16% { transform: translateY(0); }
-        20%, 36% { transform: translateY(-2.1rem); }
-        40%, 56% { transform: translateY(-4.2rem); }
-        60%, 76% { transform: translateY(-6.3rem); }
-        80%, 100% { transform: translateY(-8.4rem); }
+        0%, 12% { transform: translateY(0); }
+        16.67%, 28.67% { transform: translateY(calc(-1 * var(--row))); }
+        33.33%, 45.33% { transform: translateY(calc(-2 * var(--row))); }
+        50%, 62% { transform: translateY(calc(-3 * var(--row))); }
+        66.67%, 78.67% { transform: translateY(calc(-4 * var(--row))); }
+        83.33%, 95.33% { transform: translateY(calc(-5 * var(--row))); }
+        100% { transform: translateY(calc(-6 * var(--row))); }
       }
-      @media (max-width: 560px) {
-        .hero-top { grid-template-columns: 1fr; }
-        .ticker .in { display: none; }
-      }
+      @media (max-width: 560px) { .ticker .in { display: none; } }
 
-      /* ---- sticky navigation ------------------------------------------------------------------ */
+      /* the hero picture: tilted back, it straightens up as you scroll */
+      .hero-shot { position: relative; margin: clamp(48px, 7vw, 88px) auto 0; max-width: 1120px; perspective: 1600px; }
+      .hero-shot::before {
+        content: '';
+        position: absolute;
+        inset: 10% 8% -4%;
+        z-index: -1;
+        background: radial-gradient(ellipse at 50% 60%, rgb(169 143 219 / 0.55), rgb(104 202 195 / 0.25) 45%, transparent 70%);
+        filter: blur(50px);
+        animation: pulse 6s ease-in-out infinite alternate;
+      }
+      @keyframes pulse { to { opacity: 0.6; transform: scale(1.06); } }
+      .hero-shot .bezel {
+        padding: clamp(6px, 1vw, 12px);
+        border-radius: 20px;
+        background: linear-gradient(175deg, #3a4150, #1d212b);
+        box-shadow: 0 50px 100px rgb(0 0 0 / 0.55), 0 0 0 1px rgb(255 255 255 / 0.07);
+        transform-origin: 50% 100%;
+        animation: straighten 1.4s var(--ease-out) 600ms both;
+      }
+      .hero-shot img { border-radius: 10px; }
+      @keyframes straighten { from { opacity: 0; transform: rotateX(28deg) scale(0.9) translateY(60px); } }
+
+      /* ---- numbers band ------------------------------------------------------------------------ */
+      .stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin: clamp(48px, 7vw, 80px) auto 0; padding: 0; list-style: none; max-width: 960px; }
+      .stats li { padding: 18px 12px; border: 1px solid var(--line); border-radius: 14px; background: rgb(31 35 48 / 0.7); }
+      .stats b { display: block; font: 900 clamp(2.2rem, 5vw, 3.2rem)/1 var(--sans); color: var(--teal-hi); }
+      .stats span { display: block; margin-top: 8px; font-size: 0.9rem; color: var(--muted); }
+      @media (max-width: 640px) { .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+      /* ---- sticky navigation ------------------------------------------------------------------- */
       .nav {
         position: sticky;
         top: 0;
-        z-index: 5;
-        background: rgb(37 41 54 / 0.86);
-        -webkit-backdrop-filter: blur(10px);
-                backdrop-filter: blur(10px);
+        z-index: 10;
+        background: rgb(37 41 54 / 0.82);
+        -webkit-backdrop-filter: blur(12px) saturate(1.3);
+                backdrop-filter: blur(12px) saturate(1.3);
         border-block: 1px solid var(--line);
       }
       .nav ol {
@@ -215,6 +278,7 @@
         padding: 10px var(--gutter);
         max-width: 1180px;
         display: flex;
+        justify-content: center;
         gap: 6px;
         overflow-x: auto;
         scrollbar-width: none;
@@ -227,54 +291,65 @@
         text-decoration: none;
         font: 700 0.95rem/1 var(--sans);
         white-space: nowrap;
+        transition: background 200ms, color 200ms;
       }
       .nav a:hover { background: var(--surface); }
-      .nav li:last-child { margin-left: auto; }
-      .nav li:last-child a { background: linear-gradient(#8ae3de, #4fb8b1); color: #0b2a2a; }
+      .nav .dl { color: var(--violet-hi); }
+      .nav .go { background: linear-gradient(var(--teal-hi), #4fb8b1); color: #0b2a2a; margin-left: 8px; }
+      .nav .go:hover { background: linear-gradient(#a5ece8, #5cc5be); }
+      @media (max-width: 760px) { .nav ol { justify-content: flex-start; } }
 
-      /* ---- intro -------------------------------------------------------------------------------- */
-      main { padding-bottom: 40px; }
-      .intro { padding-block: clamp(48px, 8vw, 104px) clamp(24px, 4vw, 48px); }
-      .intro h2, .block h2 { font-size: clamp(1.8rem, 4.2vw, 2.9rem); margin: 0 0 0.55em; }
+      /* ---- sections ---------------------------------------------------------------------------- */
+      main { padding-bottom: 20px; }
+      .section { padding: clamp(64px, 9vw, 120px) 0; }
+      .section + .section { border-top: 1px solid var(--line); }
+      .head { text-align: center; max-width: 760px; margin: 0 auto clamp(36px, 5vw, 56px); }
+      .head h2 { font-size: clamp(2rem, 4.6vw, 3.2rem); margin: 16px 0 0.4em; }
+      .head p { margin: 0 auto; color: var(--muted); font-size: 1.08rem; max-width: 60ch; }
+
       .quote {
         position: relative;
-        max-width: 780px;
-        margin: 0;
-        padding: clamp(20px, 3vw, 32px) clamp(22px, 3.5vw, 40px);
-        background: var(--surface);
+        max-width: 760px;
+        margin: 0 auto;
+        padding: clamp(36px, 4vw, 48px) clamp(24px, 4vw, 52px) clamp(28px, 4vw, 44px);
+        background: linear-gradient(160deg, var(--surface), var(--bg-2));
         border: 1px solid var(--line);
-        border-left: 5px solid var(--violet);
-        border-radius: 16px;
-        font-size: 1.12rem;
+        border-radius: 20px;
+        font-size: 1.15rem;
+        text-align: center;
       }
-      .quote p { margin: 0 0 0.7em; }
+      .quote::before {
+        content: '∫';
+        position: absolute;
+        top: -30px;
+        left: 50%;
+        translate: -50% 0;
+        display: grid;
+        place-items: center;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        border: 4px solid #151820;
+        background: linear-gradient(var(--lcd-top), var(--lcd-bottom));
+        color: var(--lcd-ink);
+        font: italic 400 2.2rem/1 var(--serif);
+        box-shadow: 0 8px 20px rgb(0 0 0 / 0.4);
+      }
+      .quote p { margin: 0 0 0.8em; }
       .quote p:last-child { margin: 0; }
-      .signature { margin: 22px 0 0; font-weight: 700; color: var(--muted); }
+      .signature { margin: 22px 0 0; text-align: center; font-weight: 800; color: var(--muted); letter-spacing: 0.04em; }
 
-      /* ---- features ------------------------------------------------------------------------------ */
+      /* ---- features: two equal columns, alternating ---------------------------------------- */
       .feature {
         display: grid;
-        grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
-        gap: clamp(24px, 5vw, 72px);
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: clamp(32px, 6vw, 88px);
         align-items: center;
-        padding: clamp(40px, 6vw, 80px) 0;
-        border-top: 1px solid var(--line);
+        padding: clamp(40px, 6vw, 72px) 0;
       }
       .feature.flip .text { order: 2; }
-      .feature.wide { grid-template-columns: minmax(0, 1fr); }
-      .num {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        margin-bottom: 16px;
-        padding: 4px 10px;
-        font: 800 0.85rem/1.4 var(--mono);
-        color: var(--lcd-ink);
-        background: var(--lcd);
-        border-radius: 4px;
-      }
-      .feature h3 { font-size: clamp(1.5rem, 3vw, 2.2rem); margin: 0 0 0.5em; }
-      .feature .lead { font-weight: 700; font-size: 1.08rem; margin: 0 0 0.7em; color: var(--teal); }
+      .feature h3 { font-size: clamp(1.6rem, 3vw, 2.3rem); margin: 16px 0 0.5em; }
+      .feature .lead { font-weight: 700; font-size: 1.1rem; margin: 0 0 0.7em; color: var(--teal); }
       .feature p { margin: 0 0 0.8em; }
       .feature ul { margin: 0.4em 0 0; padding-left: 1.1em; color: var(--muted); }
       .feature li { margin: 0.3em 0; }
@@ -282,128 +357,240 @@
       .keys { margin: 1.2em 0 0; display: grid; grid-template-columns: max-content 1fr; gap: 8px 14px; font-size: 0.92rem; color: var(--muted); }
       .keys dt { font-weight: 600; }
       .keys dd { margin: 0; }
-      .shot { margin: 0; }
-      .shot.device img { width: min(100%, 380px); margin: 0 auto; filter: drop-shadow(0 30px 50px rgb(0 0 0 / 0.5)); }
-      .shot.wide img { border-radius: 12px; border: 1px solid var(--line); box-shadow: 0 30px 70px rgb(0 0 0 / 0.5); }
-      .shot figcaption { margin-top: 12px; font-size: 0.9rem; color: var(--muted); text-align: center; }
-      .proof {
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 10px;
-        margin: 1.2em 0 0;
-        padding: 0;
-        list-style: none;
-        font-size: 0.9rem;
+      .shot { margin: 0; position: relative; isolation: isolate; }
+      .shot.device::before {
+        content: '';
+        position: absolute;
+        inset: 15%;
+        z-index: -1;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgb(169 143 219 / 0.4), transparent 70%);
+        filter: blur(40px);
       }
+      .feature.flip .shot.device::before { background: radial-gradient(circle, rgb(104 202 195 / 0.35), transparent 70%); }
+      .shot.device img { width: min(100%, 360px); margin: 0 auto; filter: drop-shadow(0 30px 50px rgb(0 0 0 / 0.5)); animation: bob 5s ease-in-out infinite alternate; }
+      .feature.flip .shot.device img { animation-delay: -2.5s; }
+      .proof { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin: 1.2em 0 0; padding: 0; list-style: none; font-size: 0.9rem; }
       .proof li { padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--bg-2); color: var(--muted); }
-      .proof b { display: block; color: var(--text); font: 400 1.05rem/1.3 var(--serif); font-style: italic; margin-bottom: 2px; }
+      .proof b { display: block; color: var(--text); font: italic 400 1.05rem/1.3 var(--serif); margin-bottom: 2px; }
+      .wide-shot { margin: 0 auto; max-width: 1120px; text-align: center; }
+      .wide-shot img { border-radius: 14px; border: 1px solid var(--line); box-shadow: 0 40px 80px rgb(0 0 0 / 0.5), 0 0 90px rgb(104 202 195 / 0.12); }
+      .wide-shot figcaption { margin-top: 14px; font-size: 0.9rem; color: var(--muted); }
       @media (max-width: 860px) {
         .feature { grid-template-columns: minmax(0, 1fr); }
         .feature.flip .text { order: 0; }
-        .proof { grid-template-columns: 1fr; }
+        .proof { grid-template-columns: minmax(0, 1fr); }
       }
 
-      /* ---- blocks ------------------------------------------------------------------------------- */
-      .block { padding: clamp(48px, 7vw, 96px) 0; border-top: 1px solid var(--line); }
-      .block > .wrap > p { color: var(--muted); }
-      .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr)); gap: 16px; margin: 2em 0 0; padding: 0; list-style: none; }
+      /* ---- the plot that draws itself --------------------------------------------------------- */
+      .plot {
+        max-width: 980px;
+        margin: 0 auto;
+        border: 8px solid #151820;
+        border-radius: 14px;
+        background: linear-gradient(180deg, var(--lcd-top), var(--lcd-bottom));
+        box-shadow: inset 0 2px 8px rgb(0 0 0 / 0.35), 0 40px 80px rgb(0 0 0 / 0.45), 0 0 120px rgb(169 143 219 / 0.15);
+        overflow: hidden;
+      }
+      .plot svg { display: block; width: 100%; height: auto; }
+      .plot .grid line { stroke: rgb(29 36 23 / 0.16); stroke-width: 1; }
+      .plot .axis { stroke: var(--lcd-ink); stroke-width: 2; }
+      .plot .fn { fill: none; stroke: var(--lcd-ink); stroke-width: 3; stroke-linejoin: round; }
+      .plot .fn.g { stroke-dasharray: 10 8; }
+      .plot .dot { fill: var(--lcd-ink); transform-box: fill-box; transform-origin: center; }
+      .plot .scan { stroke: var(--lcd-ink); stroke-width: 1.5; opacity: 0; }
+      .plot .lbl { font: 600 15px var(--mono); fill: var(--lcd-ink); }
+      .plot-cap { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 8px 14px; background: var(--lcd-ink); color: var(--lcd-top); font: 700 0.8rem/1.3 var(--mono); }
+
+      /* ---- cards -------------------------------------------------------------------------------- */
+      .cards { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin: 0; padding: 0; list-style: none; }
       .cards li {
-        padding: 20px 22px;
+        position: relative;
+        padding: 24px 22px;
         background: var(--bg-2);
         border: 1px solid var(--line);
-        border-radius: 14px;
+        border-radius: 16px;
         color: var(--muted);
         font-size: 0.97rem;
+        transition: transform 300ms var(--ease-out), border-color 300ms, box-shadow 300ms;
       }
-      .cards li:nth-child(odd) { border-top: 3px solid var(--violet); }
-      .cards li:nth-child(even) { border-top: 3px solid var(--teal); }
-      .cards b { display: block; margin-bottom: 6px; color: var(--text); font-size: 1.04rem; }
+      .cards li::before {
+        content: '';
+        position: absolute;
+        inset: 0 22px auto;
+        height: 3px;
+        border-radius: 0 0 3px 3px;
+        background: linear-gradient(90deg, var(--violet), var(--teal));
+      }
+      .cards li:hover { transform: translateY(-6px); border-color: #545c75; box-shadow: 0 20px 40px rgb(0 0 0 / 0.35), 0 0 40px rgb(169 143 219 / 0.12); }
+      .cards .ico { display: grid; place-items: center; width: 44px; height: 44px; margin-bottom: 14px; border-radius: 12px; background: linear-gradient(var(--lcd-top), var(--lcd-bottom)); color: var(--lcd-ink); font: italic 400 1.4rem/1 var(--serif); }
+      .cards b { display: block; margin-bottom: 6px; color: var(--text); font-size: 1.05rem; }
+      @media (max-width: 1020px) { .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+      @media (max-width: 560px) { .cards { grid-template-columns: minmax(0, 1fr); } }
 
-      .cheat-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 16px 48px; margin-top: 1.6em; }
+      /* ---- keyboard ----------------------------------------------------------------------------- */
+      .cheat-cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 56px; max-width: 980px; margin: 0 auto; }
       .cheat-cols h3 { font-size: 1.15rem; margin: 0 0 0.4em; color: var(--violet); }
       .cheat { margin: 0; padding: 0; }
-      .cheat div { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; padding: 9px 0; border-bottom: 1px dashed var(--line); }
+      .cheat div { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; padding: 10px 0; border-bottom: 1px dashed var(--line); }
       .cheat dt { margin: 0; }
       .cheat dd { margin: 0; text-align: right; display: flex; flex-wrap: wrap; gap: 4px; justify-content: flex-end; }
+      @media (max-width: 760px) { .cheat-cols { grid-template-columns: minmax(0, 1fr); } }
 
-      .platforms { width: 100%; border-collapse: collapse; margin-top: 1.4em; font-size: 0.98rem; }
-      .platforms th, .platforms td { text-align: left; padding: 12px 14px 12px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
-      .platforms th { color: var(--muted); font-weight: 700; }
-      .platforms td:first-child { font-weight: 700; }
-      .table-scroll { overflow-x: auto; }
+      /* ---- platforms ---------------------------------------------------------------------------- */
+      .platforms { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin: 0; padding: 0; list-style: none; text-align: center; }
+      .platforms li { display: flex; flex-direction: column; align-items: center; padding: 28px 18px 24px; border: 1px solid var(--line); border-radius: 18px; background: linear-gradient(170deg, var(--surface), var(--bg-2)); transition: transform 300ms var(--ease-out), box-shadow 300ms; }
+      .platforms li:hover { transform: translateY(-6px); box-shadow: 0 20px 40px rgb(0 0 0 / 0.35); }
+      .platforms h3 { margin: 0 0 10px; font-size: 1.4rem; }
+      .platforms p { margin: 0 0 18px; color: var(--muted); font-size: 0.93rem; flex: 1; }
+      .platforms .chip { font-size: 0.72rem; }
+      .releases { margin: 28px 0 0; text-align: center; color: var(--muted); }
+      @media (max-width: 900px) { .platforms { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+      @media (max-width: 480px) { .platforms { grid-template-columns: minmax(0, 1fr); } }
 
-      details { border-bottom: 1px solid var(--line); padding: 16px 0; max-width: 80ch; }
-      summary { cursor: pointer; font: 700 1.1rem/1.4 var(--sans); }
-      summary::marker { color: var(--teal); }
-      details p { margin: 0.6em 0 0; color: var(--muted); }
+      /* ---- FAQ ----------------------------------------------------------------------------------- */
+      .faq { max-width: 820px; margin: 0 auto; }
+      details { border: 1px solid var(--line); border-radius: 14px; background: var(--bg-2); margin-bottom: 10px; transition: border-color 200ms; }
+      details[open] { border-color: #545c75; }
+      summary { cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 18px 22px; font: 700 1.08rem/1.4 var(--sans); }
+      summary::-webkit-details-marker { display: none; }
+      summary::after { content: '+'; flex: none; display: grid; place-items: center; width: 28px; height: 28px; border-radius: 8px; background: var(--surface); color: var(--teal); font: 700 1.2rem/1 var(--mono); transition: transform 300ms var(--ease-out); }
+      details[open] summary::after { transform: rotate(45deg); }
+      details::details-content { block-size: 0; overflow: clip; transition: block-size 400ms var(--ease-out), content-visibility 400ms allow-discrete; }
+      details[open]::details-content { block-size: auto; }
+      details p { margin: 0; padding: 0 22px 20px; color: var(--muted); }
 
-      .cta { text-align: center; padding: clamp(56px, 8vw, 110px) 0; border-top: 1px solid var(--line); }
-      .cta h2 { font-size: clamp(2rem, 5vw, 3.4rem); margin: 0 0 0.4em; }
-      .cta p { margin: 0 auto; color: var(--muted); }
-      .cta .actions { justify-content: center; }
+      /* ---- call to action --------------------------------------------------------------------- */
+      .cta { position: relative; isolation: isolate; overflow: clip; text-align: center; }
+      .cta .orb.a { top: auto; bottom: -30vmax; translate: -80% 0; }
+      .cta .orb.b { top: auto; bottom: -26vmax; translate: -20% 0; }
+      .cta h2 { font-size: clamp(2.4rem, 6vw, 4.2rem); margin: 16px 0 0.3em; }
+      .cta p { margin: 0 auto; color: var(--muted); max-width: 52ch; font-size: 1.1rem; }
 
-      footer { background: var(--bg-2); border-top: 1px solid var(--line); padding: 36px 0 44px; font-size: 0.95rem; }
-      footer .row { display: flex; flex-wrap: wrap; align-items: center; gap: 16px 28px; }
-      footer .mark { display: flex; align-items: center; gap: 10px; font-weight: 800; color: var(--text); margin-right: auto; }
-      footer .mark svg { width: 28px; height: 28px; border-radius: 7px; }
-      footer ul { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 8px 24px; }
-      footer p { margin: 18px 0 0; color: var(--muted); max-width: none; }
+      footer { background: var(--bg-2); border-top: 1px solid var(--line); padding: 44px 0 48px; font-size: 0.95rem; text-align: center; }
+      footer .mark { display: inline-flex; align-items: center; gap: 10px; font-weight: 900; font-size: 1.1rem; }
+      footer .mark svg { width: 32px; height: 32px; border-radius: 8px; }
+      footer ul { list-style: none; padding: 0; margin: 18px 0 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 24px; }
+      footer p { margin: 18px auto 0; color: var(--muted); max-width: 72ch; }
+
+      /* ---- scroll-driven motion: only where the browser supports it ------------------------- */
+      @supports (animation-timeline: view()) {
+        .progress {
+          display: block;
+          position: fixed;
+          inset: 0 0 auto;
+          height: 3px;
+          z-index: 30;
+          transform-origin: 0 50%;
+          background: linear-gradient(90deg, var(--violet), var(--teal));
+          animation: grow linear both;
+          animation-timeline: scroll(root);
+        }
+        @keyframes grow { from { transform: scaleX(0); } }
+
+        .hero-shot .bezel { animation: tilt linear both; animation-timeline: view(); animation-range: entry 10% cover 45%; }
+        @keyframes tilt { from { transform: rotateX(30deg) scale(0.86) translateY(40px); opacity: 0.4; } }
+
+        .reveal { animation: reveal linear both; animation-timeline: view(); animation-range: entry 0% cover 28%; }
+        @keyframes reveal { from { opacity: 0; transform: translateY(56px) scale(0.97); } }
+        .from-left { animation: from-left linear both; animation-timeline: view(); animation-range: entry 0% cover 32%; }
+        .from-right { animation: from-right linear both; animation-timeline: view(); animation-range: entry 0% cover 32%; }
+        @keyframes from-left { from { opacity: 0; transform: translateX(-80px) rotate(-3deg); } }
+        @keyframes from-right { from { opacity: 0; transform: translateX(80px) rotate(3deg); } }
+        /* one column: rise instead of sliding in from outside the screen */
+        @media (max-width: 860px) { .from-left, .from-right { animation-name: reveal; } }
+        .zoom { animation: zoom linear both; animation-timeline: view(); animation-range: entry 0% cover 40%; }
+        @keyframes zoom { from { opacity: 0; transform: scale(0.85); filter: blur(4px); } }
+
+        /* numbers count up when they come into view */
+        .stats b { font-size: 0; }
+        .stats b::after {
+          content: counter(n);
+          counter-reset: n var(--n);
+          font-size: clamp(2.2rem, 5vw, 3.2rem);
+          animation: count linear both;
+          animation-timeline: view();
+          animation-range: entry 20% cover 45%;
+        }
+        @keyframes count { from { --n: 0; } to { --n: var(--to); } }
+
+        /* the plot: a scan line runs from left to right and leaves the curves behind it */
+        .plot { view-timeline: --plot block; }
+        .plot .curves { animation: plot-wipe linear both; animation-timeline: --plot; animation-range: cover 15% cover 55%; }
+        .plot .scan { animation: plot-scan linear both; animation-timeline: --plot; animation-range: cover 15% cover 55%; }
+        .plot .dot { animation: pop linear both; animation-timeline: --plot; animation-range: cover 52% cover 60%; }
+        @keyframes plot-wipe { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+        @keyframes plot-scan { 0% { transform: translateX(0); opacity: 1; } 96% { opacity: 1; } 100% { transform: translateX(1000px); opacity: 0; } }
+        @keyframes pop { from { transform: scale(0); } 70% { transform: scale(1.6); } to { transform: scale(1); } }
+      }
 
       @media (prefers-reduced-motion: reduce) {
         html { scroll-behavior: auto; }
-        .btn { transition: none; }
-        .ticker ol { animation: none; }
-        .hero-shot .bezel { transform: none; }
+        *, *::before, *::after { animation: none !important; transition: none !important; }
+        .logo .draw { stroke-dashoffset: 0; }
+        .progress { display: none !important; }
+        .stats b { font-size: clamp(2.2rem, 5vw, 3.2rem) !important; }
+        .stats b::after { content: none !important; }
       }
     </style>
   </head>
   <body>
     <a class="skip" href="#features">Skip to the features</a>
+    <div class="progress" aria-hidden="true"></div>
 
-    <header class="hero paper">
+    <header class="hero">
+      <div class="orb a" aria-hidden="true"></div>
+      <div class="orb b" aria-hidden="true"></div>
       <div class="wrap">
-        <div class="hero-top">
-          <svg class="logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="176" height="176" aria-hidden="true" focusable="false">
-            <rect width="1024" height="1024" rx="224" fill="#262b37"/>
-            <g fill="none" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M300 812c-30 62-96 78-142 40M300 812 L462 212c28-62 94-78 140-40" stroke="#a98fdb" stroke-width="84"/>
-              <path d="M566 470 L780 730 M780 470 L566 730" stroke="#68cac3" stroke-width="76"/>
-            </g>
-          </svg>
-          <div>
-            <p class="kicker">Scientific · Symbolic · Graphing</p>
-            <h1>ABA-X1</h1>
-            <p class="sub">Advanced Browser Algebra – a calculator for desktop and web</p>
-          </div>
-        </div>
-        <p class="pitch">Exact results first, a computer algebra system that checks its own answers, and a plotter that never draws a line through a pole – in a calculator you can drive entirely from your keyboard.</p>
+        <svg class="logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="156" height="156" aria-hidden="true" focusable="false">
+          <rect width="1024" height="1024" rx="224" fill="#262b37"/>
+          <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path class="draw" pathLength="1" d="M158 852c46 38 112 22 142-40L462 212c28-62 94-78 140-40" stroke="#a98fdb" stroke-width="84"/>
+            <path class="draw x" pathLength="1" d="M566 470 L780 730 M780 470 L566 730" stroke="#68cac3" stroke-width="76"/>
+          </g>
+        </svg>
+        <p class="chip">Scientific · Symbolic · Graphing</p>
+        <h1>ABA-X1</h1>
+        <p class="sub">Advanced Browser Algebra – a calculator for desktop and web</p>
+        <p class="pitch">Exact results first, a computer algebra system that checks its own answers, and a plotter that never draws a line through a pole – driven entirely from your keyboard.</p>
         <div class="actions">
           <a class="btn btn-primary" href="https://krocon.de/products/aba-x1/">Open the web app</a>
-          <a class="btn btn-secondary" href="https://github.com/krocon/aba-x">Source on GitHub</a>
-          <a class="btn btn-ghost" href="#platforms">Desktop apps</a>
+          <a class="btn btn-secondary" href="https://github.com/krocon/aba-x/releases/">Download</a>
+          <a class="btn btn-ghost" href="https://github.com/krocon/aba-x">Source on GitHub</a>
         </div>
         <p class="note">Free and open source (MIT). Runs in your browser – offline after the first visit – or as an app for macOS, Windows and Linux. Nothing you type leaves your device.</p>
 
-        <div class="ticker" role="img" aria-label="Results as the calculator shows them: 8.5 times 88 times 1.19 is 890.12; the square root of 12 plus pi over 3 is 2 root 3 plus pi over 3; the integral of sin 2x from 0 to 1 is one half minus cos 2 over 2, about 0.7081; x cubed minus 6 x squared plus 11 x minus 6 equals 0 has the solutions 1, 2 and 3.">
-          <div class="lvls" aria-hidden="true"><span>3:</span><span>2:</span><span>1:</span></div>
-          <ol aria-hidden="true">
-            <li><span class="in">8.5·88·1.19 =</span><span class="out">890.12</span></li>
-            <li><span class="in">√12 + π/3 =</span><span class="out">2√3 + π/3</span></li>
-            <li><span class="in">∫₀¹ sin(2x) dx =</span><span class="out">½ − cos(2)/2 ≈ 0.70807</span></li>
-            <li><span class="in">x³−6x²+11x−6=0</span><span class="out">x = 1, x = 2, x = 3</span></li>
-            <li><span class="in">d/dx x³ sin x =</span><span class="out">x²(3 sin x + x cos x)</span></li>
-            <li><span class="in">Σₖ₌₁ⁿ k² =</span><span class="out">n(n+1)(2n+1)/6</span></li>
-            <li><span class="in">√12 + π/3 =</span><span class="out">2√3 + π/3</span></li>
-            <li><span class="in">8.5·88·1.19 =</span><span class="out">890.12</span></li>
-          </ol>
+        <div class="ticker" role="img" aria-label="Results as the calculator shows them: 8.5 times 88 times 1.19 is 890.12; the square root of 12 plus pi over 3 is 2 root 3 plus pi over 3; the integral of sin 2x from 0 to 1 is one half minus cos 2 over 2, about 0.70807; x cubed minus 6 x squared plus 11 x minus 6 equals 0 has the solutions 1, 2 and 3.">
+          <div class="win" aria-hidden="true">
+            <div class="lvls"><span>3:</span><span>2:</span><span>1:</span></div>
+            <ol>
+              <li><span class="in">8.5·88·1.19 =</span><span class="out">890.12</span></li>
+              <li><span class="in">√12 + π/3 =</span><span class="out">2√3 + π/3</span></li>
+              <li><span class="in">∫₀¹ sin(2x) dx =</span><span class="out">½ − cos(2)/2 ≈ 0.70807</span></li>
+              <li><span class="in">x³−6x²+11x−6=0</span><span class="out">x = 1, x = 2, x = 3</span></li>
+              <li><span class="in">d/dx x³ sin x =</span><span class="out">x²(3 sin x + x cos x)</span></li>
+              <li><span class="in">Σₖ₌₁ⁿ k² =</span><span class="out">n(n+1)(2n+1)/6</span></li>
+              <li><span class="in">8.5·88·1.19 =</span><span class="out">890.12</span></li>
+              <li><span class="in">√12 + π/3 =</span><span class="out">2√3 + π/3</span></li>
+              <li><span class="in">∫₀¹ sin(2x) dx =</span><span class="out">½ − cos(2)/2 ≈ 0.70807</span></li>
+            </ol>
+          </div>
+          <div class="cursor" aria-hidden="true"></div>
         </div>
 
         <figure class="hero-shot">
           <div class="bezel">
-            <img src="img/hero.png" width="2560" height="1394" fetchpriority="high"
+            <img src="img/hero.png" width="2560" height="1114" fetchpriority="high"
                  alt="ABA-X1 in full size: a large green display with a stack of results – 890.12, 2√3 + π/3, the integral of sin 2x from 0 to 1 as 1/2 − cos(2)/2 ≈ 0.708, a derivative, a sum formula and the solutions x = 1, 2, 3 – and the keypad on the right">
           </div>
         </figure>
+
+        <ul class="stats" aria-label="In numbers">
+          <li><b style="--to: 3">3</b><span>modes: Standard, CAS, Graph</span></li>
+          <li><b style="--to: 6">6</b><span>functions in one plot</span></li>
+          <li><b style="--to: 4">4</b><span>platforms, one code base</span></li>
+          <li><b style="--to: 0">0</b><span>accounts, trackers, servers</span></li>
+        </ul>
       </div>
     </header>
 
@@ -414,99 +601,147 @@
         <li><a href="#keys">Keys</a></li>
         <li><a href="#platforms">Platforms</a></li>
         <li><a href="#faq">FAQ</a></li>
-        <li><a href="https://krocon.de/products/aba-x1/">Open the app</a></li>
+        <li><a class="dl" href="https://github.com/krocon/aba-x/releases/">Download</a></li>
+        <li><a class="go" href="https://krocon.de/products/aba-x1/">Open the app</a></li>
       </ol>
     </nav>
 
     <main id="features">
-      <section class="intro wrap" aria-labelledby="intro-title">
-        <h2 id="intro-title">A calculator that shows its work</h2>
-        <blockquote class="quote">
-          <p>I wanted the calculator I loved at university – stack, softkeys, shift keys – but with the mathematics of today: fractions that stay fractions, roots that stay roots, integrals that come back as formulas.</p>
-          <p>And I wanted to trust it. So every answer of the computer algebra system is checked numerically before ABA-X1 shows it. If the check fails, you get an honest message instead of a wrong result.</p>
-        </blockquote>
-        <p class="signature">Marc Kronberg</p>
+      <section class="section" aria-labelledby="intro-title">
+        <div class="wrap">
+          <div class="head reveal">
+            <span class="chip">Why</span>
+            <h2 id="intro-title">A calculator that shows its work</h2>
+          </div>
+          <blockquote class="quote reveal">
+            <p>I wanted the calculator I loved at university – stack, softkeys, shift keys – but with the mathematics of today: fractions that stay fractions, roots that stay roots, integrals that come back as formulas.</p>
+            <p>And I wanted to trust it. So every answer of the computer algebra system is checked numerically before ABA-X1 shows it. If the check fails, you get an honest message instead of a wrong result.</p>
+          </blockquote>
+          <p class="signature reveal">Marc Kronberg</p>
+        </div>
       </section>
 
-      <div class="wrap">
-        <article class="feature" id="exact">
-          <div class="text">
-            <span class="num" aria-hidden="true">01 · STANDARD</span>
-            <h3>Exact first, decimal underneath</h3>
-            <p class="lead">½ stays ½. √8 becomes 2√2.</p>
-            <p>Type naturally – fractions, roots, powers, integrals – and press ENTER. Every stack level shows what you typed, the exact result and its decimal value. Click a level to edit it and ENTER replaces it in place.</p>
-            <ul>
-              <li>Degrees or radians, exact or decimal (<kbd>⌥R</kbd> <kbd>⌥E</kbd>)</li>
-              <li>RPN when you want it: an operator on an empty line works on the stack</li>
-              <li>Variables and your own functions: <code>a = 5</code>, <code>f(x) = x² − 3x + 2</code></li>
-            </ul>
-            <dl class="keys"><dt>Evaluate, decimal</dt><dd><kbd>Enter</kbd> <kbd>⇧ Enter</kbd></dd><dt>Edit a level</dt><dd>click it, or <kbd>↑</kbd> <kbd>Enter</kbd></dd></dl>
-          </div>
-          <figure class="shot device"><img src="img/device-calc.png" width="800" height="1550" loading="lazy" decoding="async" alt="The calculator in the standard mode: 8.5 · 88 · 1.19 = 890.12 on stack level 1"></figure>
-        </article>
-
-        <article class="feature flip" id="cas">
-          <div class="text">
-            <span class="num" aria-hidden="true">02 · CAS</span>
-            <h3>Algebra that double-checks itself</h3>
-            <p class="lead">Simplify, factor, solve, differentiate, integrate.</p>
-            <p>The CAS mode turns the softkeys into SIMP, EXPA, FACT and SOLVE, with a calculus menu for derivatives, antiderivatives, definite integrals and limits. Every answer is put back into the original numerically – a failed check is never shown.</p>
-            <ul class="proof" aria-label="Examples">
-              <li><b>∫₀¹ sin 2x dx</b>½ − cos(2)/2 ≈ 0.70807</li>
-              <li><b>sin x = ½</b>x = π/6 + 2nπ, 5π/6 + 2nπ</li>
-              <li><b>∫₋₁¹ dx/x²</b>an honest error – not −2</li>
-            </ul>
-          </div>
-          <figure class="shot device"><img src="img/device-cas.png" width="800" height="1550" loading="lazy" decoding="async" alt="The CAS mode: the integral of sin 2x from 0 to 1 exactly as 1/2 − cos(2)/2 with its approximation, the same as a decimal, and the antiderivative −cos(2x)/2 + C"></figure>
-        </article>
-
-        <article class="feature" id="graph">
-          <div class="text">
-            <span class="num" aria-hidden="true">03 · GRAPH</span>
-            <h3>A plotter that respects poles and jumps</h3>
-            <p class="lead">tan x without vertical lines. floor x with real steps.</p>
-            <p>Up to six functions at once, told apart by line style like on a real LCD. Zoom and pan with the keyboard, mouse, wheel or two fingers; trace a curve; find zeros, extrema, intersections and tangents; shade a signed area. Export as PNG or SVG.</p>
-            <dl class="keys"><dt>Pan, zoom</dt><dd><kbd>←</kbd> <kbd>→</kbd> <kbd>↑</kbd> <kbd>↓</kbd> <kbd>+</kbd> <kbd>−</kbd></dd><dt>Menus</dt><dd><kbd>F1</kbd> … <kbd>F6</kbd></dd></dl>
-          </div>
-          <figure class="shot device"><img src="img/device-graph.png" width="800" height="1550" loading="lazy" decoding="async" alt="The graph mode: sin((x − 1)(x + 2)) between −5 and 5 with all zeros marked"></figure>
-        </article>
-
-        <article class="feature wide" id="full">
-          <div class="text">
-            <span class="num" aria-hidden="true">04 · FULL SIZE</span>
-            <h3>All the screen you have</h3>
-            <p class="lead">One key – <kbd>⌥F</kbd> – and display and keypad fill the window.</p>
-            <p>On a wide screen the keypad moves beside a big display; on a phone the calculator fills the screen. The plot grows with it.</p>
-          </div>
-          <figure class="shot wide"><img src="img/graph.png" width="2560" height="1394" loading="lazy" decoding="async" alt="Full size in a wide window: the plot of sin((x − 1)(x + 2)) and the parabola x²/6 − 1 with all intersections marked, the keypad on the right">
-            <figcaption>sin((x − 1)(x + 2)) and x²/6 − 1 – intersections marked with ANLYZ ▸ ISECT</figcaption>
-          </figure>
-        </article>
-      </div>
-
-      <section class="block" id="more" aria-labelledby="more-title">
+      <section class="section" aria-labelledby="features-title">
         <div class="wrap">
-          <h2 id="more-title">Small details, done properly</h2>
-          <p>A calculator is used every day. These are the things that make it pleasant.</p>
+          <div class="head reveal">
+            <span class="chip">Features</span>
+            <h2 id="features-title">Three modes, one calculator</h2>
+            <p>The softkeys switch between them – <kbd>F1</kbd> Standard, <kbd>F2</kbd> CAS, <kbd>F3</kbd> Graph.</p>
+          </div>
+
+          <article class="feature" id="exact">
+            <div class="text from-left">
+              <span class="chip" aria-hidden="true">01 · Standard</span>
+              <h3>Exact first, decimal underneath</h3>
+              <p class="lead">½ stays ½. √8 becomes 2√2.</p>
+              <p>Type naturally – fractions, roots, powers, integrals – and press ENTER. Every stack level shows what you typed, the exact result and its decimal value. Click a level to edit it and ENTER replaces it in place.</p>
+              <ul>
+                <li>Degrees or radians, exact or decimal (<kbd>⌥R</kbd> <kbd>⌥E</kbd>)</li>
+                <li>RPN when you want it: an operator on an empty line works on the stack</li>
+                <li>Variables and your own functions: <code>a = 5</code>, <code>f(x) = x² − 3x + 2</code></li>
+              </ul>
+            </div>
+            <figure class="shot device from-right"><img src="img/device-calc.png" width="800" height="1550" loading="lazy" decoding="async" alt="The calculator in the standard mode: 8.5 · 88 · 1.19 = 890.12 on stack level 1"></figure>
+          </article>
+
+          <article class="feature flip" id="cas">
+            <div class="text from-right">
+              <span class="chip" aria-hidden="true">02 · CAS</span>
+              <h3>Algebra that double-checks itself</h3>
+              <p class="lead">Simplify, factor, solve, differentiate, integrate.</p>
+              <p>The CAS mode turns the softkeys into SIMP, EXPA, FACT and SOLVE, with a calculus menu for derivatives, antiderivatives, definite integrals and limits. Every answer is put back into the original numerically – a failed check is never shown.</p>
+              <ul class="proof" aria-label="Examples">
+                <li><b>∫₀¹ sin 2x dx</b>½ − cos(2)/2 ≈ 0.70807</li>
+                <li><b>sin x = ½</b>x = π/6 + 2nπ, 5π/6 + 2nπ</li>
+                <li><b>∫₋₁¹ dx/x²</b>an honest error – not −2</li>
+              </ul>
+            </div>
+            <figure class="shot device from-left"><img src="img/device-cas.png" width="800" height="1550" loading="lazy" decoding="async" alt="The CAS mode: the integral of sin 2x from 0 to 1 exactly as 1/2 − cos(2)/2 with its approximation, the same as a decimal, and the antiderivative −cos(2x)/2 + C"></figure>
+          </article>
+
+          <article class="feature" id="graph">
+            <div class="text from-left">
+              <span class="chip" aria-hidden="true">03 · Graph</span>
+              <h3>A plotter that respects poles and jumps</h3>
+              <p class="lead">tan x without vertical lines. floor x with real steps.</p>
+              <p>Up to six functions at once, told apart by line style like on a real LCD. Zoom and pan with the keyboard, mouse, wheel or two fingers; trace a curve; find zeros, extrema, intersections and tangents; shade a signed area. Export as PNG or SVG.</p>
+              <dl class="keys"><dt>Pan, zoom</dt><dd><kbd>←</kbd> <kbd>→</kbd> <kbd>↑</kbd> <kbd>↓</kbd> <kbd>+</kbd> <kbd>−</kbd></dd><dt>Analyse</dt><dd>ROOT · EXTR · ISECT · TANG · ∫AREA</dd></dl>
+            </div>
+            <figure class="shot device from-right"><img src="img/device-graph.png" width="800" height="1550" loading="lazy" decoding="async" alt="The graph mode: sin((x − 1)(x + 2)) between −5 and 5 with all zeros marked"></figure>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="plot-title">
+        <div class="wrap">
+          <div class="head reveal">
+            <span class="chip">ANLYZ ▸ ISECT</span>
+            <h2 id="plot-title">Plotted, not guessed</h2>
+            <p>sin((x − 1)(x + 2)) and the parabola x²/6 − 1 – eight intersections, each one found numerically to ten digits.</p>
+          </div>
+          <figure class="plot zoom" role="img" aria-label="Plot of sin((x − 1)(x + 2)) as a solid line and x²/6 − 1 as a dashed line between x = −5 and 5, with their eight intersections marked">
+            <svg viewBox="0 0 1000 400" aria-hidden="true" focusable="false">
+              <g class="grid">
+                <line x1="100" y1="0" x2="100" y2="400"/><line x1="200" y1="0" x2="200" y2="400"/><line x1="300" y1="0" x2="300" y2="400"/><line x1="400" y1="0" x2="400" y2="400"/><line x1="600" y1="0" x2="600" y2="400"/><line x1="700" y1="0" x2="700" y2="400"/><line x1="800" y1="0" x2="800" y2="400"/><line x1="900" y1="0" x2="900" y2="400"/>
+                <line x1="0" y1="66.7" x2="1000" y2="66.7"/><line x1="0" y1="133.3" x2="1000" y2="133.3"/><line x1="0" y1="266.7" x2="1000" y2="266.7"/><line x1="0" y1="333.3" x2="1000" y2="333.3"/>
+              </g>
+              <line class="axis" x1="0" y1="200" x2="1000" y2="200"/>
+              <line class="axis" x1="500" y1="0" x2="500" y2="400"/>
+              <text class="lbl" x="292" y="222">−2</text><text class="lbl" x="692" y="222">2</text><text class="lbl" x="508" y="72">2</text><text class="lbl" x="508" y="340">−2</text>
+              <g class="curves">
+                <path class="fn g" d="M0.0 -11.1L20.0 10.7L40.0 31.6L60.0 51.6L80.0 70.7L100.0 88.9L120.0 106.2L140.0 122.7L160.0 138.2L180.0 152.9L200.0 166.7L220.0 179.6L240.0 191.6L260.0 202.7L280.0 212.9L300.0 222.2L320.0 230.7L340.0 238.2L360.0 244.9L380.0 250.7L400.0 255.6L420.0 259.6L440.0 262.7L460.0 264.9L480.0 266.2L500.0 266.7L520.0 266.2L540.0 264.9L560.0 262.7L580.0 259.6L600.0 255.6L620.0 250.7L640.0 244.9L660.0 238.2L680.0 230.7L700.0 222.2L720.0 212.9L740.0 202.7L760.0 191.6L780.0 179.6L800.0 166.7L820.0 152.9L840.0 138.2L860.0 122.7L880.0 106.2L900.0 88.9L920.0 70.7L940.0 51.6L960.0 31.6L980.0 10.7L1000.0 -11.1"/>
+                <path class="fn f" d="M0.0 250.1L1.7 256.1L3.3 260.8L5.0 264.2L6.7 266.1L8.3 266.7L10.0 265.7L11.7 263.4L13.3 259.7L15.0 254.8L16.7 248.7L18.3 241.7L20.0 233.8L21.7 225.3L23.3 216.3L25.0 207.0L26.7 197.5L28.3 188.2L30.0 179.2L31.7 170.5L33.3 162.5L35.0 155.3L36.7 148.9L38.3 143.5L40.0 139.2L41.7 136.0L43.3 134.1L45.0 133.3L46.7 133.8L48.3 135.5L50.0 138.3L51.7 142.2L53.3 147.0L55.0 152.8L56.7 159.4L58.3 166.6L60.0 174.4L61.7 182.6L63.3 191.0L65.0 199.6L66.7 208.1L68.3 216.5L70.0 224.5L71.7 232.1L73.3 239.2L75.0 245.6L76.7 251.3L78.3 256.2L80.0 260.2L81.7 263.3L83.3 265.4L85.0 266.5L86.7 266.6L88.3 265.8L90.0 264.0L91.7 261.3L93.3 257.7L95.0 253.4L96.7 248.3L98.3 242.5L100.0 236.3L101.7 229.5L103.3 222.4L105.0 215.1L106.7 207.5L108.3 199.9L110.0 192.4L111.7 184.9L113.3 177.7L115.0 170.9L116.7 164.4L118.3 158.4L120.0 152.9L121.7 148.0L123.3 143.8L125.0 140.2L126.7 137.4L128.3 135.3L130.0 133.9L131.7 133.4L133.3 133.5L135.0 134.4L136.7 136.0L138.3 138.3L140.0 141.3L141.7 144.9L143.3 149.0L145.0 153.6L146.7 158.7L148.3 164.2L150.0 170.0L151.7 176.1L153.3 182.4L155.0 188.8L156.7 195.3L158.3 201.7L160.0 208.2L161.7 214.5L163.3 220.7L165.0 226.6L166.7 232.3L168.3 237.6L170.0 242.6L171.7 247.2L173.3 251.3L175.0 255.0L176.7 258.2L178.3 260.9L180.0 263.1L181.7 264.8L183.3 265.9L185.0 266.5L186.7 266.6L188.3 266.2L190.0 265.3L191.7 263.9L193.3 262.0L195.0 259.7L196.7 257.0L198.3 253.9L200.0 250.5L201.7 246.7L203.3 242.6L205.0 238.2L206.7 233.7L208.3 228.9L210.0 224.0L211.7 219.0L213.3 213.9L215.0 208.7L216.7 203.5L218.3 198.4L220.0 193.2L221.7 188.2L223.3 183.3L225.0 178.5L226.7 173.8L228.3 169.3L230.0 165.1L231.7 161.0L233.3 157.2L235.0 153.6L236.7 150.3L238.3 147.3L240.0 144.6L241.7 142.1L243.3 140.0L245.0 138.1L246.7 136.6L248.3 135.3L250.0 134.4L251.7 133.8L253.3 133.4L255.0 133.3L256.7 133.6L258.3 134.1L260.0 134.8L261.7 135.8L263.3 137.1L265.0 138.6L266.7 140.3L268.3 142.2L270.0 144.3L271.7 146.5L273.3 149.0L275.0 151.6L276.7 154.3L278.3 157.2L280.0 160.2L281.7 163.3L283.3 166.4L285.0 169.7L286.7 173.0L288.3 176.3L290.0 179.7L291.7 183.1L293.3 186.5L295.0 189.9L296.7 193.3L298.3 196.6L300.0 200.0L301.7 203.3L303.3 206.6L305.0 209.8L306.7 213.0L308.3 216.0L310.0 219.1L311.7 222.0L313.3 224.9L315.0 227.6L316.7 230.3L318.3 232.9L320.0 235.4L321.7 237.8L323.3 240.1L325.0 242.3L326.7 244.4L328.3 246.4L330.0 248.3L331.7 250.1L333.3 251.8L335.0 253.3L336.7 254.8L338.3 256.2L340.0 257.5L341.7 258.7L343.3 259.8L345.0 260.8L346.7 261.7L348.3 262.5L350.0 263.3L351.7 263.9L353.3 264.5L355.0 265.0L356.7 265.4L358.3 265.8L360.0 266.1L361.7 266.3L363.3 266.5L365.0 266.6L366.7 266.7L368.3 266.7L370.0 266.6L371.7 266.5L373.3 266.4L375.0 266.2L376.7 266.0L378.3 265.8L380.0 265.5L381.7 265.2L383.3 264.8L385.0 264.5L386.7 264.1L388.3 263.7L390.0 263.3L391.7 262.9L393.3 262.4L395.0 262.0L396.7 261.5L398.3 261.1L400.0 260.6L401.7 260.2L403.3 259.7L405.0 259.2L406.7 258.8L408.3 258.3L410.0 257.9L411.7 257.4L413.3 257.0L415.0 256.6L416.7 256.2L418.3 255.8L420.0 255.4L421.7 255.1L423.3 254.7L425.0 254.4L426.7 254.1L428.3 253.8L430.0 253.5L431.7 253.2L433.3 253.0L435.0 252.8L436.7 252.6L438.3 252.4L440.0 252.3L441.7 252.2L443.3 252.1L445.0 252.0L446.7 251.9L448.3 251.9L450.0 251.9L451.7 251.9L453.3 251.9L455.0 252.0L456.7 252.1L458.3 252.2L460.0 252.3L461.7 252.4L463.3 252.6L465.0 252.8L466.7 253.0L468.3 253.2L470.0 253.5L471.7 253.8L473.3 254.1L475.0 254.4L476.7 254.7L478.3 255.1L480.0 255.4L481.7 255.8L483.3 256.2L485.0 256.6L486.7 257.0L488.3 257.4L490.0 257.9L491.7 258.3L493.3 258.8L495.0 259.2L496.7 259.7L498.3 260.2L500.0 260.6L501.7 261.1L503.3 261.5L505.0 262.0L506.7 262.4L508.3 262.9L510.0 263.3L511.7 263.7L513.3 264.1L515.0 264.5L516.7 264.8L518.3 265.2L520.0 265.5L521.7 265.8L523.3 266.0L525.0 266.2L526.7 266.4L528.3 266.5L530.0 266.6L531.7 266.7L533.3 266.7L535.0 266.6L536.7 266.5L538.3 266.3L540.0 266.1L541.7 265.8L543.3 265.4L545.0 265.0L546.7 264.5L548.3 263.9L550.0 263.3L551.7 262.5L553.3 261.7L555.0 260.8L556.7 259.8L558.3 258.7L560.0 257.5L561.7 256.2L563.3 254.8L565.0 253.3L566.7 251.8L568.3 250.1L570.0 248.3L571.7 246.4L573.3 244.4L575.0 242.3L576.7 240.1L578.3 237.8L580.0 235.4L581.7 232.9L583.3 230.3L585.0 227.6L586.7 224.9L588.3 222.0L590.0 219.1L591.7 216.0L593.3 213.0L595.0 209.8L596.7 206.6L598.3 203.3L600.0 200.0L601.7 196.6L603.3 193.3L605.0 189.9L606.7 186.5L608.3 183.1L610.0 179.7L611.7 176.3L613.3 173.0L615.0 169.7L616.7 166.4L618.3 163.3L620.0 160.2L621.7 157.2L623.3 154.3L625.0 151.6L626.7 149.0L628.3 146.5L630.0 144.3L631.7 142.2L633.3 140.3L635.0 138.6L636.7 137.1L638.3 135.8L640.0 134.8L641.7 134.1L643.3 133.6L645.0 133.3L646.7 133.4L648.3 133.8L650.0 134.4L651.7 135.3L653.3 136.6L655.0 138.1L656.7 140.0L658.3 142.1L660.0 144.6L661.7 147.3L663.3 150.3L665.0 153.6L666.7 157.2L668.3 161.0L670.0 165.1L671.7 169.3L673.3 173.8L675.0 178.5L676.7 183.3L678.3 188.2L680.0 193.2L681.7 198.4L683.3 203.5L685.0 208.7L686.7 213.9L688.3 219.0L690.0 224.0L691.7 228.9L693.3 233.7L695.0 238.2L696.7 242.6L698.3 246.7L700.0 250.5L701.7 253.9L703.3 257.0L705.0 259.7L706.7 262.0L708.3 263.9L710.0 265.3L711.7 266.2L713.3 266.6L715.0 266.5L716.7 265.9L718.3 264.8L720.0 263.1L721.7 260.9L723.3 258.2L725.0 255.0L726.7 251.3L728.3 247.2L730.0 242.6L731.7 237.6L733.3 232.3L735.0 226.6L736.7 220.7L738.3 214.5L740.0 208.2L741.7 201.7L743.3 195.3L745.0 188.8L746.7 182.4L748.3 176.1L750.0 170.0L751.7 164.2L753.3 158.7L755.0 153.6L756.7 149.0L758.3 144.9L760.0 141.3L761.7 138.3L763.3 136.0L765.0 134.4L766.7 133.5L768.3 133.4L770.0 133.9L771.7 135.3L773.3 137.4L775.0 140.2L776.7 143.8L778.3 148.0L780.0 152.9L781.7 158.4L783.3 164.4L785.0 170.9L786.7 177.7L788.3 184.9L790.0 192.4L791.7 199.9L793.3 207.5L795.0 215.1L796.7 222.4L798.3 229.5L800.0 236.3L801.7 242.5L803.3 248.3L805.0 253.4L806.7 257.7L808.3 261.3L810.0 264.0L811.7 265.8L813.3 266.6L815.0 266.5L816.7 265.4L818.3 263.3L820.0 260.2L821.7 256.2L823.3 251.3L825.0 245.6L826.7 239.2L828.3 232.1L830.0 224.5L831.7 216.5L833.3 208.1L835.0 199.6L836.7 191.0L838.3 182.6L840.0 174.4L841.7 166.6L843.3 159.4L845.0 152.8L846.7 147.0L848.3 142.2L850.0 138.3L851.7 135.5L853.3 133.8L855.0 133.3L856.7 134.1L858.3 136.0L860.0 139.2L861.7 143.5L863.3 148.9L865.0 155.3L866.7 162.5L868.3 170.5L870.0 179.2L871.7 188.2L873.3 197.5L875.0 207.0L876.7 216.3L878.3 225.3L880.0 233.8L881.7 241.7L883.3 248.7L885.0 254.8L886.7 259.7L888.3 263.4L890.0 265.7L891.7 266.7L893.3 266.1L895.0 264.2L896.7 260.8L898.3 256.1L900.0 250.1L901.7 242.9L903.3 234.8L905.0 225.8L906.7 216.2L908.3 206.2L910.0 196.0L911.7 185.8L913.3 176.0L915.0 166.7L916.7 158.2L918.3 150.6L920.0 144.2L921.7 139.2L923.3 135.7L925.0 133.7L926.7 133.4L928.3 134.8L930.0 137.8L931.7 142.5L933.3 148.6L935.0 156.1L936.7 164.8L938.3 174.4L940.0 184.7L941.7 195.5L943.3 206.4L945.0 217.2L946.7 227.6L948.3 237.2L950.0 245.9L951.7 253.3L953.3 259.2L955.0 263.5L956.7 266.0L958.3 266.6L960.0 265.4L961.7 262.2L963.3 257.2L965.0 250.5L966.7 242.3L968.3 232.9L970.0 222.4L971.7 211.2L973.3 199.7L975.0 188.1L976.7 176.8L978.3 166.2L980.0 156.7L981.7 148.4L983.3 141.8L985.0 137.0L986.7 134.1L988.3 133.4L990.0 134.7L991.7 138.3L993.3 143.8L995.0 151.2L996.7 160.2L998.3 170.6L1000.0 181.9"/>
+              </g>
+              <line class="scan" x1="0" y1="0" x2="0" y2="400"/>
+              <g class="dots"><rect class="dot" x="217.8" y="175.9" width="12" height="12"/><rect class="dot" x="309.8" y="223.0" width="12" height="12"/><rect class="dot" x="404.5" y="251.8" width="12" height="12"/><rect class="dot" x="517.7" y="260.0" width="12" height="12"/><rect class="dot" x="541.8" y="258.1" width="12" height="12"/><rect class="dot" x="684.8" y="220.2" width="12" height="12"/><rect class="dot" x="735.7" y="195.8" width="12" height="12"/><rect class="dot" x="780.2" y="169.7" width="12" height="12"/></g>
+            </svg>
+            <figcaption class="plot-cap"><span>Y1 = sin((x−1)(x+2))</span><span>Y2 = x²/6 − 1</span><span>x ∈ [−5, 5]</span></figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section class="section" id="full" aria-labelledby="full-title">
+        <div class="wrap">
+          <div class="head reveal">
+            <span class="chip">04 · Full size</span>
+            <h2 id="full-title">All the screen you have</h2>
+            <p>One key – <kbd>⌥F</kbd> – and display and keypad fill the window. On a wide screen the keypad moves beside a big display; on a phone the calculator fills the screen.</p>
+          </div>
+          <figure class="wide-shot zoom"><img src="img/graph.png" width="2560" height="1114" loading="lazy" decoding="async" alt="Full size in a wide window: the plot of sin((x − 1)(x + 2)) and the parabola x²/6 − 1 with all intersections marked, the keypad on the right">
+            <figcaption>The same two functions in the app – intersections with ANLYZ ▸ ISECT</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section class="section" id="more" aria-labelledby="more-title">
+        <div class="wrap">
+          <div class="head reveal">
+            <span class="chip">Details</span>
+            <h2 id="more-title">Small details, done properly</h2>
+            <p>A calculator is used every day. These are the things that make it pleasant.</p>
+          </div>
           <ul class="cards">
-            <li><b>Offline and private</b>All mathematics runs on your device. No account, no tracking, no server – the web app works without a network after the first visit.</li>
-            <li><b>Desktop and web, same results</b>One code base: the app for macOS, Windows and Linux and the web version compute exactly the same.</li>
-            <li><b>Textbook notation</b>Fractions, roots, integrals, sums and matrices as you know them from paper – typed or from the keypad.</li>
-            <li><b>History with favourites</b>Every calculation is kept; star the ones you need again and re-use input or result with one key.</li>
-            <li><b>Export and import</b>Variables, functions, history and settings in one file – move them between desktop and web.</li>
-            <li><b>English and German</b>Switch the language at any time; the native menu follows.</li>
-            <li><b>Honest about limits</b>No elementary antiderivative? Complex result? Diverging integral? You get a clear message, never a made-up number.</li>
-            <li><b>Accessible</b>Every key is reachable by keyboard and has a name for screen readers; checked with axe in Chromium and WebKit.</li>
+            <li class="reveal"><span class="ico" aria-hidden="true">⌂</span><b>Offline and private</b>All mathematics runs on your device. No account, no tracking, no server – the web app works without a network after the first visit.</li>
+            <li class="reveal"><span class="ico" aria-hidden="true">≡</span><b>Desktop and web, same results</b>One code base: the app for macOS, Windows and Linux and the web version compute exactly the same.</li>
+            <li class="reveal"><span class="ico" aria-hidden="true">√</span><b>Textbook notation</b>Fractions, roots, integrals, sums and matrices as you know them from paper – typed or from the keypad.</li>
+            <li class="reveal"><span class="ico" aria-hidden="true">★</span><b>History with favourites</b>Every calculation is kept; star the ones you need again and re-use input or result with one key.</li>
+            <li class="reveal"><span class="ico" aria-hidden="true">⇄</span><b>Export and import</b>Variables, functions, history and settings in one file – move them between desktop and web.</li>
+            <li class="reveal"><span class="ico" aria-hidden="true">Aa</span><b>English and German</b>Switch the language at any time; the native menu follows.</li>
+            <li class="reveal"><span class="ico" aria-hidden="true">≈</span><b>Honest about limits</b>No elementary antiderivative? Complex result? Diverging integral? You get a clear message, never a made-up number.</li>
+            <li class="reveal"><span class="ico" aria-hidden="true">⌨</span><b>Accessible</b>Every key is reachable by keyboard and has a name for screen readers; checked with axe in Chromium and WebKit.</li>
           </ul>
         </div>
       </section>
 
-      <section class="block" id="keys" aria-labelledby="keys-title">
+      <section class="section" id="keys" aria-labelledby="keys-title">
         <div class="wrap">
-          <h2 id="keys-title">Hands on the keyboard</h2>
-          <p>Mouse and touch work too – but every key of the calculator is one key on your keyboard away. <kbd>⌘</kbd> on macOS, <kbd>Ctrl</kbd> on Windows and Linux; <kbd>⌥</kbd> is <kbd>Alt</kbd>.</p>
+          <div class="head reveal">
+            <span class="chip">Keys</span>
+            <h2 id="keys-title">Hands on the keyboard</h2>
+            <p>Mouse and touch work too – but every key of the calculator is one key on your keyboard away. <kbd>⌘</kbd> on macOS, <kbd>Ctrl</kbd> on Windows and Linux; <kbd>⌥</kbd> is <kbd>Alt</kbd>.</p>
+          </div>
           <div class="cheat-cols">
-            <div>
+            <div class="from-left">
               <h3>Calculating</h3>
               <dl class="cheat">
                 <div><dt>Type a formula</dt><dd>just type</dd></div>
@@ -518,11 +753,12 @@
                 <div><dt>Shift keys on the keypad</dt><dd><kbd class="l">◀⇧</kbd> <kbd class="r">⇧▶</kbd></dd></div>
               </dl>
             </div>
-            <div>
+            <div class="from-right">
               <h3>Everything else</h3>
               <dl class="cheat">
                 <div><dt>Softkeys: modes and menus</dt><dd><kbd>F1</kbd> … <kbd>F6</kbd></dd></div>
-                <div><dt>Radians ⇄ degrees, exact ⇄ decimal</dt><dd><kbd>⌥ R</kbd> <kbd>⌥ E</kbd></dd></div>
+                <div><dt>Radians ⇄ degrees</dt><dd><kbd>⌥ R</kbd></dd></div>
+                <div><dt>Exact ⇄ decimal</dt><dd><kbd>⌥ E</kbd></dd></div>
                 <div><dt>Full size</dt><dd><kbd>⌥ F</kbd></dd></div>
                 <div><dt>Settings</dt><dd><kbd>⌘ ,</kbd></dd></div>
                 <div><dt>Export, import</dt><dd><kbd>⌘ S</kbd> <kbd>⌘ O</kbd></dd></div>
@@ -533,65 +769,72 @@
         </div>
       </section>
 
-      <section class="block" id="platforms" aria-labelledby="platforms-title">
+      <section class="section" id="platforms" aria-labelledby="platforms-title">
         <div class="wrap">
-          <h2 id="platforms-title">In the browser and on the desktop</h2>
-          <p>The web app needs nothing but a modern browser. The desktop app is built with Tauri and Rust – small, fast and with a native menu.</p>
-          <div class="table-scroll">
-            <table class="platforms">
-              <thead><tr><th scope="col">Where</th><th scope="col">Needs</th><th scope="col">How</th></tr></thead>
-              <tbody>
-                <tr><td>Web</td><td>Chrome, Edge, Safari or Firefox (current versions)</td><td><a href="https://krocon.de/products/aba-x1/">krocon.de/products/aba-x1</a> – installable, works offline</td></tr>
-                <tr><td>macOS</td><td>12 Monterey or later, Apple Silicon and Intel</td><td>.dmg – with the first release on GitHub</td></tr>
-                <tr><td>Windows</td><td>10 or 11, x64</td><td>Installer or .msi – with the first release</td></tr>
-                <tr><td>Linux</td><td>WebKitGTK 4.1 – Ubuntu 22.04, Debian 12, Fedora 36 or later</td><td>.deb, .rpm, AppImage – with the first release</td></tr>
-              </tbody>
-            </table>
+          <div class="head reveal">
+            <span class="chip">Platforms</span>
+            <h2 id="platforms-title">In the browser and on the desktop</h2>
+            <p>The web app needs nothing but a modern browser. The desktop app is built with Tauri and Rust – small, fast and with a native menu.</p>
+          </div>
+          <ul class="platforms">
+            <li class="reveal"><h3>Web</h3><p>Chrome, Edge, Safari or Firefox – installable, works offline</p><a class="chip" href="https://krocon.de/products/aba-x1/">Open now</a></li>
+            <li class="reveal"><h3>macOS</h3><p>12 Monterey or later, Apple Silicon and Intel – .dmg</p><a class="chip" href="https://github.com/krocon/aba-x/releases/">Download</a></li>
+            <li class="reveal"><h3>Windows</h3><p>10 or 11, x64 – installer or .msi</p><a class="chip" href="https://github.com/krocon/aba-x/releases/">Download</a></li>
+            <li class="reveal"><h3>Linux</h3><p>WebKitGTK 4.1 – .deb, .rpm, AppImage</p><a class="chip" href="https://github.com/krocon/aba-x/releases/">Download</a></li>
+          </ul>
+          <p class="releases reveal">All packages and release notes: <a href="https://github.com/krocon/aba-x/releases/">github.com/krocon/aba-x/releases</a></p>
+        </div>
+      </section>
+
+      <section class="section" id="faq" aria-labelledby="faq-title">
+        <div class="wrap">
+          <div class="head reveal">
+            <span class="chip">FAQ</span>
+            <h2 id="faq-title">Questions</h2>
+          </div>
+          <div class="faq">
+            <details>
+              <summary>Is it free?</summary>
+              <p>Yes. ABA-X1 is open source under the MIT license – read the code, change it, use it.</p>
+            </details>
+            <details>
+              <summary>Can I trust the results?</summary>
+              <p>Every symbolic answer is checked numerically at several points before it is shown: a derivative is compared with a numerical derivative, an antiderivative is differentiated again, solutions are put back into the equation, a definite integral is compared with numerical integration. Answers that fail are not displayed – you get a message instead.</p>
+            </details>
+            <details>
+              <summary>Does it send my calculations anywhere?</summary>
+              <p>No. Everything runs on your device – also in the browser. There are no accounts, no cookies for tracking and no server that computes for you. Your variables and history stay in your browser's storage or in the app's data folder.</p>
+            </details>
+            <details>
+              <summary>What can the computer algebra do?</summary>
+              <p>Simplify, expand, factor, solve equations (also with general solutions like x = π/6 + 2nπ) and systems, derivatives (also partial and of higher order), antiderivatives, definite and improper integrals and limits. Complex numbers, matrices as calculations and inequalities come later.</p>
+            </details>
+            <details>
+              <summary>Where do I get the desktop app?</summary>
+              <p>On the <a href="https://github.com/krocon/aba-x/releases/">releases page on GitHub</a>: .dmg for macOS, installer or .msi for Windows, .deb, .rpm or AppImage for Linux. If a package is not signed, macOS or Windows may ask once before the first start.</p>
+            </details>
+            <details>
+              <summary>Is it a copy of a well-known calculator?</summary>
+              <p>No. ABA-X1 is inspired by the classic graphing calculators – stack, softkeys, shift keys – but has its own design, its own key layout and no connection to any calculator manufacturer.</p>
+            </details>
+            <details>
+              <summary>Which languages?</summary>
+              <p>English and German, switchable at any time in the settings.</p>
+            </details>
           </div>
         </div>
       </section>
 
-      <section class="block" id="faq" aria-labelledby="faq-title">
-        <div class="wrap">
-          <h2 id="faq-title">Questions</h2>
-          <details>
-            <summary>Is it free?</summary>
-            <p>Yes. ABA-X1 is open source under the MIT license – read the code, change it, use it.</p>
-          </details>
-          <details>
-            <summary>Can I trust the results?</summary>
-            <p>Every symbolic answer is checked numerically at several points before it is shown: a derivative is compared with a numerical derivative, an antiderivative is differentiated again, solutions are put back into the equation, a definite integral is compared with numerical integration. Answers that fail are not displayed – you get a message instead.</p>
-          </details>
-          <details>
-            <summary>Does it send my calculations anywhere?</summary>
-            <p>No. Everything runs on your device – also in the browser. There are no accounts, no cookies for tracking and no server that computes for you. Your variables and history stay in your browser's storage or in the app's data folder.</p>
-          </details>
-          <details>
-            <summary>What can the computer algebra do?</summary>
-            <p>Simplify, expand, factor, solve equations (also with general solutions like x = π/6 + 2nπ) and systems, derivatives (also partial and of higher order), antiderivatives, definite and improper integrals and limits. Complex numbers, matrices as calculations and inequalities come later.</p>
-          </details>
-          <details>
-            <summary>Where are the desktop packages?</summary>
-            <p>They come with the first release on GitHub. Until then you can use the web app or build the desktop app from source with Node.js, pnpm and Rust – the steps are in the <a href="https://github.com/krocon/aba-x#development">README</a>.</p>
-          </details>
-          <details>
-            <summary>Is it a copy of a well-known calculator?</summary>
-            <p>No. ABA-X1 is inspired by the classic graphing calculators – stack, softkeys, shift keys – but has its own design, its own key layout and no connection to any calculator manufacturer.</p>
-          </details>
-          <details>
-            <summary>Which languages?</summary>
-            <p>English and German, switchable at any time in the settings.</p>
-          </details>
-        </div>
-      </section>
-
-      <section class="cta paper" aria-labelledby="cta-title">
-        <div class="wrap">
+      <section class="section cta" aria-labelledby="cta-title">
+        <div class="orb a" aria-hidden="true"></div>
+        <div class="orb b" aria-hidden="true"></div>
+        <div class="wrap reveal">
+          <span class="chip">Ready</span>
           <h2 id="cta-title">Try it now</h2>
-          <p>No installation, no account – it opens in your browser and keeps working offline.</p>
+          <p>No account – open it in your browser, or download the app for your desktop.</p>
           <div class="actions">
             <a class="btn btn-primary" href="https://krocon.de/products/aba-x1/">Open the web app</a>
-            <a class="btn btn-secondary" href="https://github.com/krocon/aba-x">Source on GitHub</a>
+            <a class="btn btn-secondary" href="https://github.com/krocon/aba-x/releases/">Download</a>
           </div>
         </div>
       </section>
@@ -599,26 +842,25 @@
 
     <footer>
       <div class="wrap">
-        <div class="row">
-          <span class="mark">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" aria-hidden="true" focusable="false">
-              <rect width="1024" height="1024" rx="224" fill="#262b37"/>
-              <g fill="none" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M300 812c-30 62-96 78-142 40M300 812 L462 212c28-62 94-78 140-40" stroke="#a98fdb" stroke-width="84"/>
-                <path d="M566 470 L780 730 M780 470 L566 730" stroke="#68cac3" stroke-width="76"/>
-              </g>
-            </svg>
-            ABA-X1
-          </span>
-          <ul>
-            <li><a href="https://krocon.de/products/aba-x1/">Web app</a></li>
-            <li><a href="https://github.com/krocon/aba-x">Source on GitHub</a></li>
-            <li><a href="https://github.com/krocon/aba-x/issues">Report a problem</a></li>
-            <li><a href="https://github.com/krocon/aba-x/blob/main/LICENSE">MIT license</a></li>
-            <li><a href="https://krocon.de/products/fnf/">Files and Folders</a></li>
-            <li><a href="https://krocon.de">Imprint and privacy (krocon.de)</a></li>
-          </ul>
-        </div>
+        <span class="mark">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" aria-hidden="true" focusable="false">
+            <rect width="1024" height="1024" rx="224" fill="#262b37"/>
+            <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M300 812c-30 62-96 78-142 40M300 812 L462 212c28-62 94-78 140-40" stroke="#a98fdb" stroke-width="84"/>
+              <path d="M566 470 L780 730 M780 470 L566 730" stroke="#68cac3" stroke-width="76"/>
+            </g>
+          </svg>
+          ABA-X1
+        </span>
+        <ul>
+          <li><a href="https://krocon.de/products/aba-x1/">Web app</a></li>
+          <li><a href="https://github.com/krocon/aba-x/releases/">Releases</a></li>
+          <li><a href="https://github.com/krocon/aba-x">Source on GitHub</a></li>
+          <li><a href="https://github.com/krocon/aba-x/issues">Report a problem</a></li>
+          <li><a href="https://github.com/krocon/aba-x/blob/main/LICENSE">MIT license</a></li>
+          <li><a href="https://krocon.de/products/fnf/">Files and Folders</a></li>
+          <li><a href="https://krocon.de">Imprint and privacy (krocon.de)</a></li>
+        </ul>
         <p>© 2026 Marc Kronberg. Computer algebra by Nerdamer (Apache-2.0), math input by MathLive (MIT). ABA-X1 is an independent project and not affiliated with any calculator manufacturer.</p>
       </div>
     </footer>

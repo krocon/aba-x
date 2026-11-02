@@ -3,8 +3,10 @@
 A static, **dark** page in English, after the model of the Comic Commander page: `index.html` with inline CSS,
 **no JavaScript, no web fonts, no trackers, no requests to other servers**. The pictures live in `img/` next to the
 page. Colours of the app: page `#252936`, LCD green, violet `#a98fdb`, teal `#68cac3` (logo inline, `favicon.svg` =
-`public/logo.svg`). The only movement is the small LCD ticker in the hero (CSS animation, off with
-`prefers-reduced-motion`).
+`public/logo.svg`). Motion is CSS only: load animations in the hero (logo draws itself, rolling LCD ticker), scroll-driven animations
+(`animation-timeline: view()/scroll()`: progress bar, panels sliding in, counters, the plot that draws itself) where
+the browser supports them – elsewhere everything is simply visible – and none with `prefers-reduced-motion`.
+Downloads link to `https://github.com/krocon/aba-x/releases/`.
 
 ## Upload
 
@@ -28,7 +30,7 @@ Generated from the web build, reproducible:
 pnpm screenshots:site     # builds the web version, writes site/img/*.png
 ```
 
-The scenes are in `scripts/screenshots/run.mjs` (group `site`): `hero` and `graph` are 1280 × 720 in full-size mode at
+The scenes are in `scripts/screenshots/run.mjs` (group `site`): `hero` and `graph` are 1280 × 580 in full-size mode at
 device pixel ratio 2 (the menu button is hidden); `device-*` are the device at 520 × 980 (= the worked examples). If
 the size changes, adjust `width`/`height` of the `<img>` tags – `scripts/site.test.mjs` compares them with the files.
 

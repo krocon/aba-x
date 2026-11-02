@@ -18,8 +18,9 @@ Worked examples (regenerated with `pnpm screenshots:examples`):
 [∫₀¹ sin(2x) dx exact, numeric and antiderivative](docs/screenshots/examples/b-integral.png) ·
 [plot of sin((x−1)(x+2)) with zeros](docs/screenshots/examples/c-graph.png)
 
-> **Status: v0.1.0, feature-complete first version.** Not yet released; packages are built by the release workflow
-> on demand. See [`docs/roadmap.md`](docs/roadmap.md).
+> **Downloads:** [GitHub releases](https://github.com/krocon/aba-x/releases/) · **Web app:**
+> [krocon.de/products/aba-x1](https://krocon.de/products/aba-x1/) · **Product page:**
+> [krocon.de/products/aba-x](https://krocon.de/products/aba-x/). See [`docs/roadmap.md`](docs/roadmap.md).
 
 ## Features
 

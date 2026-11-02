@@ -100,7 +100,7 @@ async function fullSize(page) {
 const site = [
   {
     name: 'hero',
-    viewport: { width: 1280, height: 720 },
+    viewport: { width: 1280, height: 580 },
     selector: '.device',
     async setup(page) {
       await fullSize(page);
@@ -120,7 +120,7 @@ const site = [
   },
   {
     name: 'graph',
-    viewport: { width: 1280, height: 720 },
+    viewport: { width: 1280, height: 580 },
     selector: '.device',
     async setup(page) {
       await fullSize(page);
