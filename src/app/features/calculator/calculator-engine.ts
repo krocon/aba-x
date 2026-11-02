@@ -7,6 +7,7 @@ import { parseLatexStatement } from '../../../math/parser/statement';
 import { type MathResult, fail, ok } from '../../../math/result';
 import { toLatex } from '../../../math/serializer';
 import { ComputeClient } from '../../core/compute/compute-client';
+import { SettingsStore } from '../settings/settings-store';
 import { pickVariable, solutionsDisplay, variablesOf, withConstant } from '../cas/cas-logic';
 import {
   type FormattedNumber,
@@ -26,6 +27,8 @@ export interface EvalContext {
   readonly ans?: Expr;
   readonly variables?: ReadonlyMap<string, Expr>;
   readonly functions?: ReadonlyMap<string, UserFunction>;
+  /** Significant digits of decimal results (settings). */
+  readonly digits?: number;
 }
 
 export interface Evaluation {
@@ -60,6 +63,7 @@ export type Outcome =
 @Injectable({ providedIn: 'root' })
 export class CalculatorEngine {
   private readonly compute = inject(ComputeClient);
+  private readonly settings = inject(SettingsStore);
 
   parse(latex: string, ctx: Pick<EvalContext, 'functions'>): MathResult<Expr> {
     return parseLatex(latex, { functions: new Set(ctx.functions?.keys() ?? []) });
@@ -140,7 +144,7 @@ export class CalculatorEngine {
 
     if (ctx.approx) {
       if (!numeric.ok) return numeric;
-      const n = formatNumber(numeric.value);
+      const n = formatNumber(numeric.value, ctx.digits);
       return ok({ input, expr: numberExpr(n.text), latex: n.latex, approximate: true });
     }
 
@@ -151,14 +155,16 @@ export class CalculatorEngine {
       return numeric;
     }
 
-    const cas = await this.compute.run({ op: 'simplify', expr: e });
+    const cas = await this.compute.run({ op: 'simplify', expr: e }, this.settings.timeoutMs());
     if (cas.ok) {
       if (becameComplex(e, cas.value.expr)) {
         return fail('domain', 'the result is complex (complex numbers are not supported yet)');
       }
       const decimalsFromInput = hasDecimals(input);
       const approx =
-        numeric.ok && !isPlainNumber(cas.value.expr) ? formatNumber(numeric.value) : undefined;
+        numeric.ok && !isPlainNumber(cas.value.expr)
+          ? formatNumber(numeric.value, ctx.digits)
+          : undefined;
       return ok({
         input,
         expr: cas.value.expr,
@@ -169,7 +175,7 @@ export class CalculatorEngine {
     }
     if (cas.error.code === 'timeout' || cas.error.code === 'cancelled') return cas;
     if (numeric.ok) {
-      const n = formatNumber(numeric.value);
+      const n = formatNumber(numeric.value, ctx.digits);
       return ok({
         input,
         expr: numberExpr(n.text),
@@ -193,7 +199,7 @@ export class CalculatorEngine {
     if (op === 'simplify' || op === 'expand' || op === 'factor') {
       if (e.type === 'rel' || e.type === 'list')
         return fail('unsupported', `${op.toUpperCase()} needs an expression`);
-      const r = await this.compute.run({ op, expr: e });
+      const r = await this.compute.run({ op, expr: e }, this.settings.timeoutMs());
       return r.ok ? done(r.value.expr, r.value.approximate) : r;
     }
     if (op === 'solve') {
@@ -202,7 +208,10 @@ export class CalculatorEngine {
           return fail('syntax', 'SOLVE: a system is a list of equations [a = b, c = d]');
         }
         const variables = variablesOf(e);
-        const r = await this.compute.run({ op: 'solveSystem', equations: [...e.items], variables });
+        const r = await this.compute.run(
+          { op: 'solveSystem', equations: [...e.items], variables },
+          this.settings.timeoutMs(),
+        );
         if (!r.ok) return r;
         if (r.value.length === 0) return fail('not-solvable', 'no solution found');
         const sets = r.value.map((set) =>
@@ -228,7 +237,10 @@ export class CalculatorEngine {
         return fail('unsupported', 'inequalities are not supported');
       const variable = pickVariable(equation);
       if (!variable) return fail('syntax', 'SOLVE: the equation needs exactly one unknown (or x)');
-      const r = await this.compute.run({ op: 'solve', equation, variable });
+      const r = await this.compute.run(
+        { op: 'solve', equation, variable },
+        this.settings.timeoutMs(),
+      );
       if (!r.ok) return r;
       if (r.value.solutions.length === 0)
         return fail('not-solvable', `no solution for ${variable}`);
@@ -244,10 +256,16 @@ export class CalculatorEngine {
     const variable = pickVariable(e);
     if (!variable) return fail('syntax', 'the expression needs exactly one variable (or x)');
     if (op === 'deriv') {
-      const r = await this.compute.run({ op: 'differentiate', expr: e, variable, order: 1 });
+      const r = await this.compute.run(
+        { op: 'differentiate', expr: e, variable, order: 1 },
+        this.settings.timeoutMs(),
+      );
       return r.ok ? done(r.value.expr, r.value.approximate) : r;
     }
-    const r = await this.compute.run({ op: 'integrate', expr: e, variable });
+    const r = await this.compute.run(
+      { op: 'integrate', expr: e, variable },
+      this.settings.timeoutMs(),
+    );
     if (!r.ok) {
       return r.error.code === 'not-solvable'
         ? fail(

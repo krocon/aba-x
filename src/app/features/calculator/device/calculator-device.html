@@ -26,28 +26,46 @@
         <p class="placeholder">The function plotter follows.</p>
       }
       @default {
-        <ol class="stack" aria-label="Stack">
-          @for (row of levels(); track row.level) {
-            <li
-              class="level"
-              [class.sel]="calc.selected() === row.level"
-              [attr.aria-current]="calc.selected() === row.level ? 'true' : null"
-            >
-              <span class="num">{{ row.level }}:</span>
-              @if (row.entry; as entry) {
-                <span
-                  class="val"
-                  [attr.aria-label]="'Level ' + row.level + ': ' + (entry.text ?? entry.latex)"
-                >
-                  <math-span class="main">{{ entry.latex }}</math-span>
-                  @if (entry.approx) {
-                    <math-span class="approx">{{ '\\approx ' + entry.approx }}</math-span>
-                  }
-                </span>
-              }
-            </li>
-          }
-        </ol>
+        @if (calc.menu() === 'hist') {
+          <ol class="hist" aria-label="History">
+            @for (h of calc.history.entries(); track h.id) {
+              <li
+                [class.sel]="calc.history.selected() === h.id"
+                [attr.aria-current]="calc.history.selected() === h.id ? 'true' : null"
+                [attr.aria-label]="h.text"
+              >
+                <math-span class="in">{{ h.input }}</math-span>
+                <span class="arrow" aria-hidden="true">{{ h.fav ? '★' : '→' }}</span>
+                <math-span class="out">{{ h.result }}</math-span>
+              </li>
+            } @empty {
+              <li class="empty">{{ i18n.t('hist.empty') }}</li>
+            }
+          </ol>
+        } @else {
+          <ol class="stack" aria-label="Stack">
+            @for (row of levels(); track row.level) {
+              <li
+                class="level"
+                [class.sel]="calc.selected() === row.level"
+                [attr.aria-current]="calc.selected() === row.level ? 'true' : null"
+              >
+                <span class="num">{{ row.level }}:</span>
+                @if (row.entry; as entry) {
+                  <span
+                    class="val"
+                    [attr.aria-label]="'Level ' + row.level + ': ' + (entry.text ?? entry.latex)"
+                  >
+                    <math-span class="main">{{ entry.latex }}</math-span>
+                    @if (entry.approx) {
+                      <math-span class="approx">{{ '\\approx ' + entry.approx }}</math-span>
+                    }
+                  </span>
+                }
+              </li>
+            }
+          </ol>
+        }
         <div class="line">
           <app-math-input ariaLabel="Input line" />
         </div>

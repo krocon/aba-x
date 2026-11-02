@@ -33,6 +33,8 @@ export interface MenuItem {
 export interface MainMenuHandlers {
   setMode(mode: AppMode): void;
   openVars(): void;
+  openHistory(): void;
+  openSettings(): void;
   planned(what: string): void;
 }
 
@@ -107,5 +109,39 @@ export function casCalcMenu(c: CasMenuTarget): MenuItem[] {
     item('d/dx', () => c.insertTemplate('\\frac{d}{dx}#0')),
     item('LIM', () => c.insertTemplate('\\lim_{x\\to#?}#0')),
     item('BACK', () => c.menu.set('mode')),
+  ];
+}
+
+/** What the HIST menu needs. */
+export interface HistMenuTarget {
+  histUse(what: 'input' | 'result'): void;
+  closeHistory(): void;
+  history: {
+    current(): { id: number } | null;
+    toggleFav(id: number): void;
+    remove(id: number): void;
+    clear(): void;
+  };
+}
+
+/** HIST menu (prompt 017). */
+export function histMenu(c: HistMenuTarget): MenuItem[] {
+  const withCurrent = (f: (id: number) => void) => () => {
+    const e = c.history.current();
+    if (e) f(e.id);
+  };
+  return [
+    item('INPUT', () => c.histUse('input')),
+    item('RESULT', () => c.histUse('result')),
+    item(
+      '★FAV',
+      withCurrent((id) => c.history.toggleFav(id)),
+    ),
+    item(
+      'DEL',
+      withCurrent((id) => c.history.remove(id)),
+    ),
+    item('CLEAR', () => c.history.clear()),
+    item('EXIT', () => c.closeHistory()),
   ];
 }

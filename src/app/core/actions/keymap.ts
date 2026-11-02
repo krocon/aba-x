@@ -20,7 +20,16 @@ export type ActionId =
   | 'swap'
   | 'clearStack'
   | 'shortcuts'
-  | 'copyResult';
+  | 'copyResult'
+  | 'exportData'
+  | 'importData'
+  | 'about'
+  | 'settings'
+  | 'history'
+  | 'vars'
+  | 'modeStandard'
+  | 'modeCas'
+  | 'modeGraph';
 
 export interface ActionInfo {
   readonly id: ActionId;
@@ -42,6 +51,15 @@ export const ACTIONS: readonly ActionInfo[] = [
   { id: 'clearStack', title: 'Clear the stack' },
   { id: 'shortcuts', title: 'Keyboard shortcuts' },
   { id: 'copyResult', title: 'Copy level 1 (or the selected level)' },
+  { id: 'exportData', title: 'Export data…' },
+  { id: 'importData', title: 'Import data…' },
+  { id: 'about', title: 'About ABA-X1' },
+  { id: 'settings', title: 'Settings…' },
+  { id: 'history', title: 'History' },
+  { id: 'vars', title: 'Variables' },
+  { id: 'modeStandard', title: 'Standard mode' },
+  { id: 'modeCas', title: 'CAS mode' },
+  { id: 'modeGraph', title: 'Graph mode' },
 ];
 
 export interface Chord {
@@ -68,6 +86,10 @@ const BASE: Keymap = [
   { action: 'swap', chord: { alt: true, key: 'S' } },
   { action: 'clearStack', chord: { alt: true, shift: true, key: 'Backspace' } },
   { action: 'shortcuts', chord: { mod: true, key: '/' } },
+  { action: 'settings', chord: { mod: true, key: ',' } },
+  { action: 'exportData', chord: { mod: true, key: 'S' } },
+  { action: 'importData', chord: { mod: true, key: 'O' } },
+  { action: 'copyResult', chord: { mod: true, shift: true, key: 'C' } },
 ];
 
 /** Default keymap; identical on all OS today, `Mod` resolves per OS. */
@@ -113,6 +135,16 @@ export function formatChord(chord: Chord, os: Os): string {
     return `${chord.alt ? '⌥' : ''}${chord.shift ? '⇧' : ''}${chord.mod ? '⌘' : ''}${key}`;
   }
   return [chord.mod && 'Ctrl', chord.alt && 'Alt', chord.shift && 'Shift', key]
+    .filter(Boolean)
+    .join('+');
+}
+
+/** Accelerator string for the native menu (Tauri/muda notation), or null. */
+export function accelerator(chord: Chord): string | null {
+  const names: Record<string, string> = { '/': 'Slash', ',': 'Comma', '.': 'Period' };
+  const key = names[chord.key] ?? chord.key;
+  if (!/^([A-Z]|F\d{1,2}|Slash|Comma|Period|Backspace|Enter)$/.test(key)) return null;
+  return [chord.mod && 'CmdOrCtrl', chord.alt && 'Alt', chord.shift && 'Shift', key]
     .filter(Boolean)
     .join('+');
 }

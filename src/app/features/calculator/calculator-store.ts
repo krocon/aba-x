@@ -1,11 +1,13 @@
 import { Injectable, inject, signal } from '@angular/core';
+import { I18n } from '../../core/i18n/i18n';
+import { SettingsStore } from '../settings/settings-store';
 import { bin, neg } from '../../../math/ast/build';
 import type { BinaryOp, Expr } from '../../../math/ast/nodes';
-import type { AngleMode } from '../../../math/numeric/evaluate';
 import type { MathResult } from '../../../math/result';
 import { isFreeName } from '../../../math/parser/statement';
 import type { VarsMenuEntry } from '../vars/vars-logic';
 import { VarsStore } from '../vars/vars-store';
+import { HistoryStore } from '../history/history-store';
 import { UiStateStore } from '../../core/ui-state/ui-state-store';
 import { CalculatorEngine, type CasOp, type Evaluation } from './calculator-engine';
 import { toText } from '../../../math/serializer';
@@ -51,6 +53,7 @@ export class CalculatorStore {
   private readonly engine = inject(CalculatorEngine);
   readonly vars = inject(VarsStore);
   private readonly ui = inject(UiStateStore);
+  readonly history = inject(HistoryStore);
   private editor: MathEditor | null = null;
   private nextId = 1;
   private flashTimer: ReturnType<typeof setTimeout> | null = null;
@@ -67,14 +70,16 @@ export class CalculatorStore {
   readonly busy = signal(false);
   /** Selected stack level while browsing the stack (▲ on an empty line), else null. */
   readonly selected = signal<number | null>(null);
-  readonly angle = signal<AngleMode>('rad');
-  /** EXACT (default) or APPROX annunciator. */
-  readonly approxMode = signal(false);
+  private readonly settings = inject(SettingsStore);
+  private readonly i18n = inject(I18n);
+  /** RAD/DEG and EXACT/APPROX come from the settings (prompt 018). */
+  readonly angle = this.settings.angle;
+  readonly approxMode = this.settings.approx;
   /**
    * Soft menu: `mode` = the menu of the current mode (Standard: the main menu, CAS: CAS functions),
    * `main` = mode selection, `vars` = the user's variables, `cas-calc` = calculus submenu.
    */
-  readonly menu = signal<'mode' | 'main' | 'vars' | 'cas-calc'>('mode');
+  readonly menu = signal<'mode' | 'main' | 'vars' | 'cas-calc' | 'hist'>('mode');
   readonly varsPage = signal(0);
 
   attach(editor: MathEditor | null): void {
@@ -106,6 +111,7 @@ export class CalculatorStore {
 
   /** ▲ on an empty line starts browsing the stack; while browsing, keys act on the selection. */
   private browse(action: KeyAction): boolean {
+    if (this.menu() === 'hist') return this.histKey(action);
     const sel = this.selected();
     if (sel === null) {
       const empty = (this.editor?.latex().trim() ?? '') === '';
@@ -140,6 +146,46 @@ export class CalculatorStore {
     return false;
   }
 
+  /** Keys in the HIST view: ▲▼ select, ENTER inserts the input, DEL deletes, ON leaves. */
+  private histKey(action: KeyAction): boolean {
+    if (action.kind === 'command') {
+      if (action.command === 'moveUp') this.history.move(1);
+      else if (action.command === 'moveDown') this.history.move(-1);
+      else if (action.command === 'deleteBackward' || action.command === 'deleteForward') {
+        const c = this.history.current();
+        if (c) this.history.remove(c.id);
+      }
+      return true;
+    }
+    if (action.kind === 'enter') {
+      this.histUse('input');
+      return true;
+    }
+    if (action.kind === 'clear') {
+      this.closeHistory();
+      return true;
+    }
+    return false;
+  }
+
+  openHistory(): void {
+    this.menu.set('hist');
+    this.history.selected.set(this.history.entries().at(-1)?.id ?? null);
+  }
+
+  closeHistory(): void {
+    this.menu.set('mode');
+    this.history.selected.set(null);
+    this.editor?.focus();
+  }
+
+  /** Inserts the input or the result of the selected history entry and leaves HIST. */
+  histUse(what: 'input' | 'result'): void {
+    const c = this.history.current();
+    this.closeHistory();
+    if (c) this.editor?.insert(what === 'input' ? c.input : c.result);
+  }
+
   moveSelection(delta: number): void {
     if (this.selected() === null && delta > 0 && this.stack().length > 0) {
       this.selected.set(1);
@@ -168,7 +214,9 @@ export class CalculatorStore {
           return;
         }
         if (shift === 'right') {
-          if (this.vars.purge(entry.name)) this.message.set(`${entry.name} purged`);
+          if (this.vars.purge(entry.name)) {
+            this.message.set(this.i18n.t('msg.purged', { name: entry.name }));
+          }
           return;
         }
         const name = entry.name.length === 1 ? entry.name : `\\mathrm{${entry.name}}`;
@@ -244,7 +292,7 @@ export class CalculatorStore {
         this.varsPage.set(0);
         break;
       case 'planned':
-        this.message.set(`${action.what}: not available yet`);
+        this.message.set(this.i18n.t('msg.notAvailable', { what: action.what }));
         break;
     }
     if (action.kind !== 'enter' && action.kind !== 'approx') this.editor?.focus();
@@ -314,7 +362,7 @@ export class CalculatorStore {
     } else {
       const t = top(this.stack());
       if (!t) {
-        this.message.set('enter an expression first');
+        this.message.set(this.i18n.t('msg.enterFirst'));
         return;
       }
       target = t.expr;
@@ -349,7 +397,7 @@ export class CalculatorStore {
       '';
     const t = top(this.stack());
     if (!isFreeName(target) || !t) {
-      this.message.set('STO: put a value on the stack, type a name, then press STO');
+      this.message.set(this.i18n.t('msg.sto'));
       return;
     }
     this.vars.setVariable(target, t.expr);
@@ -381,11 +429,11 @@ export class CalculatorStore {
   }
 
   toggleAngle(): void {
-    this.angle.update((a) => (a === 'rad' ? 'deg' : 'rad'));
+    this.settings.update({ angle: this.angle() === 'rad' ? 'deg' : 'rad' });
   }
 
   toggleApprox(): void {
-    this.approxMode.update((a) => !a);
+    this.settings.update({ approx: !this.approxMode() });
   }
 
   private context(approx: boolean) {
@@ -395,6 +443,7 @@ export class CalculatorStore {
       ans: top(this.stack())?.expr,
       variables: this.vars.variables(),
       functions: this.vars.functions(),
+      digits: this.settings.digits(),
     };
   }
 
@@ -467,6 +516,7 @@ export class CalculatorStore {
   }
 
   private pushEvaluation(v: Evaluation): void {
+    this.history.add(v.input, v.latex, toText(v.expr));
     this.pushEntry({
       expr: v.expr,
       latex: v.latex,

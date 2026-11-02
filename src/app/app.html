@@ -1,3 +1,7 @@
+@if (!menu.native) {
+  <app-menu-bar />
+}
+
 <main class="content">
   <h1 class="visually-hidden">ABA-X1 – Scientific &amp; Symbolic Calculator</h1>
   <app-calculator-device />
@@ -6,20 +10,34 @@
 @if (keys.helpOpen()) {
   <app-shortcuts-dialog />
 }
+@if (aboutOpen()) {
+  <app-about-dialog (closed)="aboutOpen.set(false)" />
+}
+@if (settingsOpen()) {
+  <app-settings-dialog (closed)="settingsOpen.set(false)" />
+}
+<app-import-dialog (confirm)="confirmImport()" />
 
 <footer class="status" aria-live="polite">
-  <span>{{ kind === 'desktop' ? 'Desktop' : 'Web' }}</span>
+  <span>{{ i18n.t(kind === 'desktop' ? 'status.desktop' : 'status.web') }}</span>
   @if (info(); as i) {
     <span>v{{ i.version }}</span>
     @if (i.os !== 'web') {
       <span>{{ i.os }} · {{ i.arch }}</span>
     }
   }
-  <button type="button" class="link" (click)="keys.helpOpen.set(true)">Keyboard shortcuts</button>
-  @if (vars.problem(); as problem) {
-    <span class="problem">{{ problem }}</span>
+  <button type="button" class="link" (click)="keys.helpOpen.set(true)">
+    {{ i18n.t('status.shortcuts') }}
+  </button>
+  @if (backup.message(); as m) {
+    <span>{{ m }}</span>
   }
-  @if (ui.storageProblem(); as problem) {
-    <span class="problem">{{ problem }}</span>
+  @for (
+    problem of [vars.problem(), history.problem(), settings.problem(), ui.storageProblem()];
+    track $index
+  ) {
+    @if (problem) {
+      <span class="problem">{{ problem }}</span>
+    }
   }
 </footer>

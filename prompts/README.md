@@ -18,7 +18,7 @@ können parallel laufen, sobald jemand Zeit hat. Die Nummern bleiben stabil, dam
 | Nr. | Prompt | Inhalt | Abhängig von | Aufwand | Status |
 |---|---|---|---|---|---|
 | 001 | [walking-skeleton-tauri-web](done/001-walking-skeleton-tauri-web.md) | Gerüst Desktop + Web, Fassaden, Gerät, Hardware-Tastatur | – | L | ✅ 02.11.2026 |
-| 002 | [plattform-fassaden](002-plattform-fassaden.md) | Dateien, Menü, Fensterzustand, About | 001 | M | ⬜ |
+| 002 | [plattform-fassaden](done/002-plattform-fassaden.md) | Dateien, Menü, Fensterzustand, About | 001 | M | ✅ 02.11.2026 |
 | 003 | [expression-ast-parser](done/003-expression-ast-parser.md) | AST, Text- und LaTeX-Parser, Serializer | 001 | L | ✅ 02.11.2026 |
 | 004 | [worker-protokoll](done/004-worker-protokoll.md) | Web Worker, Abbruch, Timeout | 003 | M | ✅ 02.11.2026 |
 | 005 | [auswertung-standardmodus](done/005-auswertung-standardmodus.md) | ENTER rechnet: exakt/numerisch, Grad/Bogenmaß | 003 | L | ✅ 02.11.2026 |
@@ -33,9 +33,9 @@ können parallel laufen, sobald jemand Zeit hat. Die Nummern bleiben stabil, dam
 | 014 | [funktionsplotter](014-funktionsplotter.md) | Graph-Modus | 005, 008, 013 | L | ⬜ |
 | 015 | [nullstellen-extrema-schnittpunkte](015-nullstellen-extrema-schnittpunkte.md) | Analyse im Graph | 014 | M | ⬜ |
 | 016 | [integralflaechen](016-integralflaechen.md) | Flächen im Graph | 012, 015 | S | ⬜ |
-| 017 | [verlauf-export-import](017-verlauf-export-import.md) | Verlauf, Favoriten, Export/Import | 002, 008 | M | ⬜ |
-| 018 | [einstellungen-i18n](018-einstellungen-i18n.md) | SETUP, Deutsch/Englisch | 007 | M | ✅ 02.11.2026 |
-| 019 | [menue-tastenkuerzel-je-os](019-menue-tastenkuerzel-je-os.md) | Menüleiste, Kürzel je OS | 002, 007 | S | ⬜ |
+| 017 | [verlauf-export-import](done/017-verlauf-export-import.md) | Verlauf, Favoriten, Export/Import | 002, 008 | M | ✅ 02.11.2026 |
+| 018 | [einstellungen-i18n](done/018-einstellungen-i18n.md) | SETUP, Deutsch/Englisch | 007 | M | ✅ 02.11.2026 |
+| 019 | [menue-tastenkuerzel-je-os](done/019-menue-tastenkuerzel-je-os.md) | Menüleiste, Kürzel je OS | 002, 007 | S | ✅ 02.11.2026 |
 | 020 | [pwa-offline-web-deployment](020-pwa-offline-web-deployment.md) | PWA, Offline-E2E, Deployment vorbereiten | 005 | S | ✅ 02.11.2026 |
 | 021 | [barrierefreiheit](021-barrierefreiheit.md) | Barrierefreiheit, Performance | 006, 007 | M | ⬜ |
 | 022 | [release-distribution](022-release-distribution.md) | Pakete, Release-Workflow, Signierung vorbereiten | 017, 019 | M | ⬜ |

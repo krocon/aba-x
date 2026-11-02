@@ -97,8 +97,8 @@ pub fn remove(dir: &Path, key: &str) -> Result<(), AppError> {
 
 /// Temp file in the same folder, flushed to disk, then renamed over the target (replaces it on
 /// every OS). A crash leaves either the old or the new document, never half of one.
-fn write_atomic(path: &Path, bytes: &[u8]) -> std::io::Result<()> {
-    let tmp = path.with_extension("json.tmp");
+pub(crate) fn write_atomic(path: &Path, bytes: &[u8]) -> std::io::Result<()> {
+    let tmp = tmp_path(path);
     {
         let mut f = File::create(&tmp)?;
         f.write_all(bytes)?;
@@ -107,6 +107,13 @@ fn write_atomic(path: &Path, bytes: &[u8]) -> std::io::Result<()> {
     fs::rename(&tmp, path).inspect_err(|_| {
         let _ = fs::remove_file(&tmp);
     })
+}
+
+/// `<name>.<ext>.tmp` next to the target.
+fn tmp_path(path: &Path) -> PathBuf {
+    let mut name = path.file_name().unwrap_or_default().to_os_string();
+    name.push(".tmp");
+    path.with_file_name(name)
 }
 
 #[cfg(test)]

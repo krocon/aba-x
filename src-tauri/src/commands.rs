@@ -6,6 +6,9 @@ use std::path::PathBuf;
 use serde_json::Value;
 use tauri::{AppHandle, Manager};
 
+use crate::app_menu::{self, MenuSpec};
+use crate::files;
+
 use crate::about::{self, AppInfo};
 use crate::error::AppError;
 use crate::storage::{self, LoadedDoc};
@@ -46,4 +49,31 @@ pub async fn storage_remove(app: AppHandle, key: String) -> Result<(), AppError>
 pub fn get_app_info(app: AppHandle) -> AppInfo {
     let pkg = app.package_info();
     about::app_info(&pkg.name, &pkg.version.to_string())
+}
+
+#[tauri::command]
+pub async fn files_write_text(path: String, text: String) -> Result<String, AppError> {
+    blocking(move || files::write(&path, text.as_bytes()).map(|()| files::display_name(&path)))
+        .await
+}
+
+#[tauri::command]
+pub async fn files_write_bytes(path: String, bytes: Vec<u8>) -> Result<String, AppError> {
+    blocking(move || files::write(&path, &bytes).map(|()| files::display_name(&path))).await
+}
+
+#[tauri::command]
+pub async fn files_read_text(path: String) -> Result<String, AppError> {
+    blocking(move || files::read_text(&path)).await
+}
+
+/// Replaces the native menu bar (validated spec from the frontend's menu model).
+#[tauri::command]
+pub fn set_app_menu(app: AppHandle, spec: MenuSpec) -> Result<(), AppError> {
+    app_menu::validate(&spec)?;
+    let menu =
+        app_menu::build(&app, &spec).map_err(|e| AppError::new("invalid_menu", e.to_string()))?;
+    app.set_menu(menu)
+        .map(|_| ())
+        .map_err(|e| AppError::new("invalid_menu", e.to_string()))
 }

@@ -248,3 +248,37 @@
     padding: 0.6rem 0.6rem 0.9rem;
   }
 }
+
+.hist {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.hist li {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 1.6rem;
+  font-size: 0.85rem;
+  border-bottom: 1px dotted var(--lcd-dim);
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.hist li.sel {
+  background: var(--lcd-ink);
+  color: var(--lcd-bg-top);
+  --primary-color: var(--lcd-bg-top);
+}
+
+.hist .out {
+  margin-left: auto;
+}
+
+.hist .empty {
+  border: 0;
+}

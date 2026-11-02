@@ -7,6 +7,7 @@ import {
   inject,
 } from '@angular/core';
 import { KeyboardDispatcher } from '../../../core/actions/keyboard-dispatcher';
+import { I18n } from '../../../core/i18n/i18n';
 import type { ActionId } from '../../../core/actions/keymap';
 import { UiStateStore } from '../../../core/ui-state/ui-state-store';
 import { CalculatorStore } from '../calculator-store';
@@ -15,7 +16,15 @@ import { Keypad } from '../keypad/keypad';
 import { keyIdForPhysical } from '../keypad/keypad-model';
 import { MathInput } from '../math-input';
 import { varsMenu } from '../../vars/vars-logic';
-import { MAIN_MENU, MODE_TITLES, type MenuItem, casCalcMenu, casMenu, mainItems } from './softkeys';
+import {
+  MAIN_MENU,
+  MODE_TITLES,
+  type MenuItem,
+  casCalcMenu,
+  casMenu,
+  histMenu,
+  mainItems,
+} from './softkeys';
 
 /** Visible stack levels in the display. */
 const LEVELS = 4;
@@ -52,9 +61,12 @@ export class CalculatorDevice {
           this.calc.menu.set('mode');
         },
         openVars: () => this.calc.run({ kind: 'vars' }),
+        openHistory: () => this.calc.openHistory(),
+        openSettings: () => this.keys.run('settings'),
         planned: (what) => this.calc.run({ kind: 'planned', what }),
       });
     }
+    if (m === 'hist') return histMenu(this.calc);
     if (m === 'mode') return casMenu(this.calc);
     if (m === 'cas-calc') return casCalcMenu(this.calc);
     const vars = this.calc.vars;
@@ -84,8 +96,11 @@ export class CalculatorDevice {
     visibleLevels(this.calc.stack(), LEVELS, this.calc.selected()),
   );
 
+  private readonly keys = inject(KeyboardDispatcher);
+  protected readonly i18n = inject(I18n);
+
   constructor() {
-    const keys = inject(KeyboardDispatcher);
+    const keys = this.keys;
     const softkey = (i: number) => () => {
       this.calc.flash(`soft-${i}`);
       this.softkey(i);
@@ -103,9 +118,29 @@ export class CalculatorDevice {
       ['drop', () => this.calc.run({ kind: 'stack', op: 'drop' })],
       ['swap', () => this.calc.run({ kind: 'stack', op: 'swap' })],
       ['clearStack', () => this.calc.clearStack()],
+      ['history', () => this.calc.openHistory()],
+      ['vars', () => this.calc.run({ kind: 'vars' })],
+      ['modeStandard', () => this.setMode('standard')],
+      ['modeCas', () => this.setMode('cas')],
+      ['modeGraph', () => this.setMode('graph')],
+      ['copyResult', () => this.copy()],
     ];
     const off = handlers.map(([id, h]) => keys.register(id, h));
     inject(DestroyRef).onDestroy(() => off.forEach((f) => f()));
+  }
+
+  private setMode(mode: 'standard' | 'cas' | 'graph'): void {
+    this.ui.setMode(mode);
+    this.calc.menu.set('mode');
+  }
+
+  private copy(): void {
+    const t = this.calc.clipboardText();
+    if (!t) return;
+    void navigator.clipboard?.writeText(t.text).then(
+      () => this.calc.message.set(this.i18n.t('msg.copied')),
+      () => this.calc.message.set(this.i18n.t('msg.copyFailed')),
+    );
   }
 
   protected softkey(index: number): void {

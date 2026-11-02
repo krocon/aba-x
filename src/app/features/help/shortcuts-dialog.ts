@@ -7,15 +7,17 @@ import {
   viewChild,
 } from '@angular/core';
 import { KeyboardDispatcher } from '../../core/actions/keyboard-dispatcher';
-import { ACTIONS, formatChord } from '../../core/actions/keymap';
+import { formatChord } from '../../core/actions/keymap';
+import { I18n } from '../../core/i18n/i18n';
+import type { TextKey } from '../../core/i18n/texts';
 
 /** Fixed keys of the input line (handled by the math field, not the keymap). */
-const LINE_KEYS: readonly [string, string][] = [
-  ['Enter', 'ENTER – evaluate, push onto the stack (empty line: duplicate level 1)'],
-  ['Esc', 'Clear the input line / cancel a running computation / leave the stack'],
-  ['↑ on an empty line', 'Browse the stack (↑ ↓, Enter = recall, Delete = drop)'],
-  ['Tab', 'Next placeholder in a fraction, root, integral …'],
-  ['/  ^  _', 'Fraction, power, subscript'],
+const LINE_KEYS: readonly [string, TextKey][] = [
+  ['Enter', 'line.enter'],
+  ['Esc', 'line.esc'],
+  ['', 'line.up'],
+  ['Tab', 'line.tab'],
+  ['/  ^  _', 'line.struct'],
 ];
 
 /** Keyboard shortcut overview (prompt 007), opened with Mod+/ or from the menu. */
@@ -33,7 +35,7 @@ const LINE_KEYS: readonly [string, string][] = [
       tabindex="-1"
       (keydown.escape)="close()"
     >
-      <h2 id="shortcuts-title">Keyboard shortcuts</h2>
+      <h2 id="shortcuts-title">{{ i18n.t('shortcuts.title') }}</h2>
       <table>
         <tbody>
           @for (row of rows; track row[0]) {
@@ -46,7 +48,7 @@ const LINE_KEYS: readonly [string, string][] = [
           }
         </tbody>
       </table>
-      <button type="button" class="close" (click)="close()">Close</button>
+      <button type="button" class="close" (click)="close()">{{ i18n.t('dialog.close') }}</button>
     </div>
   `,
   styles: `
@@ -115,14 +117,17 @@ export class ShortcutsDialog {
   private readonly dialog = viewChild.required<ElementRef<HTMLElement>>('dialog');
   private readonly opener = document.activeElement as HTMLElement | null;
 
+  protected readonly i18n = inject(I18n);
   protected readonly rows: [string, string][] = [
-    ...LINE_KEYS,
+    ...LINE_KEYS.map(
+      ([k, t]) => [k || this.i18n.t('line.upKey'), this.i18n.t(t)] as [string, string],
+    ),
     ...this.keys.keymap.map(
       (b) =>
-        [
-          formatChord(b.chord, this.keys.os),
-          ACTIONS.find((a) => a.id === b.action)?.title ?? b.action,
-        ] as [string, string],
+        [formatChord(b.chord, this.keys.os), this.i18n.t(`action.${b.action}` as TextKey)] as [
+          string,
+          string,
+        ],
     ),
   ];
 
