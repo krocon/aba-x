@@ -19,3 +19,54 @@ export const MODE_TITLES: Record<AppMode, string> = {
   cas: 'CAS',
   graph: 'GRAPH',
 };
+
+/** A soft-menu label as the device shows it. */
+export interface MenuItem {
+  label: string;
+  run: () => void;
+  active: boolean;
+  planned: boolean;
+  /** aria-pressed for mode keys, null otherwise. */
+  pressed: boolean | null;
+}
+
+export interface MainMenuHandlers {
+  setMode(mode: AppMode): void;
+  openVars(): void;
+  planned(what: string): void;
+}
+
+export function mainItems(
+  menu: readonly Softkey[],
+  mode: AppMode,
+  h: MainMenuHandlers,
+): MenuItem[] {
+  return menu.map((k) => {
+    if (k.kind === 'mode') {
+      const on = k.mode === mode;
+      return {
+        label: k.label,
+        run: () => h.setMode(k.mode),
+        active: on,
+        planned: false,
+        pressed: on,
+      };
+    }
+    if (k.what === 'VARS') {
+      return {
+        label: k.label,
+        run: () => h.openVars(),
+        active: false,
+        planned: false,
+        pressed: null,
+      };
+    }
+    return {
+      label: k.label,
+      run: () => h.planned(k.what),
+      active: false,
+      planned: true,
+      pressed: null,
+    };
+  });
+}

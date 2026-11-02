@@ -1,5 +1,16 @@
 import type { Expr } from '../../../math/ast/nodes';
-import { STACK_LIMIT, drop, dropN, level, push, swap, top, visibleLevels } from './entry-stack';
+import {
+  STACK_LIMIT,
+  drop,
+  dropLevel,
+  dropN,
+  level,
+  moveSelection,
+  push,
+  swap,
+  top,
+  visibleLevels,
+} from './entry-stack';
 
 const entry = (latex: string) => ({
   expr: { type: 'sym', name: latex } as Expr,
@@ -37,5 +48,17 @@ describe('entry-stack', () => {
       [2, 'a'],
       [1, 'b'],
     ]);
+  });
+
+  it('scrolls the window with a selection above it, moves and drops selections', () => {
+    let big: ReturnType<typeof push> = [];
+    for (let i = 1; i <= 6; i++) big = push(big, entry(String(i)), i);
+    expect(visibleLevels(big, 4, 6).map((r) => r.level)).toEqual([6, 5, 4, 3]);
+    expect(visibleLevels(big, 4, 2).map((r) => r.level)).toEqual([4, 3, 2, 1]);
+    expect(moveSelection(1, 1, 6)).toBe(2);
+    expect(moveSelection(6, 1, 6)).toBe(6);
+    expect(moveSelection(1, -1, 6)).toBe(1);
+    expect(moveSelection(null, 1, 6)).toBeNull();
+    expect(dropLevel(big, 2).map((e) => e.latex)).toEqual(['1', '2', '3', '4', '6']);
   });
 });

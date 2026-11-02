@@ -1,4 +1,7 @@
 import { TestBed } from '@angular/core/testing';
+import { FakeStorageApi } from '../../../testing/fake-storage-api';
+import { StorageApi } from '../../core/storage/storage-api';
+import { VarsStore } from '../vars/vars-store';
 import { CalculatorStore, MathEditor } from './calculator-store';
 import { ALL_KEYS } from './keypad/keypad-model';
 
@@ -33,7 +36,11 @@ describe('CalculatorStore', () => {
     await store.enter(approx);
   };
 
+  let storage: FakeStorageApi;
+
   beforeEach(() => {
+    storage = new FakeStorageApi();
+    TestBed.configureTestingModule({ providers: [{ provide: StorageApi, useValue: storage }] });
     store = TestBed.inject(CalculatorStore);
     editor = new FakeEditor();
     store.attach(editor);
@@ -136,7 +143,87 @@ describe('CalculatorStore', () => {
     expect(levels()).toEqual(['2']);
   });
 
-  it('says so for planned functions', () => {
+  it('browses the stack: ▲ on an empty line, recall, drop, leave', async () => {
+    await type('1');
+    await type('2');
+    await type('3');
+    store.press(key('up'));
+    expect(store.selected()).toBe(1);
+    store.press(key('up'));
+    expect(store.selected()).toBe(2);
+    expect(store.clipboardText()).toEqual({ text: '2', latex: '2' });
+    store.press(key('bksp'));
+    expect(levels()).toEqual(['1', '3']);
+    expect(store.selected()).toBe(2);
+    store.press(key('enter'));
+    expect(editor.line).toBe('1');
+    expect(store.selected()).toBeNull();
+    editor.line = '';
+    store.press(key('up'));
+    store.press(key('down'));
+    expect(store.selected()).toBeNull();
+  });
+
+  it('alpha: one letter, or locked with α twice; left shift gives capitals', () => {
+    store.press(key('alpha'));
+    store.press(key('sin'));
+    store.press(key('d7'));
+    expect(editor.line).toBe('m7');
+    store.press(key('alpha'));
+    store.press(key('alpha'));
+    expect(store.alpha()).toBe('lock');
+    store.press(key('cos'));
+    store.press(key('shift-left'));
+    store.press(key('tan'));
+    expect(editor.line).toBe('m7nO');
+    store.press(key('alpha'));
+    expect(store.alpha()).toBe('off');
+  });
+
+  it('assigns variables and defines functions, persisted', async () => {
+    await type('a=5');
+    expect(store.message()).toBe('a := 5');
+    expect(store.stack()).toEqual([]);
+    await type('f(x)=x^2-3x+2');
+    await type('f(a)+a');
+    expect(levels()).toEqual(['17']);
+    expect(storage.docs.get('variables')).toEqual({
+      schemaVersion: 1,
+      items: [{ name: 'a', value: '5' }],
+    });
+    expect(storage.docs.get('functions')).toEqual({
+      schemaVersion: 1,
+      items: [{ name: 'f', params: ['x'], body: 'x^2 - 3*x + 2' }],
+    });
+    const vars = TestBed.inject(VarsStore);
+    await vars.restore();
+    expect([...vars.variables().keys()]).toEqual(['a']);
+  });
+
+  it('STO stores level 1 under the typed name; VARS softkeys insert, store and purge', async () => {
+    await type('42');
+    editor.line = 'r';
+    store.press(key('sto'));
+    expect(store.message()).toBe('r := 42');
+    expect(store.stack()).toEqual([]);
+    store.press(key('shift-left'));
+    store.press(key('sto'));
+    expect(store.menu()).toBe('vars');
+    store.varsSoftkey({ kind: 'var', name: 'r' });
+    expect(editor.line).toBe('r');
+    editor.line = '';
+    await type('7');
+    store.press(key('shift-left'));
+    store.varsSoftkey({ kind: 'var', name: 'r' });
+    expect(store.vars.variables().get('r')).toEqual({ type: 'num', value: '7' });
+    store.press(key('shift-right'));
+    store.varsSoftkey({ kind: 'var', name: 'r' });
+    expect(store.vars.variables().size).toBe(0);
+    store.varsSoftkey({ kind: 'exit' });
+    expect(store.menu()).toBe('main');
+  });
+
+  it('STO without a name explains itself', () => {
     store.press(key('sto'));
     expect(store.message()).toContain('STO');
     store.press(key('d1'));

@@ -24,3 +24,13 @@
 .problem {
   color: var(--color-danger);
 }
+
+.link {
+  font: inherit;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}

@@ -28,6 +28,10 @@ export type KeyAction =
   | { kind: 'shift'; shift: 'left' | 'right' }
   | { kind: 'alpha' }
   | { kind: 'stack'; op: 'drop' | 'swap' | 'recall' }
+  /** STO: store level 1 under the name in the input line. */
+  | { kind: 'sto' }
+  /** Open the VARS soft menu. */
+  | { kind: 'vars' }
   /** Planned function – the key shows it, pressing it says "not available yet". */
   | { kind: 'planned'; what: string };
 
@@ -65,8 +69,8 @@ export const FUNCTION_ROWS: readonly (readonly KeyDef[])[] = [
       id: 'sto',
       label: 'STO',
       name: 'Store',
-      action: planned('STO'),
-      left: fn('RCL', planned('RCL')),
+      action: { kind: 'sto' },
+      left: fn('VARS', { kind: 'vars' }),
       alpha: 'A',
       variant: 'fn',
     },

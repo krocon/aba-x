@@ -8,7 +8,13 @@
     <div class="annunciators" aria-live="polite">
       <span class="ann" [class.on]="calc.shift() === 'left'" aria-label="Left shift">◀⇧</span>
       <span class="ann" [class.on]="calc.shift() === 'right'" aria-label="Right shift">⇧▶</span>
-      <span class="ann" [class.on]="calc.alpha()" aria-label="Alpha">α</span>
+      <span
+        class="ann"
+        [class.on]="calc.alpha() !== 'off'"
+        [class.lock]="calc.alpha() === 'lock'"
+        aria-label="Alpha"
+        >α</span
+      >
       <span class="ann on">{{ calc.angle() === 'rad' ? 'RAD' : 'DEG' }}</span>
       <span class="ann on">{{ calc.approxMode() ? 'APPROX' : 'EXACT' }}</span>
       <span class="ann busy" [class.on]="calc.busy()" aria-label="Busy">⧗</span>
@@ -19,12 +25,16 @@
       @case ('standard') {
         <ol class="stack" aria-label="Stack">
           @for (row of levels(); track row.level) {
-            <li class="level">
+            <li
+              class="level"
+              [class.sel]="calc.selected() === row.level"
+              [attr.aria-current]="calc.selected() === row.level ? 'true' : null"
+            >
               <span class="num">{{ row.level }}:</span>
               @if (row.entry; as entry) {
                 <span
                   class="val"
-                  [attr.aria-label]="entry.input ? entry.input + ' = ' + entry.latex : entry.latex"
+                  [attr.aria-label]="'Level ' + row.level + ': ' + (entry.text ?? entry.latex)"
                 >
                   <math-span class="main">{{ entry.latex }}</math-span>
                   @if (entry.approx) {
@@ -50,26 +60,23 @@
     <p class="msg" role="status">{{ calc.message() }}</p>
 
     <div class="menu" aria-hidden="true">
-      @for (key of menu; track key.label; let i = $index) {
-        <span
-          class="menu-label"
-          [class.active]="isActive(key)"
-          [class.planned]="key.kind === 'planned'"
-          >{{ key.label }}</span
-        >
+      @for (key of menu(); track $index) {
+        <span class="menu-label" [class.active]="key.active" [class.planned]="key.planned">{{
+          key.label
+        }}</span>
       }
     </div>
   </section>
 
   <div class="softkeys" role="group" aria-label="Soft menu (F1–F6)">
-    @for (key of menu; track key.label; let i = $index) {
+    @for (key of menu(); track $index; let i = $index) {
       <div class="soft-cell">
         <button
           type="button"
           class="soft"
           [class.lit]="calc.litKey() === 'soft-' + i"
-          [attr.aria-pressed]="key.kind === 'mode' ? isActive(key) : null"
-          [attr.aria-label]="key.label + ' (F' + (i + 1) + ')'"
+          [attr.aria-pressed]="key.pressed"
+          [attr.aria-label]="(key.label || 'empty') + ' (F' + (i + 1) + ')'"
           tabindex="-1"
           (pointerdown)="$event.preventDefault()"
           (click)="softkey(i)"

@@ -90,7 +90,10 @@ describe('App', () => {
     expect(storage.docs.get('ui-state')).toEqual({ schemaVersion: 1, mode: 'graph' });
     press('F4');
     await settle();
-    expect(el.querySelector('.msg')?.textContent).toContain('VARS');
+    expect([...el.querySelectorAll('.menu-label')].at(-1)?.textContent?.trim()).toBe('EXIT');
+    press('F6');
+    await settle();
+    expect(el.querySelector('.menu-label')?.textContent?.trim()).toBe('STD');
   });
 
   it('keypad and ENTER evaluate onto stack level 1', async () => {

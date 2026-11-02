@@ -88,6 +88,10 @@
   color: var(--lcd-ink);
 }
 
+.ann.lock {
+  text-decoration: underline;
+}
+
 .path {
   font-size: 0.85rem;
   font-weight: 700;
@@ -115,6 +119,16 @@
   border-bottom: 1px dotted var(--lcd-dim);
 }
 
+.level.sel {
+  background: var(--lcd-ink);
+  color: var(--lcd-bg-top);
+  --primary-color: var(--lcd-bg-top);
+}
+
+.level.sel .val {
+  color: var(--lcd-bg-top);
+}
+
 .num {
   flex: none;
 }
@@ -126,7 +140,10 @@
   margin-left: auto;
   font-size: 0.95rem;
   white-space: nowrap;
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  max-width: calc(100% - 2rem);
   padding: 0.1rem 0;
   --primary-color: var(--lcd-ink);
 }

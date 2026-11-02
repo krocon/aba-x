@@ -13,8 +13,10 @@ export interface StackEntry {
   readonly approx?: string;
   /** The result is itself an approximation. */
   readonly approximate: boolean;
-  /** What was typed (for HIST and the screen reader). */
+  /** What was typed (LaTeX, for HIST). */
   readonly input?: string;
+  /** Plain text of the result for the screen reader and the clipboard. */
+  readonly text?: string;
 }
 
 export type NewEntry = Omit<StackEntry, 'id'>;
@@ -53,13 +55,30 @@ export function top(stack: readonly StackEntry[]): StackEntry | null {
   return level(stack, 1);
 }
 
-/** The `count` lowest levels for the display, highest level first: `[{level: 4, …}, …, {level: 1, …}]`. */
+/**
+ * `count` levels for the display, highest first. Normally levels count…1; while a level above the
+ * window is selected, the window scrolls so that it stays visible.
+ */
 export function visibleLevels(
   stack: readonly StackEntry[],
   count: number,
+  selected: number | null = null,
 ): { level: number; entry: StackEntry | null }[] {
+  const offset = selected !== null && selected > count ? selected - count : 0;
   return Array.from({ length: count }, (_, i) => {
-    const lv = count - i;
+    const lv = count - i + offset;
     return { level: lv, entry: level(stack, lv) };
   });
+}
+
+/** Moves a selection by delta within 1…size; null stays null. */
+export function moveSelection(selected: number | null, delta: number, size: number): number | null {
+  if (selected === null || size === 0) return null;
+  return Math.min(size, Math.max(1, selected + delta));
+}
+
+/** Removes level n. */
+export function dropLevel(stack: readonly StackEntry[], n: number): StackEntry[] {
+  const i = stack.length - n;
+  return i < 0 ? [...stack] : [...stack.slice(0, i), ...stack.slice(i + 1)];
 }

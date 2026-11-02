@@ -1,10 +1,24 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { bin, neg } from '../../../math/ast/build';
 import type { BinaryOp, Expr } from '../../../math/ast/nodes';
-import type { AngleMode, UserFunction } from '../../../math/numeric/evaluate';
+import type { AngleMode } from '../../../math/numeric/evaluate';
 import type { MathResult } from '../../../math/result';
+import { isFreeName } from '../../../math/parser/statement';
+import type { VarsMenuEntry } from '../vars/vars-logic';
+import { VarsStore } from '../vars/vars-store';
 import { CalculatorEngine, type Evaluation } from './calculator-engine';
-import { type StackEntry, drop, dropN, level, push, swap, top } from './entry-stack';
+import { toText } from '../../../math/serializer';
+import {
+  type StackEntry,
+  drop,
+  dropLevel,
+  dropN,
+  level,
+  moveSelection,
+  push,
+  swap,
+  top,
+} from './entry-stack';
 import {
   type EditCommand,
   type KeyAction,
@@ -34,6 +48,7 @@ const RPN_BINARY: Record<string, BinaryOp> = { add: '+', sub: '-', mul: '*', div
 @Injectable({ providedIn: 'root' })
 export class CalculatorStore {
   private readonly engine = inject(CalculatorEngine);
+  readonly vars = inject(VarsStore);
   private editor: MathEditor | null = null;
   private nextId = 1;
   private flashTimer: ReturnType<typeof setTimeout> | null = null;
@@ -43,22 +58,32 @@ export class CalculatorStore {
 
   readonly stack = signal<StackEntry[]>([]);
   readonly shift = signal<Shift>('none');
-  readonly alpha = signal(false);
+  /** α: off, for one key, or locked (α twice). */
+  readonly alpha = signal<'off' | 'once' | 'lock'>('off');
   readonly message = signal<string | null>(null);
   readonly litKey = signal<string | null>(null);
   readonly busy = signal(false);
+  /** Selected stack level while browsing the stack (▲ on an empty line), else null. */
+  readonly selected = signal<number | null>(null);
   readonly angle = signal<AngleMode>('rad');
   /** EXACT (default) or APPROX annunciator. */
   readonly approxMode = signal(false);
-  /** User variables and functions (prompt 008 fills them). */
-  readonly variables = signal<ReadonlyMap<string, Expr>>(new Map());
-  readonly functions = signal<ReadonlyMap<string, UserFunction>>(new Map());
+  /** Soft menu: the main menu or the user's variables (VARS, page). */
+  readonly menu = signal<'main' | 'vars'>('main');
+  readonly varsPage = signal(0);
 
   attach(editor: MathEditor | null): void {
     this.editor = editor;
   }
 
   press(key: KeyDef): void {
+    if (this.alpha() !== 'off' && key.alpha && key.action.kind !== 'alpha') {
+      const upper = this.shift() === 'left';
+      this.shift.set('none');
+      if (this.alpha() === 'once') this.alpha.set('off');
+      this.run({ kind: 'insert', latex: upper ? key.alpha : key.alpha.toLowerCase() });
+      return;
+    }
     const action = resolveKey(key, this.shift());
     this.shift.set(nextShift(this.shift(), action));
     if (this.busy() && action.kind !== 'clear') {
@@ -69,8 +94,114 @@ export class CalculatorStore {
   }
 
   private pressResolved(key: KeyDef, action: KeyAction): void {
+    if (this.browse(action)) return;
     if (this.rpn(key, action)) return;
     this.run(action);
+  }
+
+  /** ▲ on an empty line starts browsing the stack; while browsing, keys act on the selection. */
+  private browse(action: KeyAction): boolean {
+    const sel = this.selected();
+    if (sel === null) {
+      const empty = (this.editor?.latex().trim() ?? '') === '';
+      if (
+        action.kind === 'command' &&
+        action.command === 'moveUp' &&
+        empty &&
+        this.stack().length > 0
+      ) {
+        this.selected.set(1);
+        return true;
+      }
+      return false;
+    }
+    if (action.kind === 'command') {
+      if (action.command === 'moveUp') this.moveSelection(1);
+      else if (action.command === 'moveDown') this.moveSelection(-1);
+      else if (action.command === 'deleteBackward' || action.command === 'deleteForward')
+        this.dropSelected();
+      else this.selected.set(null);
+      return true;
+    }
+    if (action.kind === 'enter') {
+      this.recallSelected();
+      return true;
+    }
+    if (action.kind === 'clear') {
+      this.selected.set(null);
+      return true;
+    }
+    this.selected.set(null);
+    return false;
+  }
+
+  moveSelection(delta: number): void {
+    if (this.selected() === null && delta > 0 && this.stack().length > 0) {
+      this.selected.set(1);
+      return;
+    }
+    const next = moveSelection(this.selected(), delta, this.stack().length);
+    // ▼ below level 1 leaves the stack
+    this.selected.set(this.selected() === 1 && delta < 0 ? null : next);
+  }
+
+  /** VARS softkey: insert the name; left shift stores level 1 under it, right shift purges it. */
+  varsSoftkey(entry: VarsMenuEntry): void {
+    const shift = this.shift();
+    this.shift.set('none');
+    this.message.set(null);
+    switch (entry.kind) {
+      case 'exit':
+        this.menu.set('main');
+        return;
+      case 'next':
+        this.varsPage.update((p) => p + 1);
+        return;
+      default: {
+        if (shift === 'left') {
+          this.sto(entry.name);
+          return;
+        }
+        if (shift === 'right') {
+          if (this.vars.purge(entry.name)) this.message.set(`${entry.name} purged`);
+          return;
+        }
+        const name = entry.name.length === 1 ? entry.name : `\\mathrm{${entry.name}}`;
+        if (entry.kind === 'fn') {
+          const args = Array.from({ length: entry.arity }, (_, i) => (i === 0 ? '#0' : '#?')).join(
+            ',',
+          );
+          this.editor?.insert(`${name}\\left(${args}\\right)`);
+        } else this.editor?.insert(name);
+        this.editor?.focus();
+      }
+    }
+  }
+
+  /** The selected entry (or level 1) – for copying. */
+  current(): StackEntry | null {
+    return level(this.stack(), this.selected() ?? 1);
+  }
+
+  recallSelected(): void {
+    const e = this.current();
+    this.selected.set(null);
+    if (e) this.editor?.insert(e.latex);
+    this.editor?.focus();
+  }
+
+  dropSelected(): void {
+    const n = this.selected();
+    if (n === null) return;
+    this.stack.update((s) => dropLevel(s, n));
+    const size = this.stack().length;
+    this.selected.set(size === 0 ? null : Math.min(n, size));
+  }
+
+  /** Text for the clipboard: plain text and LaTeX of the selected entry (or level 1). */
+  clipboardText(): { text: string; latex: string } | null {
+    const e = this.current();
+    return e ? { text: e.text ?? toText(e.expr), latex: e.latex } : null;
   }
 
   run(action: KeyAction): void {
@@ -95,10 +226,17 @@ export class CalculatorStore {
       case 'shift':
         break;
       case 'alpha':
-        this.alpha.update((a) => !a);
+        this.alpha.update((a) => (a === 'off' ? 'once' : a === 'once' ? 'lock' : 'off'));
         break;
       case 'stack':
         this.stackOp(action.op);
+        break;
+      case 'sto':
+        this.sto();
+        break;
+      case 'vars':
+        this.menu.set(this.menu() === 'vars' ? 'main' : 'vars');
+        this.varsPage.set(0);
         break;
       case 'planned':
         this.message.set(`${action.what}: not available yet`);
@@ -127,20 +265,53 @@ export class CalculatorStore {
       await this.apply(t.expr, 1, true);
       return;
     }
-    const r = await this.guard(() => this.engine.evaluate(latex, this.context(approx)));
+    const r = await this.guardAny(() => this.engine.evaluateStatement(latex, this.context(approx)));
     if (!r) return;
     if (!r.ok) {
       this.message.set(r.error.message);
       return;
     }
-    this.pushEvaluation(r.value);
+    const o = r.value;
+    if (o.kind === 'value') this.pushEvaluation(o.evaluation);
+    else if (o.kind === 'assign') {
+      this.vars.setVariable(o.name, o.evaluation.expr);
+      this.message.set(`${o.name} := ${toText(o.evaluation.expr)}`);
+    } else {
+      this.vars.setFunction(o.name, { params: o.params, body: o.body });
+      this.message.set(`${o.name}(${o.params.join(', ')}) := ${toText(o.body)}`);
+    }
     this.editor?.clear();
     this.editor?.focus();
+  }
+
+  /** STO: the input line holds a name, level 1 is stored under it. */
+  sto(name?: string): void {
+    const target =
+      name ??
+      this.editor
+        ?.latex()
+        .trim()
+        .replace(/^\\mathrm\{(.*)\}$/, '$1') ??
+      '';
+    const t = top(this.stack());
+    if (!isFreeName(target) || !t) {
+      this.message.set('STO: put a value on the stack, type a name, then press STO');
+      return;
+    }
+    this.vars.setVariable(target, t.expr);
+    this.stack.update(drop);
+    if (!name) this.editor?.clear();
+    this.message.set(`${target} := ${t.text ?? t.latex}`);
   }
 
   /** Replays queued keys until one of them starts a new computation. */
   private drain(): void {
     while (this.queue.length > 0 && !this.busy()) this.queue.shift()!();
+  }
+
+  clearStack(): void {
+    this.selected.set(null);
+    this.stack.set([]);
   }
 
   cancel(): void {
@@ -168,15 +339,17 @@ export class CalculatorStore {
       angle: this.angle(),
       approx: approx || this.approxMode(),
       ans: top(this.stack())?.expr,
-      variables: this.variables(),
-      functions: this.functions(),
+      variables: this.vars.variables(),
+      functions: this.vars.functions(),
     };
   }
 
+  private guard(f: () => Promise<MathResult<Evaluation>>): Promise<MathResult<Evaluation> | null> {
+    return this.guardAny(f);
+  }
+
   /** Runs an evaluation with busy flag; stale results (after a newer run) are dropped. */
-  private async guard(
-    f: () => Promise<MathResult<Evaluation>>,
-  ): Promise<MathResult<Evaluation> | null> {
+  private async guardAny<T>(f: () => Promise<MathResult<T>>): Promise<MathResult<T> | null> {
     const id = ++this.run$;
     this.busy.set(true);
     try {
@@ -245,6 +418,7 @@ export class CalculatorStore {
       latex: v.latex,
       approximate: v.approximate,
       input: v.input,
+      text: toText(v.expr),
       ...(v.approx && !this.approxMode() ? { approx: v.approx.latex } : {}),
     });
   }

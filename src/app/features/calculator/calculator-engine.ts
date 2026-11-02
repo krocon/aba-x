@@ -3,6 +3,7 @@ import { freeSymbols, substitute } from '../../../math/ast/build';
 import type { Expr } from '../../../math/ast/nodes';
 import { type AngleMode, type UserFunction, evaluateNumeric } from '../../../math/numeric/evaluate';
 import { parseLatex } from '../../../math/parser/latex-parser';
+import { parseLatexStatement } from '../../../math/parser/statement';
 import { type MathResult, fail, ok } from '../../../math/result';
 import { toLatex } from '../../../math/serializer';
 import { ComputeClient } from '../../core/compute/compute-client';
@@ -36,6 +37,16 @@ export interface Evaluation {
   readonly approximate: boolean;
 }
 
+export type Outcome =
+  | { readonly kind: 'value'; readonly evaluation: Evaluation }
+  | { readonly kind: 'assign'; readonly name: string; readonly evaluation: Evaluation }
+  | {
+      readonly kind: 'define';
+      readonly name: string;
+      readonly params: string[];
+      readonly body: Expr;
+    };
+
 /**
  * Standard-mode evaluation (prompt 005): parse → substitute Ans/variables → exact result from the
  * CAS (worker) where possible, numeric otherwise. Real numbers only for now: a complex result is
@@ -63,6 +74,27 @@ export class CalculatorEngine {
       return fail('not-evaluable', (x as Error).message);
     }
     return ok(ctx.angle === 'deg' ? toRadians(e) : e);
+  }
+
+  /**
+   * The input line in Standard mode: an expression, `a = …` (assignment, value evaluated now) or
+   * `f(x) = …` (definition, kept symbolic).
+   */
+  async evaluateStatement(latex: string, ctx: EvalContext): Promise<MathResult<Outcome>> {
+    const st = parseLatexStatement(latex, { functions: new Set(ctx.functions?.keys() ?? []) });
+    if (!st.ok) return st;
+    const s = st.value;
+    if (s.kind === 'define')
+      return ok({ kind: 'define', name: s.name, params: s.params, body: s.body });
+    if (s.kind === 'assign') {
+      const v = await this.evaluateExpr(s.value, ctx, latex);
+      return v.ok ? ok({ kind: 'assign', name: s.name, evaluation: v.value }) : v;
+    }
+    if (s.expr.type === 'rel') {
+      return fail('unsupported', 'equations are solved in the CAS mode (F2 → SOLVE)');
+    }
+    const v = await this.evaluateExpr(s.expr, ctx, latex);
+    return v.ok ? ok({ kind: 'value', evaluation: v.value }) : v;
   }
 
   async evaluate(latex: string, ctx: EvalContext): Promise<MathResult<Evaluation>> {

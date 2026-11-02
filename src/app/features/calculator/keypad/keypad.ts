@@ -25,7 +25,7 @@ export class Keypad {
     return (
       (key.variant === 'shift-left' && s === 'left') ||
       (key.variant === 'shift-right' && s === 'right') ||
-      (key.variant === 'alpha' && key.id === 'alpha' && this.store.alpha())
+      (key.variant === 'alpha' && key.id === 'alpha' && this.store.alpha() !== 'off')
     );
   }
 }

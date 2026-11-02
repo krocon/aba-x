@@ -577,6 +577,12 @@ class LatexLexer {
   }
 }
 
+/** The token stream of a whole LaTeX input (for statement detection). Throws ParseError. */
+export function scanLatexTokens(src: string, opts: ParseOptions = {}): Tok[] {
+  const raw = scan(src);
+  return new LatexLexer(raw, src, opts).tokens(0, raw.length);
+}
+
 export function parseLatex(src: string, opts: ParseOptions = {}): MathResult<Expr> {
   try {
     const raw = scan(src);

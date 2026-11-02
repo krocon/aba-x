@@ -111,6 +111,11 @@ export class MathInput implements OnInit, OnDestroy, MathEditor {
   };
 
   private readonly onKeydown = (e: KeyboardEvent) => {
+    if (this.stackKey(e)) {
+      e.preventDefault();
+      e.stopPropagation();
+      return;
+    }
     if (e.key === 'Enter' && !e.shiftKey && !e.altKey && !e.metaKey && !e.ctrlKey) {
       e.preventDefault();
       e.stopPropagation();
@@ -121,6 +126,46 @@ export class MathInput implements OnInit, OnDestroy, MathEditor {
       this.store.run({ kind: 'clear' });
     }
   };
+
+  /** Stack browsing with the hardware keyboard (prompt 006): ↑ on an empty line, ↑/↓, Enter, Del, Esc, copy. */
+  private stackKey(e: KeyboardEvent): boolean {
+    const empty = this.latex().trim() === '';
+    const browsing = this.store.selected() !== null;
+    const mod = e.metaKey || e.ctrlKey;
+    if (mod && e.key.toLowerCase() === 'c' && (browsing || empty)) {
+      const t = this.store.clipboardText();
+      if (t) void navigator.clipboard?.writeText(t.text).catch(() => undefined);
+      return !!t;
+    }
+    if (!browsing) {
+      if (e.key === 'ArrowUp' && empty && this.store.stack().length > 0) {
+        this.store.moveSelection(1);
+        return true;
+      }
+      return false;
+    }
+    switch (e.key) {
+      case 'ArrowUp':
+        this.store.moveSelection(1);
+        return true;
+      case 'ArrowDown':
+        this.store.moveSelection(-1);
+        return true;
+      case 'Enter':
+        this.store.recallSelected();
+        return true;
+      case 'Backspace':
+      case 'Delete':
+        this.store.dropSelected();
+        return true;
+      case 'Escape':
+        this.store.selected.set(null);
+        return true;
+      default:
+        if (e.key.length === 1) this.store.selected.set(null);
+        return false;
+    }
+  }
 
   async ngOnInit(): Promise<void> {
     try {
