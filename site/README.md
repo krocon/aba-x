@@ -16,9 +16,9 @@ No build step: copy `index.html`, `favicon.svg` and `img/` into the target folde
 /products/aba-x/img/hero.png, graph.png, device-calc.png, device-cas.png, device-graph.png   (~2 MB together)
 ```
 
-**Open decision – where the page lives.** The web app itself is at `https://krocon.de/products/aba-x1/` (Angular
-`baseHref`), so the page cannot use that folder. The head assumes `https://krocon.de/products/aba-x/` (`og:url`,
-`og:image`); a different folder only needs those two meta tags changed. All links to the app are absolute.
+**Target:** `https://krocon.de/products/aba-x/` (decided by Marc, 02.11.2026) – the web app itself is at
+`https://krocon.de/products/aba-x1/` (Angular `baseHref`). `og:url` and `og:image` in the head point to the page's
+folder; All links to the app are absolute.
 
 ## Pictures
 
