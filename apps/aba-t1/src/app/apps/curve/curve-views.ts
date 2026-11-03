@@ -63,6 +63,7 @@ const TITLES: Record<CurveKind, { symb: TextKey; plot: TextKey; num: TextKey }> 
   parametric: { symb: 'curve.paramSymb', plot: 'curve.paramPlot', num: 'curve.paramNum' },
   polar: { symb: 'curve.polarSymb', plot: 'curve.polarPlot', num: 'curve.polarNum' },
   sequence: { symb: 'curve.seqSymb', plot: 'curve.seqPlot', num: 'curve.seqNum' },
+  graph3d: { symb: 'curve.surfSymb', plot: 'surface.plot', num: 'surface.num' },
 };
 
 /** Symbolic view (prompt 035): ten rows with one to three fields; ←→ choose the field. */

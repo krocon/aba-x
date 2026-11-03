@@ -11,7 +11,7 @@ import { parseLatex } from '@aba/math/parser/latex-parser';
 import { catalogNames, markCommands, markSlots } from '../../core/latex/typed-names';
 import { FN_COLORS, type PlotOptions, DEFAULT_PLOT } from '../function/function-logic';
 
-export type CurveKind = 'parametric' | 'polar' | 'sequence';
+export type CurveKind = 'parametric' | 'polar' | 'sequence' | 'graph3d';
 
 const DIGITS = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
 
@@ -40,6 +40,12 @@ export const KINDS: Record<CurveKind, KindConfig> = {
     fields: (d) => [`U${d}(N)`, `U${d}(1)`, `U${d}(2)`],
     name: (d) => `U${d}`,
   },
+  // 3D surfaces (prompt 046) share the symbolic view; plot and table are their own
+  graph3d: {
+    variable: { latex: 'X', name: 'X', label: 'X' },
+    fields: (d) => [`FZ${d}(X,Y)`],
+    name: (d) => `FZ${d}`,
+  },
 };
 
 export interface CurveRow {
@@ -60,6 +66,11 @@ export interface CurveState {
   numStep: number;
   plot: PlotOptions;
   seqMode: SeqMode;
+  /** 3D app: box ranges, camera and grid size (prompt 046) */
+  range3?: { xmin: number; xmax: number; ymin: number; ymax: number; zmin: number; zmax: number };
+  camera?: { azimuth: number; elevation: number; zoom: number };
+  gridN?: number;
+  box?: boolean;
 }
 
 export function initCurveState(kind: CurveKind): CurveState {
@@ -97,6 +108,19 @@ export function initCurveState(kind: CurveKind): CurveState {
         tmax: 20,
         tstep: 1,
         numStep: 1,
+      };
+    case 'graph3d':
+      return {
+        ...base,
+        view: { xmin: -5, xmax: 5, ymin: -5, ymax: 5 },
+        tmin: 0,
+        tmax: 1,
+        tstep: 1,
+        numStep: 1,
+        range3: { xmin: -5, xmax: 5, ymin: -5, ymax: 5, zmin: -5, zmax: 5 },
+        camera: { azimuth: -Math.PI / 4, elevation: Math.PI / 6, zoom: 1 },
+        gridN: 30,
+        box: true,
       };
   }
 }

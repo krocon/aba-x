@@ -138,3 +138,9 @@ Diskriminante, Nullstellen bzw. Amplitude, Periode, Verschiebung). Menütasten o
 +/− ändern ihn auf seinem Raster, Ziehen verschiebt den Graphen. **Üben**: Ein zufälliger Graph (gestrichelt, aus einem
 Startwert reproduzierbar) soll getroffen werden; Enter/Prüfen vergleicht die Graphen (nicht die Parameter), Punkte in
 der Titelzeile.
+
+## 3D-Grafik (046)
+
+FZ1(X,Y) … in Symb; Plot als schattierte Fläche mit Höhenfarben (Canvas 2D, Maler-Algorithmus – kein WebGL nötig, in
+allen WebViews gleich), Ziehen/Wippe dreht, Pinch/+/− zoomt, Box an/aus, Ansicht zurücksetzen; ⇧Plot: X-, Y-, Z-Bereich
+und Gitter (5–80). Undefinierte Stellen und Werte außerhalb des Z-Bereichs bleiben Lücken. Num: Werte auf einem 5×5-Raster.

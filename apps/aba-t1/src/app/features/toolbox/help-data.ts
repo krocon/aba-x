@@ -624,6 +624,10 @@ export const VIEW_HELP: Record<string, TopicHelp> = {
     en: 'Explorer: the menu buttons (or ←→) choose a parameter, ↑↓ or +/− change it, dragging moves the graph. Practice: a dashed graph appears – match it and press Enter (Check).',
     de: 'Explorer: Menütasten (oder ←→) wählen einen Parameter, ↑↓ oder +/− ändern ihn, Ziehen verschiebt den Graphen. Üben: Ein gestrichelter Graph erscheint – treffen und Enter (Prüfen) drücken.',
   },
+  surface: {
+    en: '3D graphing: FZ1(X,Y) … in Symb (x,t,θ,n inserts X; type Y with alpha). Plot: drag or the rocker rotates, pinch and +/− zoom, Box shows the frame; ⇧Plot sets the X, Y, Z ranges and the grid. Undefined points leave gaps.',
+    de: '3D-Grafik: FZ1(X,Y) … in Symb (x,t,θ,n fügt X ein, Y mit Alpha). Plot: Ziehen oder Wippe dreht, Pinch und +/− zoomen, Box zeigt den Rahmen; ⇧Plot setzt X-, Y-, Z-Bereich und Gitter. Undefinierte Stellen bleiben Lücken.',
+  },
   toolbox: {
     en: 'Toolbox: the menu buttons choose Math, CAS, App, User or Catalogue. ↑↓ choose, → or Enter opens, ← goes back, Help explains the selected command. In the catalogue a letter jumps.',
     de: 'Toolbox: Die Menütasten wählen Math, CAS, App, Nutzer oder Katalog. ↑↓ wählt, → oder Enter öffnet, ← geht zurück, Help erklärt den gewählten Befehl. Im Katalog springt ein Buchstabe.',

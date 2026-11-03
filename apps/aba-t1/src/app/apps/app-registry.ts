@@ -9,6 +9,7 @@ import { FunctionNumSetup, FunctionPlotSetup } from './function/function-setup';
 import { initFunctionState } from './function/function-logic';
 import { initCurveState } from './curve/curve-logic';
 import { ExplorerView, initExplorer } from './explorer/explorer-view';
+import { SurfaceNum, SurfacePlot, SurfaceSetup } from './surface/surface-views';
 import { CurveNum, CurveNumSetup, CurvePlot, CurvePlotSetup, CurveSymb } from './curve/curve-views';
 
 export const APP_DEFS: AppDef[] = [
@@ -67,4 +68,13 @@ export const APP_DEFS: AppDef[] = [
     start: 'plot',
     views: { plot: ExplorerView },
   })),
+  {
+    id: 'graph3d',
+    title: { en: '3D Graphing', de: '3D-Grafik' },
+    icon: 'M12 3l8 4.5v9L12 21l-8-4.5v-9zM12 12l8-4.5M12 12v9M12 12L4 7.5',
+    init: () => initCurveState('graph3d'),
+    version: 1,
+    start: 'symb',
+    views: { symb: CurveSymb, plot: SurfacePlot, num: SurfaceNum, plotSetup: SurfaceSetup },
+  },
 ];

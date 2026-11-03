@@ -296,6 +296,31 @@ export function t1Scenarios({ axeSource }) {
       await keys('home');
       await page.waitForSelector('app-home-view math-field');
     },
+    async graph3d(page) {
+      const keys = async (...ks) => {
+        for (const k of ks) await page.click(`.key[data-key="${k}"]`);
+      };
+      await keys('apps');
+      await page.click('app-library .tile:has-text("3D Graphing")');
+      await keys('enter');
+      await page.waitForSelector('app-curve-symb');
+      await keys('enter');
+      await page.click('app-curve-symb math-field');
+      await page.keyboard.type('X*Y');
+      await page.keyboard.press('Enter');
+      await keys('plot');
+      await page.waitForSelector('app-surface-plot canvas');
+      await keys('num');
+      // first grid point X = −5, Y = −5 → 25
+      await page.waitForFunction(
+        () =>
+          [...([...document.querySelectorAll('app-surface-num tbody tr')][0]?.children ?? [])]
+            .map((c) => c.textContent.trim())
+            .join('|') === '-5|-5|25',
+      );
+      await keys('home');
+      await page.waitForSelector('app-home-view math-field');
+    },
     async keypad(page) {
       const r = await page.$$eval('app-t1-device .key', (keys) => ({
         count: keys.length,
