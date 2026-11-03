@@ -152,3 +152,16 @@ V1 … V0 sind Relationen in X und Y: Gleichungen (`X²+Y²=9`), Ungleichungen (
 Intervallarithmetik: gefärbt ist nur, wo die Relation sicher gilt; grau, wo es sich nicht entscheiden lässt; gestrichelte
 Ränder gehören nicht dazu. ←→ verfolgt einen Rand, ↑↓ wechselt die Relation, Galerie lädt Beispiele. Num listet je X die
 Rand-Y-Werte im Y-Bereich (numerisch). Bricht die Verfeinerung am Zeitbudget ab, sagt die Statuszeile das.
+
+## Geometrie (042)
+
+Plot ist das Konstruktionsblatt: Die Menütasten öffnen Ansicht (Auswählen/Ziehen, Zoom, Alles zeigen, Spuren löschen,
+PNG), Linien, Vieleck, Kreise, Abbild. und Messen. Ein Werkzeug fragt seine Objekte Tipp für Tipp ab; eine freie Stelle
+erzeugt einen freien Punkt (auf ≈ 2 px gerundet), das Punkt-Werkzeug auf einer Geraden/einem Kreis einen Punkt darauf.
+Ohne Werkzeug wählt ein Tipp ein Objekt aus (Menü: Spur, Farbe, Verbergen, Löschen, Messen, OK), Ziehen bewegt freie
+Punkte – alles Abhängige und die eingeblendeten Messungen folgen –, sonst verschiebt es die Ebene; Pinch, Doppeltipp
+und +/− zoomen. Tastatur: Enter zeigt ein Kreuz, die Wippe bewegt es, Enter tippt dort; Esc bricht ab. Symb listet die
+Befehle (`GA = point(1, 2)`, `GC = circle(GA, GB)` …): Bearbeiten, ✓, Neu, Umbenennen, Löschen (kaskadierend); ←→
+stellt Schieberegler. Num führt Messungen und Tests (`distance(A, B)`, `angle(A, B, C)`, `area(t)`, `isCollinear(…)`),
+alle numerisch. ⇧Plot: Fenster, gleiche Achsen, Gitter. Mathematik: [`docs/mathematics/geometry.md`](mathematics/geometry.md).
+

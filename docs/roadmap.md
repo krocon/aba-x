@@ -34,6 +34,7 @@
 | 035    | Parametrisch, Polar, Folge (Treppe/Spinnennetz) als generische Kurven-App                                   | ✅ 03.11.2026 |
 | 040    | Explorer: linear, quadratisch, trigonometrisch mit Übungsmodus                                              | ✅ 03.11.2026 |
 | 036    | Erweiterte Grafiken: Relationen/Ungleichungen mit Intervallarithmetik (garantierte Gebiete), Trace, Galerie | ✅ 03.11.2026 |
+| 042    | Geometrie: dynamische Konstruktionen (Werkzeuge, Ziehen, Kegelschnitte, Abbildungen, Ortslinie), Messen/Tests | ✅ 03.11.2026 |
 | 046    | 3D-Grafik (Canvas 2D, Drehen/Zoomen, Höhenfarben)                                                           | ✅ 03.11.2026 |
 | 045    | Notizen, Speicherverwaltung, Sicherung (Export/Import), Menü nativ/HTML, About                              | ✅ 03.11.2026 |
 

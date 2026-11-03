@@ -12,6 +12,9 @@ import { ExplorerView, initExplorer } from './explorer/explorer-view';
 import { RelationNum, RelationPlot } from './relation/relation-views';
 import { SurfaceNum, SurfacePlot, SurfaceSetup } from './surface/surface-views';
 import { CurveNum, CurveNumSetup, CurvePlot, CurvePlotSetup, CurveSymb } from './curve/curve-views';
+import { initGeometryState } from './geometry/geometry-logic';
+import { GeometryPlot } from './geometry/geometry-plot';
+import { GeometryNum, GeometryPlotSetup, GeometrySymb } from './geometry/geometry-views';
 
 export const APP_DEFS: AppDef[] = [
   {
@@ -92,5 +95,19 @@ export const APP_DEFS: AppDef[] = [
     version: 1,
     start: 'symb',
     views: { symb: CurveSymb, plot: SurfacePlot, num: SurfaceNum, plotSetup: SurfaceSetup },
+  },
+  {
+    id: 'geometry',
+    title: { en: 'Geometry', de: 'Geometrie' },
+    icon: 'M4 19L12 5l8 14zM12 5v14M4 19l12-7M3 19h2M11 4h2',
+    init: initGeometryState,
+    version: 1,
+    start: 'plot',
+    views: {
+      symb: GeometrySymb,
+      plot: GeometryPlot,
+      num: GeometryNum,
+      plotSetup: GeometryPlotSetup,
+    },
   },
 ];

@@ -346,6 +346,105 @@ export function t1Scenarios({ axeSource }) {
       await keys('home');
       await page.waitForSelector('app-home-view math-field');
     },
+    async geometry(page) {
+      const keys = async (...ks) => {
+        for (const k of ks) await page.click(`.key[data-key="${k}"]`);
+      };
+      const menu = (i) => page.click(`app-t1-device .mb:nth-child(${i})`);
+      await keys('apps');
+      await page.click('app-library .tile:has-text("Geometry")');
+      await keys('enter');
+      await page.waitForSelector('app-geometry-plot canvas');
+      // Symb: a triangle and its circumcircle as commands
+      await keys('symb');
+      await page.waitForSelector('app-geometry-symb');
+      for (const cmd of [
+        'A = point(0, 0)',
+        'B = point(4, 0)',
+        'C = point(0, 3)',
+        't = triangle(A, B, C)',
+        'u = circumcircle(A, B, C)',
+      ]) {
+        await menu(3); // New
+        await page.waitForSelector('#geo-symb-entry');
+        await page.fill('#geo-symb-entry', cmd);
+        await page.press('#geo-symb-entry', 'Enter');
+        await page.waitForSelector(`app-geometry-symb li:has-text("${cmd.split(' = ')[1]}")`);
+      }
+      // Num: area and angle
+      await keys('num');
+      await page.waitForSelector('app-geometry-num');
+      for (const m of ['area(t)', 'angle(B, A, C)', 'radius(u)']) {
+        await menu(2); // New
+        await page.waitForSelector('#geo-num-entry');
+        await page.fill('#geo-num-entry', m);
+        await page.press('#geo-num-entry', 'Enter');
+      }
+      const cells = () =>
+        page.$$eval('app-geometry-num tbody tr', (rows) =>
+          rows.map((r) => [...r.children].map((c) => c.textContent.trim()).join('|')),
+        );
+      await page.waitForFunction(
+        () => document.querySelectorAll('app-geometry-num tbody tr').length === 3,
+      );
+      const before = await cells();
+      if (before[0] !== 'area(t)|6' || before[2] !== 'radius(u)|2.5')
+        throw new Error(`measurements ${JSON.stringify(before)}`);
+      // Plot: drag C from (0, 3) up to about (0, 6) – area and radius follow
+      await keys('plot');
+      await page.waitForSelector('app-geometry-plot canvas');
+      const box = await page.$eval('app-geometry-plot canvas', (c) => {
+        const r = c.getBoundingClientRect();
+        return { x: r.left, y: r.top, w: r.width, h: r.height };
+      });
+      // standard window: x −10 … 10, equal units, centre (0, 0)
+      const px = (x, y) => ({
+        x: box.x + ((x + 10) / 20) * box.w,
+        y: box.y + box.h / 2 - (y / 20) * box.w,
+      });
+      const from = px(0, 3);
+      const to = px(0, 6);
+      await page.mouse.move(from.x, from.y);
+      await page.mouse.down();
+      for (let i = 1; i <= 8; i++)
+        await page.mouse.move(from.x, from.y + ((to.y - from.y) * i) / 8);
+      await page.mouse.up();
+      await page.waitForFunction(() =>
+        [...document.querySelectorAll('app-geometry-plot .meas li')].some((li) =>
+          /^area\(t\) = 1[12]/.test(li.textContent.trim()),
+        ),
+      );
+      // build with a tool: Lines ▸ Midpoint, tap A and B → a new point at (2, 0)
+      await keys('esc'); // the dragged point was selected
+      await menu(2);
+      await page.click('app-plot-menu li:has-text("Midpoint")');
+      for (const [x, y] of [
+        [0, 0],
+        [4, 0],
+      ]) {
+        const p = px(x, y);
+        await page.mouse.click(p.x, p.y);
+        await page.waitForTimeout(400); // not a double tap
+      }
+      await keys('symb');
+      await page.waitForSelector('app-geometry-symb li:has-text("midpoint(A, B)")');
+      await page.waitForSelector('app-geometry-symb li:has-text("(2, 0)")');
+      // the three views pass axe (serious/critical)
+      await page.addScriptTag({ content: axeSource });
+      for (const v of ['symb', 'num', 'plot']) {
+        await keys(v);
+        await page.waitForSelector(`app-geometry-${v}`);
+        const r = await page.evaluate(() =>
+          // eslint-disable-next-line no-undef
+          axe.run(document, { resultTypes: ['violations'] }),
+        );
+        const bad = r.violations.filter((x) => x.impact === 'serious' || x.impact === 'critical');
+        if (bad.length)
+          throw new Error(`${v}: ${bad.map((x) => `${x.id} ${x.nodes[0]?.target}`).join('; ')}`);
+      }
+      await keys('home');
+      await page.waitForSelector('app-home-view math-field');
+    },
     async keypad(page) {
       const r = await page.$$eval('app-t1-device .key', (keys) => ({
         count: keys.length,
