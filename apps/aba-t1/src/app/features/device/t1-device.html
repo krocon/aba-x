@@ -6,7 +6,7 @@
   </div>
 
   <div class="screen">
-    <div class="lcd">
+    <div class="lcd" [class.off]="off()">
       <div class="titlebar">
         <span class="title">{{ title() }}</span>
         <span class="ann" aria-live="polite">
@@ -15,9 +15,18 @@
           }
         </span>
       </div>
-      <div class="content">
+      <div
+        class="content"
+        (pointerdown)="pointer($event, 'down')"
+        (pointermove)="pointer($event, 'move')"
+        (pointerup)="pointer($event, 'up')"
+        (pointercancel)="pointer($event, 'cancel')"
+      >
         <ng-content />
       </div>
+      @if (off()) {
+        <div class="offscreen" role="status">Off – press On</div>
+      }
       <div class="menubar" role="toolbar" aria-label="Menu">
         @for (i of slots; track i) {
           <button
@@ -51,29 +60,41 @@
         type="button"
         class="rk up"
         aria-label="Up"
-        (pointerdown)="keep($event)"
-        (click)="rocker.emit('up')"
+        (pointerdown)="rockerDown($event, 'up')"
+        (pointerup)="stopRepeat()"
+        (pointerleave)="stopRepeat()"
+        (pointercancel)="stopRepeat()"
+        (click)="rockerKey($event, 'up')"
       ></button>
       <button
         type="button"
         class="rk left"
         aria-label="Left"
-        (pointerdown)="keep($event)"
-        (click)="rocker.emit('left')"
+        (pointerdown)="rockerDown($event, 'left')"
+        (pointerup)="stopRepeat()"
+        (pointerleave)="stopRepeat()"
+        (pointercancel)="stopRepeat()"
+        (click)="rockerKey($event, 'left')"
       ></button>
       <button
         type="button"
         class="rk right"
         aria-label="Right"
-        (pointerdown)="keep($event)"
-        (click)="rocker.emit('right')"
+        (pointerdown)="rockerDown($event, 'right')"
+        (pointerup)="stopRepeat()"
+        (pointerleave)="stopRepeat()"
+        (pointercancel)="stopRepeat()"
+        (click)="rockerKey($event, 'right')"
       ></button>
       <button
         type="button"
         class="rk down"
         aria-label="Down"
-        (pointerdown)="keep($event)"
-        (click)="rocker.emit('down')"
+        (pointerdown)="rockerDown($event, 'down')"
+        (pointerup)="stopRepeat()"
+        (pointerleave)="stopRepeat()"
+        (pointercancel)="stopRepeat()"
+        (click)="rockerKey($event, 'down')"
       ></button>
     </div>
     <div class="cluster right">

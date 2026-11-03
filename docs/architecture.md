@@ -53,7 +53,9 @@ Pfad-Aliase in `tsconfig.json`, Abhängigkeiten zentral in der Root-`package.jso
 
 `apps/aba-t1` nutzt dieselben Pakete (`@aba/math`, `@aba/core`) und eine eigene Gerät-Oberfläche. Beide Desktop-Apps
 sind dünne Crates über `crates/shell` (`aba_shell::builder()`: Storage, Export-Dateien, natives Menü, About,
-Dialog- und Fensterzustand-Plugin). Kein Cargo-Workspace – jede Crate hat ihre `Cargo.lock`.
+Dialog- und Fensterzustand-Plugin). Kein Cargo-Workspace – jede Crate hat ihre `Cargo.lock`. Gemeinsam im Frontend
+seit 026: Kürzel-Logik (`@aba/core/actions/chords`), `ActionDispatcher<A>` und `GestureRecognizer`; Aktionen,
+Keymaps und Menümodelle bleiben je App.
 
 ## 3. Persistenz (ADR 0005)
 

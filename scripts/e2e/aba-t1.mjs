@@ -23,6 +23,24 @@ export function t1Scenarios({ axeSource }) {
       await page.click('.key[data-key="enter"]');
       if (Math.abs((await h()) - before) > 0.5) throw new Error('display changed its size');
     },
+    async shiftAlpha(page) {
+      const ann = () => page.$eval('app-t1-device .ann', (e) => e.textContent.trim());
+      await page.click('.key[data-key="shift"]');
+      await page.waitForFunction(() =>
+        document.querySelector('app-t1-device .ann').textContent.includes('⇧'),
+      );
+      await page.click('.key[data-key="shift"]');
+      await page.click('.key[data-key="alpha"]');
+      await page.click('.key[data-key="alpha"]');
+      await page.waitForFunction(() =>
+        document.querySelector('app-t1-device .ann').textContent.includes('🔒'),
+      );
+      await page.click('.key[data-key="alpha"]');
+      await page.waitForFunction(
+        () => document.querySelector('app-t1-device .ann').textContent.trim() === '',
+      );
+      if ((await ann()) !== '') throw new Error(`annunciators ${await ann()}`);
+    },
     async phoneWidth(page) {
       await page.setViewportSize({ width: 375, height: 812 });
       const overflow = await page.evaluate(

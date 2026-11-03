@@ -64,6 +64,7 @@ packages/core/               @aba/core – app-unabhängige Angular-Bausteine (n
   src/platform|storage|files Fassaden (Web + Tauri); APP_IDENTITY, STORAGE_DB_NAME liefert die App
   src/compute/               ComputeClient (Worker, Timeout, Abbruch), compute.worker.ts
   src/i18n/i18n-base.ts      I18nBase<K> (Sprachumschaltung); Texte bringt die App mit
+  src/actions/               chords.ts (Kürzel je OS), ActionDispatcher<A>, GestureRecognizer (Touch, rein)
   src/shared/                Modal, MathStatic (`<app-math>` mit Neu-Rendern)
   testing/                   Fakes (Storage, Platform, Files) = @aba/core/testing, nur in Specs
 apps/aba-x1/                 die App ABA-X1 (package.json = Versionsquelle, ngsw-config.json, THIRD-PARTY-NOTICES.txt)
@@ -76,7 +77,8 @@ apps/aba-x1/                 die App ABA-X1 (package.json = Versionsquelle, ngsw
   src/app/features/          calculator/ (device/, keypad/, Store, Engine, …), cas/, graph/, vars|history|backup|
                              settings|about|help|menus/
   public/, src-tauri/, site/ Icons/Manifest; Crate (nur lib.rs: `aba_shell::builder()`); Produktseite
-apps/aba-t1/                 zweiter Rechner (ADR 0008): src/app/features/device (Gerät, Tastenmodell), Crate wie oben
+apps/aba-t1/                 zweiter Rechner (ADR 0008), Bedienung: docs/aba-t1.md; core/device/DeviceStore (Kontext-Stack der
+                             Ansichten: ViewContext), core/actions (Shift/Alpha, Keymap, T1Keyboard), features/device (Gerät)
 crates/shell/                gemeinsame Rust-Hülle (commands.rs, storage.rs, files.rs, app_menu.rs, about.rs, error.rs),
                              eigene Cargo.lock, kein Workspace
 scripts/                     apps.mjs (App-Registry), version, notices, release-notes, rust.mjs (+ Tests), e2e/run.mjs

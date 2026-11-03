@@ -97,6 +97,19 @@
   position: relative;
   min-height: 0;
   overflow: hidden;
+  touch-action: none;
+}
+.lcd {
+  position: relative;
+}
+.offscreen {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: #050b0a;
+  color: #4d625d;
+  font-size: 4cqw;
 }
 .menubar {
   display: grid;

@@ -1,10 +1,19 @@
 /**
- * Keyboard shortcuts per OS (prompt 007). Pure: chord notation, matching against KeyboardEvents,
- * the default keymaps. Chords use `Mod` = ⌘ on macOS, Ctrl elsewhere; keys are matched on
- * `event.code` for letters (layout-independent) and on `event.key` otherwise.
+ * Keyboard shortcuts of ABA-X1 (prompt 007): the actions and the default keymap. Chord matching and
+ * formatting are shared (`@aba/core/actions/chords`, prompt 026).
  */
+import type { Keymap as KeymapOf, Os } from '@aba/core/actions/chords';
 
-export type Os = 'mac' | 'other';
+export {
+  accelerator,
+  detectOs,
+  formatChord,
+  matches,
+  resolve,
+  type Chord,
+  type KeyLike,
+  type Os,
+} from '@aba/core/actions/chords';
 
 export type ActionId =
   | 'softkey1'
@@ -64,15 +73,7 @@ export const ACTIONS: readonly ActionInfo[] = [
   { id: 'toggleFullSize', title: 'Full size' },
 ];
 
-export interface Chord {
-  readonly mod?: boolean;
-  readonly alt?: boolean;
-  readonly shift?: boolean;
-  /** `event.key` for named keys (`F1`, `Enter`, `Backspace`, `/`) or a letter `A`–`Z` (matched on `event.code`). */
-  readonly key: string;
-}
-
-export type Keymap = readonly { action: ActionId; chord: Chord }[];
+export type Keymap = KeymapOf<ActionId>;
 
 const BASE: Keymap = [
   { action: 'softkey1', chord: { key: 'F1' } },
@@ -99,55 +100,4 @@ const BASE: Keymap = [
 export function keymapFor(os: Os): Keymap {
   void os;
   return BASE;
-}
-
-export function detectOs(platform: string): Os {
-  return /mac|iphone|ipad/i.test(platform) ? 'mac' : 'other';
-}
-
-export interface KeyLike {
-  key: string;
-  code?: string;
-  metaKey: boolean;
-  ctrlKey: boolean;
-  altKey: boolean;
-  shiftKey: boolean;
-}
-
-export function matches(chord: Chord, e: KeyLike, os: Os): boolean {
-  const mod = os === 'mac' ? e.metaKey : e.ctrlKey;
-  const otherMod = os === 'mac' ? e.ctrlKey : e.metaKey;
-  if (!!chord.mod !== mod || otherMod) return false;
-  if (!!chord.alt !== e.altKey || !!chord.shift !== e.shiftKey) return false;
-  if (/^[A-Z]$/.test(chord.key)) return e.code === `Key${chord.key}`;
-  return e.key === chord.key;
-}
-
-export function resolve(keymap: Keymap, e: KeyLike, os: Os): ActionId | null {
-  return keymap.find((b) => matches(b.chord, e, os))?.action ?? null;
-}
-
-/** Display form: ⌘/ on macOS, Ctrl+/ elsewhere; ⌥ = Alt. */
-export function formatChord(chord: Chord, os: Os): string {
-  const keyName: Record<string, string> = {
-    Backspace: os === 'mac' ? '⌫' : 'Backspace',
-    Enter: os === 'mac' ? '↩' : 'Enter',
-  };
-  const key = keyName[chord.key] ?? chord.key;
-  if (os === 'mac') {
-    return `${chord.alt ? '⌥' : ''}${chord.shift ? '⇧' : ''}${chord.mod ? '⌘' : ''}${key}`;
-  }
-  return [chord.mod && 'Ctrl', chord.alt && 'Alt', chord.shift && 'Shift', key]
-    .filter(Boolean)
-    .join('+');
-}
-
-/** Accelerator string for the native menu (Tauri/muda notation), or null. */
-export function accelerator(chord: Chord): string | null {
-  const names: Record<string, string> = { '/': 'Slash', ',': 'Comma', '.': 'Period' };
-  const key = names[chord.key] ?? chord.key;
-  if (!/^([A-Z]|F\d{1,2}|Slash|Comma|Period|Backspace|Enter)$/.test(key)) return null;
-  return [chord.mod && 'CmdOrCtrl', chord.alt && 'Alt', chord.shift && 'Shift', key]
-    .filter(Boolean)
-    .join('+');
 }

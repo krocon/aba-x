@@ -26,9 +26,7 @@
     "security": {
       "csp": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; worker-src 'self'; connect-src ipc: http://ipc.localhost",
       "devCsp": null,
-      "dangerousDisableAssetCspModification": [
-        "style-src"
-      ]
+      "dangerousDisableAssetCspModification": ["style-src"]
     }
   },
   "bundle": {
@@ -38,15 +36,7 @@
     "resources": {
       "../THIRD-PARTY-NOTICES.txt": "THIRD-PARTY-NOTICES.txt"
     },
-    "targets": [
-      "deb",
-      "rpm",
-      "appimage",
-      "dmg",
-      "app",
-      "msi",
-      "nsis"
-    ],
+    "targets": ["deb", "rpm", "appimage", "dmg", "app", "msi", "nsis"],
     "publisher": "Marc Kronberg",
     "copyright": "© 2026 Marc Kronberg",
     "homepage": "https://github.com/krocon/aba-x",
@@ -73,10 +63,7 @@
       },
       "nsis": {
         "installMode": "currentUser",
-        "languages": [
-          "English",
-          "German"
-        ],
+        "languages": ["English", "German"],
         "displayLanguageSelector": false
       }
     },
