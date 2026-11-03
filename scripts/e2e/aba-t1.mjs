@@ -165,6 +165,35 @@ export function t1Scenarios({ axeSource }) {
       await page.keyboard.press('Enter');
       await lastResult(page, '-2');
     },
+    async apps(page) {
+      const keys = async (...ks) => {
+        for (const k of ks) await page.click(`.key[data-key="${k}"]`);
+      };
+      await keys('apps');
+      await page.waitForSelector('app-library .tile');
+      await keys('enter'); // Function
+      await page.waitForSelector('app-function-symb');
+      await keys('enter'); // edit F1
+      await page.waitForSelector('app-function-symb math-field');
+      await page.click('app-function-symb math-field');
+      await page.keyboard.type('X^2');
+      await page.keyboard.press('Enter');
+      await page.waitForFunction(() =>
+        document.querySelector('app-function-symb .def')?.textContent.includes('X'),
+      );
+      await keys('plot');
+      await page.waitForSelector('app-function-plot canvas');
+      await keys('num');
+      await page.waitForFunction(
+        () =>
+          [...document.querySelectorAll('app-function-num tbody tr')][2]?.textContent.replace(
+            /\s+/g,
+            '',
+          ) === '24',
+      );
+      await keys('home');
+      await page.waitForSelector('app-home-view math-field');
+    },
     async keypad(page) {
       const r = await page.$$eval('app-t1-device .key', (keys) => ({
         count: keys.length,

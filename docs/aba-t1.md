@@ -90,3 +90,11 @@ Vorzeichen. Details: [`mathematics/units.md`](mathematics/units.md).
 Enter speichert und rückt weiter, über das Ende hinaus wächst die Tabelle; Menü: Bearb., +Zeile, −Zeile, +Spalte,
 −Spalte, OK). ⇧8 `{ }`, ⇧5 `[ ]`. Getippte Katalogwörter (`sumlist(`, `det(`) und Namen `L1`, `M1` werden erkannt;
 dafür ersetzen Start- und CAS-Ansicht MathLives eigene Kürzel. Details: [`mathematics/linalg.md`](mathematics/linalg.md).
+
+## Apps (033)
+
+Apps-Taste (Alt+A): App-Bibliothek mit eigenen Symbolen; Wippe/Touch wählen, Enter/Start öffnet. Menü: Speich.
+(Kopie unter neuem Namen), Zurücks., Sortier. (Name / zuletzt benutzt), Löschen (nur Kopien). Jede App hat
+Symb (F7), Plot (F8), Num (F9) und deren Einstellungen (⇧), ⇧Apps = Info-Notiz. Der Zustand jeder App (auch jeder
+Kopie) wird gespeichert. Erste App: **Funktion** (F1…F9, F0 mit Häkchen und Farbe, Plot mit Ziehen/Pinch/
+Doppeltippen/+−/Wippe, Tabelle mit Startwert/Schritt, Plot- und Tabellen-Einstellungen).

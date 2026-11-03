@@ -13,6 +13,9 @@ import { T1Device } from './features/device/t1-device';
 import { ShortcutsDialog } from './features/help/shortcuts-dialog';
 import { CasStore } from './features/cas/cas-store';
 import { CasView } from './features/cas/cas-view';
+import { AppHost } from './apps/app-host';
+import { AppStore } from './apps/app-store';
+import { LibraryView } from './apps/library-view';
 import { DataCatalog } from './features/data/catalog-view';
 import { GridEditor } from './features/data/grid-editor';
 import { HomeStore } from './features/home/home-store';
@@ -42,6 +45,8 @@ import { PopupView } from './features/toolbox/popup-view';
     PopupView,
     DataCatalog,
     GridEditor,
+    LibraryView,
+    AppHost,
   ],
   template: `
     <main>
@@ -77,6 +82,12 @@ import { PopupView } from './features/toolbox/popup-view';
           }
           @case ('editor') {
             <app-grid-editor />
+          }
+          @case ('library') {
+            <app-library />
+          }
+          @case ('app') {
+            <app-app-host />
           }
           @default {
             @if (rpnEntry()) {
@@ -133,6 +144,7 @@ export class App implements OnInit {
   private readonly rpn = inject(RpnStore);
   private readonly cas = inject(CasStore);
   protected readonly popup = inject(PopupStore);
+  private readonly apps = inject(AppStore);
   protected readonly rpnEntry = computed(() => this.settings.settings().entry === 'rpn');
 
   constructor() {
@@ -150,6 +162,13 @@ export class App implements OnInit {
     this.device.onGlobal('vars.shift', open('chars'));
     this.device.onGlobal('template.shift', open('units'));
     this.device.onGlobal('d7.shift', () => this.nav.go('lists'));
+    // apps (prompt 033): library, the views of the running app and their setups, info
+    this.device.onGlobal('apps', () => this.nav.go('library'));
+    this.device.onGlobal('apps.shift', () => this.openApp('info'));
+    for (const v of ['symb', 'plot', 'num'] as const) {
+      this.device.onGlobal(v, () => this.openApp(v));
+      this.device.onGlobal(`${v}.shift`, () => this.openApp(`${v}Setup`));
+    }
     this.device.onGlobal('d4.shift', () => this.nav.go('matrices'));
     this.device.onGlobal('sub.shift', open('base'));
     this.device.onGlobal('help', () =>
@@ -160,7 +179,17 @@ export class App implements OnInit {
     );
   }
 
+  private openApp(view: Parameters<AppStore['show']>[0]): void {
+    if (this.apps.show(view)) this.nav.go('app');
+  }
+
   async ngOnInit(): Promise<void> {
-    await Promise.all([this.settings.load(), this.home.load(), this.rpn.load(), this.cas.load()]);
+    await Promise.all([
+      this.settings.load(),
+      this.home.load(),
+      this.rpn.load(),
+      this.cas.load(),
+      this.apps.load(),
+    ]);
   }
 }

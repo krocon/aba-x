@@ -70,6 +70,7 @@ packages/core/               @aba/core – app-unabhängige Angular-Bausteine (n
   src/compute/               ComputeClient (Worker, Timeout, Abbruch), compute.worker.ts
   src/i18n/i18n-base.ts      I18nBase<K> (Sprachumschaltung); Texte bringt die App mit
   src/actions/               chords.ts (Kürzel je OS), ActionDispatcher<A>, GestureRecognizer (Touch, rein)
+  src/graph/                 PlotCanvas (HiDPI-Canvas), plot-draw (Achsen, Kurven, Punkte) – ABA-T1-Apps
   src/shared/                Modal, MathStatic (`<app-math>` mit Neu-Rendern), MathField (MathLive-Zeile ohne App-Logik)
   testing/                   Fakes (Storage, Platform, Files) = @aba/core/testing, nur in Specs
 apps/aba-x1/                 die App ABA-X1 (package.json = Versionsquelle, ngsw-config.json, THIRD-PARTY-NOTICES.txt)
@@ -85,7 +86,8 @@ apps/aba-x1/                 die App ABA-X1 (package.json = Versionsquelle, ngsw
 apps/aba-t1/                 zweiter Rechner (ADR 0008), Bedienung: docs/aba-t1.md; core/device/DeviceStore (Kontext-Stack der
                              Ansichten: ViewContext), core/nav (Bildschirme), core/actions (Shift/Alpha, Keymap,
                              T1Keyboard), core/clipboard, features/device|home|rpn|cas|settings|toolbox (Overlay: Toolbox,
-                             Vars, Zeichen, Hilfe; Hilfetexte help-data.ts – eigene Texte, Spec: vollständig DE/EN)
+                             Vars, Zeichen, Hilfe; Hilfetexte help-data.ts – eigene Texte, Spec: vollständig DE/EN),
+                             apps/ (AppDef/AppStore/Bibliothek/Host; je App ein Ordner: function/ …)
 crates/shell/                gemeinsame Rust-Hülle (commands.rs, storage.rs, files.rs, app_menu.rs, about.rs, error.rs),
                              eigene Cargo.lock, kein Workspace
 scripts/                     apps.mjs (App-Registry), version, notices, release-notes, rust.mjs (+ Tests), e2e/run.mjs
