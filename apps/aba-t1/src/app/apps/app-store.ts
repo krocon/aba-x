@@ -96,6 +96,26 @@ export class AppStore {
     this.save();
   }
 
+  /** Adds an exported app as a copy (unknown app types and duplicate names are refused). */
+  importInstance(inst: AppInstance): string | null {
+    const def = APP_DEFS.find((d) => d.id === inst?.app);
+    if (!def || typeof inst.name !== 'string') return 'unknown app type';
+    let name = inst.name;
+    for (let k = 2; this.instances().some((i) => i.name === name); k++)
+      name = `${inst.name} (${k})`;
+    const copy: AppInstance = {
+      ...inst,
+      id: `${def.id}-${Date.now().toString(36)}`,
+      name,
+      copy: true,
+      used: Date.now(),
+      ...(inst.version === def.version ? {} : { state: def.init(), version: def.version }),
+    };
+    this.instances.update((l) => [...l, copy]);
+    this.save();
+    return null;
+  }
+
   toggleSort(): void {
     this.sort.update((s) => (s === 'alpha' ? 'used' : 'alpha'));
     this.save();

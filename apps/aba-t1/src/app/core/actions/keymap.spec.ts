@@ -22,7 +22,10 @@ describe('ABA-T1 keymap', () => {
     const ids = new Set(allKeys().map((k) => k.id));
     for (const b of CHORDS) {
       const { id } = keyOfAction(b.action);
-      expect(ids.has(id) || /^menu[1-6]$/.test(id) || id === 'shortcuts', b.action).toBe(true);
+      expect(
+        ids.has(id) || /^menu[1-6]$/.test(id) || id === 'shortcuts' || id.startsWith('menu:'),
+        b.action,
+      ).toBe(true);
     }
   });
 

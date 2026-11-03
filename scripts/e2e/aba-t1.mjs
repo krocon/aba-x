@@ -12,6 +12,8 @@ async function lastResult(page, want) {
   );
 }
 
+import { readFile } from 'node:fs/promises';
+
 /** @param {{ axeSource: string }} deps */
 export function t1Scenarios({ axeSource }) {
   const checks = {
@@ -228,6 +230,52 @@ export function t1Scenarios({ axeSource }) {
       );
       await keys('plot');
       await page.waitForSelector('app-curve-plot canvas');
+      await keys('home');
+      await page.waitForSelector('app-home-view math-field');
+    },
+    async notesAndBackup(page) {
+      const keys = async (...ks) => {
+        for (const k of ks) await page.click(`.key[data-key="${k}"]`);
+      };
+      const menuItem = async (menu, item) => {
+        await page.click(`app-web-menu .top:has-text("${menu}")`);
+        await page.click(`app-web-menu [role="menuitem"]:has-text("${item}")`);
+      };
+      // a note
+      await keys('shift', 'd0');
+      await page.waitForSelector('app-notes-view');
+      await page.click('app-t1-device .mb:nth-child(1)'); // New
+      await page.fill('app-notes-view textarea', '# Backup test\nsome $x^2$');
+      await keys('esc');
+      // export the backup (a download on the web)
+      const [download] = await Promise.all([
+        page.waitForEvent('download'),
+        menuItem('File', 'Export backup'),
+      ]);
+      const path = await download.path();
+      const text = await readFile(path, 'utf8');
+      const json = JSON.parse(text);
+      if (json.format !== 'aba-t1-backup' || !json.docs.notes)
+        throw new Error('backup without notes');
+      // delete the notes, then import the backup again
+      await keys('shift', 'toolbox');
+      await page.waitForSelector('app-memory-view');
+      await page.click('app-memory-view tr:has-text("Notes")');
+      await page.click('app-t1-device .mb:nth-child(1)'); // Clear
+      await page.click('app-t1-device .mb:nth-child(6)'); // Yes
+      await page.waitForFunction(() =>
+        [...document.querySelectorAll('app-memory-view tr')].some((r) =>
+          /^Notes\s*0/.test(r.textContent.trim()),
+        ),
+      );
+      const [chooser] = await Promise.all([
+        page.waitForEvent('filechooser'),
+        menuItem('File', 'Import backup'),
+      ]);
+      await chooser.setFiles(path);
+      await page.click('app-modal .btn.primary');
+      await keys('shift', 'd0');
+      await page.waitForSelector('app-notes-view li:has-text("Backup test")');
       await keys('home');
       await page.waitForSelector('app-home-view math-field');
     },

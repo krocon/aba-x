@@ -37,7 +37,7 @@ export class T1Keyboard extends ActionDispatcher<T1Action> {
   constructor() {
     super();
     for (const b of CHORDS) {
-      if (b.action === 'shortcuts') continue;
+      if (b.action === 'shortcuts' || b.action.startsWith('menu:')) continue;
       this.register(b.action, () => {
         const m = /^menu([1-6])$/.exec(b.action);
         if (m) return this.device.menuPress(Number(m[1]) - 1, false);

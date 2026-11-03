@@ -16,6 +16,7 @@ import { NavStore } from '../core/nav/nav-store';
 import type { MenuButton } from '../features/device/t1-device';
 import { editFor } from '../features/home/home-keys';
 import { AppStore } from './app-store';
+import { BackupService } from '../features/backup/backup-service';
 
 const COLS = 4;
 
@@ -126,6 +127,7 @@ export class LibraryView implements OnInit, OnDestroy {
   private readonly apps = inject(AppStore);
   private readonly device = inject(DeviceStore);
   private readonly nav = inject(NavStore);
+  private readonly backup = inject(BackupService);
   private readonly nameEl = viewChild<ElementRef<HTMLInputElement>>('name');
   protected readonly cursor = signal(0);
   protected readonly naming = signal(false);
@@ -172,7 +174,7 @@ export class LibraryView implements OnInit, OnDestroy {
       { label: t('app.reset') },
       { label: t('app.sort') },
       { label: sel?.copy ? t('data.delete') : '' },
-      { label: '' },
+      { label: 'Export' },
       { label: t('app.start') },
     ];
   }
@@ -188,6 +190,7 @@ export class LibraryView implements OnInit, OnDestroy {
     if (i === 1) this.apps.reset(sel.id);
     if (i === 2) this.apps.toggleSort();
     if (i === 3 && sel.copy) this.apps.remove(sel.id);
+    if (i === 4) void this.backup.exportApp(sel);
     if (i === 5) this.start();
   }
 

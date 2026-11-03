@@ -74,7 +74,7 @@ Empfohlene Reihenfolge: 025 → 026 → 027 → 028 → 029 → 030 → 031 → 
 | 042 | [t1-geometrie](042-t1-geometrie.md) | Dynamische Geometrie (042a/042b) | 033, 034 | XL | Soll | offen |
 | 043 | [t1-programmiersprache-kern](043-t1-programmiersprache-kern.md) | PPL-artige Sprache: `packages/ppl`, Interpreter im Worker | 027, 032 | L | Pflicht | offen |
 | 044 | [t1-programm-editor-eigene-apps](044-t1-programm-editor-eigene-apps.md) | Programmkatalog, Editor, Debugger, eigene Apps, Nutzer-Tasten | 043, 033 | M | Pflicht | offen |
-| 045 | [t1-notizen-speicher-backup](045-t1-notizen-speicher-backup.md) | Notizen, Info, Speicherverwaltung, Backup, Menü | 033 | M | Pflicht | offen |
+| 045 | [t1-notizen-speicher-backup](done/045-t1-notizen-speicher-backup.md) | Notizen, Info, Speicherverwaltung, Backup, Menü | 033 | M | Pflicht | ✅ 03.11.2026 |
 | 046 | [t1-3d-grafiken](046-t1-3d-grafiken.md) | 3D-Flächen (WebGL) | 034 | M | Kann | offen |
 | 047 | [t1-python-app](047-t1-python-app.md) | Python (MicroPython/WASM) | 044 | M | Kann | offen |
 | 048 | [t1-produktreife-release](048-t1-produktreife-release.md) | Barrierefreiheit, i18n, PWA, E2E, Release, README, Werbeseite | 025–045 | M | Pflicht | offen |

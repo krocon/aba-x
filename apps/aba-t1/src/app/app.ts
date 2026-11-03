@@ -5,6 +5,7 @@ import {
   computed,
   effect,
   inject,
+  signal,
 } from '@angular/core';
 import { T1Keyboard } from './core/actions/t1-keyboard';
 import { DeviceStore } from './core/device/device-store';
@@ -13,7 +14,16 @@ import { T1Device } from './features/device/t1-device';
 import { ShortcutsDialog } from './features/help/shortcuts-dialog';
 import { CasStore } from './features/cas/cas-store';
 import { CasView } from './features/cas/cas-view';
+import { Modal } from '@aba/core/shared/modal';
 import { AppHost } from './apps/app-host';
+import { BackupService } from './features/backup/backup-service';
+import { MemoryView } from './features/memory/memory-view';
+import { AboutDialog } from './features/menus/about-dialog';
+import { MenuService } from './features/menus/menu-service';
+import { WebMenu } from './features/menus/web-menu';
+import { NotesStore } from './features/notes/notes-store';
+import { NotesView } from './features/notes/notes-view';
+import { I18n } from './core/i18n/i18n';
 import { AppStore } from './apps/app-store';
 import { LibraryView } from './apps/library-view';
 import { DataCatalog } from './features/data/catalog-view';
@@ -47,8 +57,16 @@ import { PopupView } from './features/toolbox/popup-view';
     GridEditor,
     LibraryView,
     AppHost,
+    NotesView,
+    MemoryView,
+    WebMenu,
+    AboutDialog,
+    Modal,
   ],
   template: `
+    @if (!menu.native) {
+      <app-web-menu />
+    }
     <main>
       <h1 class="visually-hidden">ABA-T1</h1>
       <app-t1-device
@@ -89,6 +107,12 @@ import { PopupView } from './features/toolbox/popup-view';
           @case ('app') {
             <app-app-host />
           }
+          @case ('notes') {
+            <app-notes-view />
+          }
+          @case ('memory') {
+            <app-memory-view />
+          }
           @default {
             @if (rpnEntry()) {
               <app-rpn-view />
@@ -101,12 +125,31 @@ import { PopupView } from './features/toolbox/popup-view';
           <app-popup />
         }
       </app-t1-device>
-      <p class="foot">
+      <p class="foot" aria-live="polite">
+        @if (backup.message(); as m) {
+          <span class="msg">{{ m }}</span>
+        }
         <button type="button" class="link" (click)="keyboard.helpOpen.set(true)">Keyboard</button>
       </p>
     </main>
     @if (keyboard.helpOpen()) {
       <app-shortcuts-dialog (closed)="keyboard.helpOpen.set(false)" />
+    }
+    @if (aboutOpen()) {
+      <app-about-dialog (closed)="aboutOpen.set(false)" />
+    }
+    @if (backup.pending(); as p) {
+      <app-modal [heading]="i18n.t('menuItem.importBackup')" (closed)="backup.pending.set(null)">
+        <p>{{ i18n.t('backup.ask', { parts: p.keys.join(', ') }) }}</p>
+        <div class="dialog-actions">
+          <button type="button" class="btn" (click)="backup.pending.set(null)">
+            {{ i18n.t('backup.cancel') }}
+          </button>
+          <button type="button" class="btn primary" (click)="backup.confirmImport()">
+            {{ i18n.t('backup.import') }}
+          </button>
+        </div>
+      </app-modal>
     }
   `,
   styles: `
@@ -119,6 +162,10 @@ import { PopupView } from './features/toolbox/popup-view';
     .foot {
       margin: 10px 0 0;
       font-size: 0.85rem;
+    }
+    .msg {
+      margin-right: 1rem;
+      color: var(--page-text);
     }
     .link {
       border: 0;
@@ -146,6 +193,11 @@ export class App implements OnInit {
   protected readonly popup = inject(PopupStore);
   private readonly apps = inject(AppStore);
   protected readonly rpnEntry = computed(() => this.settings.settings().entry === 'rpn');
+  protected readonly menu = inject(MenuService);
+  protected readonly backup = inject(BackupService);
+  private readonly notes = inject(NotesStore);
+  protected readonly i18n = inject(I18n);
+  protected readonly aboutOpen = signal(false);
 
   constructor() {
     effect(() =>
@@ -171,6 +223,34 @@ export class App implements OnInit {
     }
     this.device.onGlobal('d4.shift', () => this.nav.go('matrices'));
     this.device.onGlobal('sub.shift', open('base'));
+    this.device.onGlobal('d0.shift', () => this.nav.go('notes'));
+    this.device.onGlobal('toolbox.shift', () => this.nav.go('memory'));
+    // menu (prompt 045): one set of actions for the native menu, the HTML menu and the keyboard
+    const actions: Record<string, () => void> = {
+      exportBackup: () => void this.backup.exportBackup(),
+      importBackup: () => void this.backup.chooseBackup(),
+      importApp: () => void this.backup.importApp(),
+      importNote: () => void this.backup.importNote(),
+      goHome: () => this.nav.go('home'),
+      goCas: () => this.nav.go('cas'),
+      goApps: () => this.nav.go('library'),
+      goNotes: () => this.nav.go('notes'),
+      goMemory: () => this.nav.go('memory'),
+      goLists: () => this.nav.go('lists'),
+      goMatrices: () => this.nav.go('matrices'),
+      settings: () => this.nav.go('homeSettings'),
+      keyboard: () => this.keyboard.helpOpen.set(true),
+      about: () => this.aboutOpen.set(true),
+    };
+    for (const [id, run] of Object.entries(actions)) {
+      this.menu.on(id as Parameters<MenuService['on']>[0], run);
+      this.keyboard.register(`menu:${id}`, run);
+    }
+    // the native menu follows the language
+    effect(() => {
+      this.i18n.lang();
+      void this.menu.install().catch((e) => console.error(e));
+    });
     this.device.onGlobal('help', () =>
       this.popup.open('help', this.device.insertTarget(), {
         kind: 'view',
@@ -190,6 +270,8 @@ export class App implements OnInit {
       this.rpn.load(),
       this.cas.load(),
       this.apps.load(),
+      this.notes.load(),
     ]);
+    await this.menu.listen().catch((e) => console.error(e));
   }
 }

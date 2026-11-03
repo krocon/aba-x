@@ -51,6 +51,10 @@ export const CHORDS: readonly ChordBinding[] = [
   { action: 'on', chord: { alt: true, key: 'O' }, title: 'On / cancel' },
   { action: 'on.shift', chord: { alt: true, shift: true, key: 'O' }, title: 'Off' },
   { action: 'shortcuts', chord: { mod: true, key: '/' }, title: 'Keyboard shortcuts' },
+  // menu actions (prompt 045) – handled by the app frame
+  { action: 'menu:exportBackup', chord: { mod: true, key: 'S' }, title: 'Export backup' },
+  { action: 'menu:importBackup', chord: { mod: true, key: 'O' }, title: 'Import backup' },
+  { action: 'menu:settings', chord: { mod: true, key: ',' }, title: 'Settings' },
 ];
 
 export function keymapFor(os: Os): Keymap {

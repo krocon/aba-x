@@ -10,7 +10,9 @@ export type Screen =
   | 'matrices'
   | 'editor'
   | 'library'
-  | 'app';
+  | 'app'
+  | 'notes'
+  | 'memory';
 
 /** Which screen the display shows. App-level keys (Home, shift Home, …) switch it. */
 @Injectable({ providedIn: 'root' })

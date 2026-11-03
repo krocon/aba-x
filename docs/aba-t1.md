@@ -118,3 +118,15 @@ rekursiv bis zur Ordnung 2, auch über andere Folgen; Selbstbezug wird gemeldet.
 fügt die Variable ein. Plot: Trace über den Parameter (←→ ein Schritt, mit ⇧ zehn, ↑↓ wechselt die Kurve), Zoom,
 Gehe zu, Def., PNG; Folgen als Treppe oder Spinnennetz (für U(N) = g(U(N−1))). Num: Tabelle über T, θ oder N.
 Hinweis: ein Tippen im Display klickt jetzt das getroffene Element; nur Ziehen und Pinch fangen den Zeiger.
+
+## Notizen, Speicher, Sicherung, Menü (045)
+
+- **Notizen** (⇧0): Liste, Editor und formatierte Ansicht; Formatierung `# Überschrift`, `- Liste`, `**fett**`,
+  `*kursiv*`, `` `Code` ``, `$Formel$` (LaTeX) – als Daten gerendert, nie als HTML. Export als Markdown.
+- **Speicher** (⇧Toolbox): Verlauf, Variablen/Funktionen, Listen, Matrizen, RPN, CAS, Apps, Notizen mit Anzahl und
+  Größe; „Löschen“ nach Rückfrage.
+- **Sicherung**: Menü Datei › Sicherung exportieren (Mod+S) schreibt alle Dokumente als `aba-t1-backup-<Datum>.json`;
+  Importieren (Mod+O) prüft Format und Version, zeigt die ersetzten Teile und lädt danach alles neu. Einzelne Apps
+  (Bibliothek › Export, Datei › App importieren) und Notizen (Datei › Notiz importieren) als eigene Dateien.
+- **Menü**: Datei, Bearbeiten (Desktop), Ansicht, Hilfe – nativ in der Desktop-App (übersetzt), als HTML-Menü über dem
+  Gerät im Web; Über ABA-T1.
