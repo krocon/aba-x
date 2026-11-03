@@ -26,7 +26,7 @@
 | Phase | Ergebnis | Haltepunkt |
 |---|---|---|
 | 1 | Design-Dokument `prompts/NNN-<slug>.design.md` | 🛑 Freigabe abwarten |
-| 2 | Mathematik-Kern (`src/math`): Specs zuerst (rot), dann Implementierung (grün) | Commit |
+| 2 | Mathematik-Kern (`packages/math`): Specs zuerst (rot), dann Implementierung (grün) | Commit |
 | 3 | Rust (nur wenn nötig): Specs zuerst, dann Implementierung | Commit |
 | 4 | Frontend: Specs zuerst, dann Implementierung | Commit |
 | 5 | Ende-zu-Ende in der **Desktop-App und im Web-Build** | |
@@ -50,7 +50,7 @@ UI-Features lassen Phase 2/3 aus, reine Kern-Features Phase 3.
 
 ### Phase 2 – Mathematik-Kern
 
-- Nur `src/math/`: keine Importe aus Angular, Tauri, MathLive, `src/app` (ESLint sperrt das).
+- Nur `packages/math/`: keine Importe aus Angular, Tauri, MathLive, `@aba/core` oder `apps/` (ESLint sperrt das).
 - Fehler sind Werte (`MathResult`), keine Exceptions über die Kerngrenze; nie ein geratenes Ergebnis.
 - Fallkataloge als `*.cases.json` mit tabellarischen Specs; Vergleich symbolischer Ergebnisse über Normalform,
   Einsetzen oder Ableiten (CAS-Ausgaben dürfen äquivalent, aber textuell verschieden sein).
@@ -66,7 +66,8 @@ UI-Features lassen Phase 2/3 aus, reine Kern-Features Phase 3.
 
 ### Phase 4 – Frontend
 
-- Plattform nur über Fassaden (`core/*-api.ts`) mit Web- und Tauri-Implementierung und Fake in `src/testing/`.
+- Plattform nur über Fassaden (`packages/core/src/*/*-api.ts`, `@aba/core/…`) mit Web- und Tauri-Implementierung und
+  Fake in `packages/core/testing/`. App-Spezifisches bleibt in `apps/<app>/` (ADR 0007).
 - Zustand mit Signals in Stores, reine Logik in `*-logic.ts`, `OnPush`, zoneless.
 - Tastatur: Hardware-Tastatur und virtuelles Tastenfeld gleichwertig; Kürzel zentral (ab Prompt 007 im
   Aktionssystem); Tasten nehmen der Eingabezeile nie den Fokus.

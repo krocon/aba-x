@@ -1,6 +1,6 @@
 # Design 024 – Monorepo für mehrere Rechner
 
-- **Status:** Entwurf – wartet auf Freigabe 🛑
+- **Status:** umgesetzt (Freigabe Marc 03.11.2026) ✅
 - **Datum:** 03.11.2026 · Branch `feat/monorepo` (von `main` @ `43dcaf7`)
 - **Auftrag:** [`024-monorepo-mehrere-rechner.md`](024-monorepo-mehrere-rechner.md)
 - **Entscheidungen (Kurzfassung):**
@@ -282,10 +282,31 @@ nicht baubar; der jeweils folgende Commit macht wieder grün.
 
 ## Fortschritt
 
-- [x] Phase 1: Bestand, Baseline, Design (03.11.2026) – **wartet auf Freigabe**
-- [ ] Commits 2–3 `@aba/math`
-- [ ] Commits 4–5 `@aba/core`
-- [ ] Commits 6–7 `apps/aba-x1`
-- [ ] Commits 8–9 Skripte, CI
-- [ ] Ende-zu-Ende Web + Desktop (Daten aus v0.1.1)
-- [ ] Commit 10 Doku, Prompt nach `done/`, Abschlussbericht
+- [x] Phase 1: Bestand, Baseline, Design (03.11.2026) – freigegeben
+- [x] Commits 2–3 `@aba/math` (`534a28e`, `994b13d`)
+- [x] Commits 4–5 `@aba/core` (`35a381a`, `d4c9a22`)
+- [x] Commits 6–7 `apps/aba-x1` (`7162e6d`, `f0466ab`)
+- [x] Commits 8–9 Skripte, CI (`4b99ba4`, `f6bb045`)
+- [x] Ende-zu-Ende Web + Desktop (Daten aus v0.1.1)
+- [x] Commit 10 Doku, Prompt nach `done/`
+
+## Ergebnis und Abweichungen vom Entwurf
+
+- **Tests:** Vitest vorher 343 (25 Dateien) → nachher 265 (`@aba/math`, 7 Dateien) + 78 (`ng test aba-x1`,
+  18 Dateien) = 343. Skript-Tests 18 → 27 (neu: Registry, Tags, zwei Apps bei Versionen und Release-Notes).
+  Rust 12 → 12.
+- **Unit-Test-Builder:** `include`-Globs sind relativ zum `sourceRoot` → Core-Specs über
+  `../../../packages/core/**/*.spec.ts`; `tsconfig.spec.json` der App schließt sie ein.
+- **Lint:** `pnpm lint` = `eslint apps packages`; globale Ignores für `target/`, `gen/`, `dist/` und die statische
+  Produktseite (`site/`, war vorher auch nicht im Lint).
+- **Tauri:** `pnpm tauri …` = `pnpm --filter aba-x1 exec tauri …`; `beforeDevCommand`/`beforeBuildCommand`
+  (`pnpm start`/`pnpm build`) laufen im App-Ordner über dessen `package.json` – kein `TAURI_APP_PATH` nötig.
+  `release.yml`: `projectPath: apps/<app>`, `tauriScript: pnpm tauri`.
+- **Release-Hilfe:** `node scripts/apps.mjs release <tag> <app>` liefert `app`/`version`/`title` für den Workflow
+  und scheitert bei Tag/Version-Abweichung (lokal geprüft).
+- **Nebenbefund 1:** Ein Vitest-Cache unter `packages/math/node_modules` war in Commit 3 mitcommittet
+  (`.gitignore` kannte nur `/node_modules`) – in Commit 7 entfernt, `.gitignore` jetzt `node_modules/`.
+- **Nebenbefund 2:** Die eingecheckten README-Screenshots waren schon auf `main` veraltet (1 px Höhe); `main` und
+  dieser Branch erzeugen pixelgleiche Bilder (AE 0). Nicht neu eingecheckt (keine Verhaltensänderung in 024).
+- **Nebenbefund 3:** Das native Desktop-Menü bleibt englisch, auch bei Sprache Deutsch (`TauriMenuApi` übersetzt
+  nicht) – unverändert seit v0.1.x, nicht Teil von 024.

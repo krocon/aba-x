@@ -1,4 +1,4 @@
 dist
-src-tauri/target
-src-tauri/gen
-THIRD-PARTY-NOTICES.txt
+apps/*/src-tauri/target
+apps/*/src-tauri/gen
+apps/*/THIRD-PARTY-NOTICES.txt

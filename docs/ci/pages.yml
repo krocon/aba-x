@@ -27,10 +27,10 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm test
       - run: pnpm build:web --base-href /aba-x/
-      - run: cp dist/web/browser/index.html dist/web/browser/404.html
+      - run: cp dist/aba-x1/web/browser/index.html dist/aba-x1/web/browser/404.html
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: dist/web/browser
+          path: dist/aba-x1/web/browser
   deploy:
     needs: build
     runs-on: ubuntu-latest

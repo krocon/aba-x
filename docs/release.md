@@ -1,13 +1,18 @@
 # Release
 
-> Prompt 022. **Kein Release, Tag oder Push ohne ausdrückliche Anweisung von Marc.**
+> Prompt 022, je App seit Prompt 024 (ADR 0007). **Kein Release, Tag oder Push ohne ausdrückliche Anweisung von Marc.**
+>
+> Beispiel ABA-X1; eine andere App mit `--app <name>` bzw. `pnpm --filter <name> …`.
 
 ## Ablauf
 
-1. `pnpm version:set X.Y.Z` (package.json → Cargo.toml/.lock; tauri.conf.json liest package.json).
-2. `pnpm notices` (Lizenzen aktualisieren), `pnpm check`, `pnpm e2e`.
-3. `pnpm release:notes` → Markdown aus Conventional Commits seit dem letzten Tag.
-4. Commit „chore(release): vX.Y.Z“, Tag `vX.Y.Z`, Push des Tags → Workflow **Release** baut
+1. `pnpm version:set X.Y.Z --app aba-x1` (`apps/aba-x1/package.json` → Cargo.toml/.lock; tauri.conf.json liest
+   package.json). `pnpm version:check` prüft alle Apps.
+2. `pnpm notices` (Lizenzen je App aktualisieren), `pnpm check`, `pnpm e2e`.
+3. `pnpm release:notes --app aba-x1` → Markdown aus Conventional Commits seit dem letzten Tag der App
+   (`aba-x1-v*`, davor `v*`); Commits, die nur eine andere App betreffen, fallen weg.
+4. Commit „chore(release): aba-x1 vX.Y.Z“, Tag **`aba-x1-vX.Y.Z`** (Schema `<app>-v<version>`; die alten Tags
+   `v0.1.0`/`v0.1.1` bleiben), Push des Tags → Workflow **Release** baut nur diese App:
    macOS (universal `.dmg`/`.app`), Windows (`.msi`, NSIS `.exe`), Linux (`.deb`, `.rpm`, `.AppImage`) und hängt
    sie an einen **Entwurf** auf GitHub; der Web-Build kommt als Workflow-Artefakt.
 5. Release Notes in den Entwurf kopieren, prüfen, veröffentlichen.

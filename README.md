@@ -76,16 +76,21 @@ pnpm check          # versions, scripts, format, lint, unit tests, desktop + web
 pnpm e2e            # web build in Chromium and WebKit: calculation, CAS, graph, typing, offline, axe
 pnpm screenshots    # the images in docs/screenshots/
 pnpm screenshots:examples   # worked examples in docs/screenshots/examples/
-pnpm screenshots:site       # pictures of the product page in site/img/
+pnpm screenshots:site       # pictures of the product page in apps/aba-x1/site/img/
 ```
+
+The repository is a monorepo for several calculators ([ADR 0007](docs/decisions/0007-monorepo-mehrere-rechner.md)):
+`packages/math` (framework-free core), `packages/core` (shared Angular building blocks) and `apps/aba-x1` (this
+app: Angular sources, Tauri crate, product page). Root commands work on ABA-X1; other apps via `--app <name>`.
+
 
 More: [`CLAUDE.md`](CLAUDE.md) (commands, layout, rules), [`docs/architecture.md`](docs/architecture.md),
 [`docs/technical-evaluation.md`](docs/technical-evaluation.md), [`docs/mathematics/`](docs/mathematics/),
 [`docs/decisions/`](docs/decisions/), [`docs/release.md`](docs/release.md). The product page (static, no build step) is in
-[`site/`](site/README.md). Development runs through feature
+[`apps/aba-x1/site/`](apps/aba-x1/site/README.md). Development runs through feature
 prompts in [`prompts/`](prompts/README.md).
 
 ## Licence
 
-MIT (see [`LICENSE`](LICENSE)); third-party licences in [`THIRD-PARTY-NOTICES.txt`](THIRD-PARTY-NOTICES.txt).
+MIT (see [`LICENSE`](LICENSE)); third-party licences in [`apps/aba-x1/THIRD-PARTY-NOTICES.txt`](apps/aba-x1/THIRD-PARTY-NOTICES.txt).
 ABA-X1 is an independent project and not affiliated with any calculator manufacturer.

@@ -1,7 +1,7 @@
 # Prompt 024: Monorepo für mehrere Rechner
 
 > **Abhängigkeiten:** 001–023 · **Aufwand:** L · **Betrifft:** Repo-Struktur, Build, CI/Release, Doku
-> Zuerst [`000-arbeitsweise.md`](000-arbeitsweise.md) lesen (Phasen, Haltepunkt nach dem Design 🛑, Definition of
+> Zuerst [`000-arbeitsweise.md`](../000-arbeitsweise.md) lesen (Phasen, Haltepunkt nach dem Design 🛑, Definition of
 > Done). Branch `feat/monorepo`. Design-Dokument: `prompts/024-monorepo-mehrere-rechner.design.md`.
 
 ## 1. Ziel

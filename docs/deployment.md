@@ -5,7 +5,7 @@
 ## Build
 
 ```bash
-pnpm build:web       # → dist/web/browser, base-href /products/aba-x1/ (angular.json, Konfiguration „web“)
+pnpm build:web       # → dist/aba-x1/web/browser, base-href /products/aba-x1/ (angular.json, Konfiguration „web“)
 pnpm serve:web       # lokal genau so ansehen: http://localhost:4300/products/aba-x1/
 ```
 
@@ -22,7 +22,7 @@ Der Ordner ist rein statisch (kein Server): `index.html`, Bundles, `ngsw-worker.
 
 | Ziel | Schritte |
 |---|---|
-| **krocon.de/products/aba-x1** (gewählt) | `pnpm build:web`, den **Inhalt** von `dist/web/browser/` nach `/products/aba-x1/` hochladen (also `…/products/aba-x1/index.html`, `…/ngsw-worker.js` usw.); kein Fallback auf `index.html` nötig (keine Routen) |
+| **krocon.de/products/aba-x1** (gewählt) | `pnpm build:web`, den **Inhalt** von `dist/aba-x1/web/browser/` nach `/products/aba-x1/` hochladen (also `…/products/aba-x1/index.html`, `…/ngsw-worker.js` usw.); kein Fallback auf `index.html` nötig (keine Routen) |
 | GitHub Pages (Alternative) | `docs/ci/pages.yml` (baut mit `--base-href /aba-x/`) nach `.github/workflows/` kopieren, Pages auf „GitHub Actions“ stellen, Workflow manuell starten |
 
 ## Server-Einstellungen

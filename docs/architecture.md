@@ -1,6 +1,6 @@
 # Architektur – ABA-X1
 
-> Stand: 02.11.2026 (alle Prompts 001–023). Struktur im Detail: `CLAUDE.md` §3. Entscheidungen im Einzelnen: [`docs/decisions/`](decisions/).
+> Stand: 03.11.2026 (Prompts 001–024; seit 024 Monorepo, ADR 0007). Struktur im Detail: `CLAUDE.md` §3. Entscheidungen im Einzelnen: [`docs/decisions/`](decisions/).
 > Bewertung der Bibliotheken: [`technical-evaluation.md`](technical-evaluation.md).
 
 ## 1. Überblick
@@ -13,11 +13,11 @@
 │  core/platform         PlatformApi ── TauriPlatformApi | WebPlatformApi                         │
 │  core/storage          StorageApi  ── TauriStorageApi  | IndexedDbStorageApi                    │
 ├───────────────────────────────────────────────────────────────────────────────────────────────┤
-│  src/math  (framework-frei: kein Angular, kein Tauri, kein MathLive)                            │
-│    result.ts (MathResult) · ast/ · parser/ · symbolic/ · numeric/ · graph/ · worker/  (geplant)  │
+│  packages/math = @aba/math (framework-frei: kein Angular, kein Tauri, kein MathLive)           │
+│    result.ts (MathResult) · ast/ · parser/ · symbolic/ · numeric/ · graph/ · worker/             │
 └───────────────────────────────────────────────────────────────────────────────────────────────┘
           │ invoke (nur Desktop)                                  │ nur Web
-┌─────────▼──────────── src-tauri (Rust, dünn) ───────┐   ┌───────▼───────────────────────┐
+┌─────────▼── apps/aba-x1/src-tauri (Rust, dünn) ────┐   ┌───────▼───────────────────────┐
 │ commands.rs → storage.rs (atomare JSON-Dokumente)   │   │ IndexedDB, Service Worker     │
 │             → about.rs (Version, OS, Arch)          │   │ (ngsw, offline)               │
 └─────────────────────────────────────────────────────┘   └───────────────────────────────┘
@@ -27,13 +27,27 @@
 
 | Schicht | Ort | Darf importieren | Regel |
 |---|---|---|---|
-| Mathematik-Kern | `src/math/` | nur sich selbst und reine npm-Pakete (Nerdamer im Adapter) | ESLint `no-restricted-imports`; Fehler als `MathResult` |
-| Fassaden | `src/app/core/*/…-api.ts` | Angular, `@tauri-apps/api` | je Fassade eine Tauri- und eine Web-Implementierung + Fake in `src/testing/` |
+| Mathematik-Kern | `packages/math/src/` (`@aba/math`) | nur sich selbst und reine npm-Pakete (Nerdamer im Adapter) | ESLint `no-restricted-imports`; Fehler als `MathResult` |
+| Gemeinsame Bausteine | `packages/core/src/` (`@aba/core`) | Angular, `@tauri-apps/api`, `@aba/math`, nie eine App | Fassaden, Compute, `I18nBase`, Modal, MathStatic |
+| Fassaden | `packages/core/src/*/…-api.ts` | Angular, `@tauri-apps/api` | je Fassade eine Tauri- und eine Web-Implementierung + Fake in `packages/core/testing/` (`@aba/core/testing`) |
 | Stores | `…-store.ts` | Fassaden, reine Logik | Signals; Logik in `*-logic.ts`/`entry-stack.ts`/`keypad-model.ts` (rein, eigene Specs) |
-| Komponenten | `src/app/features/` | Stores | keine Rechenlogik, keine `isTauri()`-Abfragen |
-| Rust | `src-tauri/src/` | std, serde, tauri | reine Module ohne Tauri (`storage.rs`, `about.rs`) + dünne `commands.rs` |
+| Komponenten | `apps/aba-x1/src/app/features/` | Stores | keine Rechenlogik, keine `isTauri()`-Abfragen |
+| Rust | `apps/aba-x1/src-tauri/src/` | std, serde, tauri | reine Module ohne Tauri (`storage.rs`, `about.rs`) + dünne `commands.rs` |
 
-Die Auswahl der Implementierung je Plattform passiert **nur** in `src/app/app.config.ts` (`runsInTauri()`).
+Die Auswahl der Implementierung je Plattform passiert **nur** in `apps/aba-x1/src/app/app.config.ts`
+(`runsInTauri()`); dort liefert die App auch `APP_IDENTITY` (Name, Version) und `STORAGE_DB_NAME`.
+
+### Monorepo (ADR 0007)
+
+| Ordner | Inhalt | Tests |
+|---|---|---|
+| `packages/math` | `@aba/math` | reines Vitest in Node (`pnpm test:math`) + `tsc --noEmit` |
+| `packages/core` | `@aba/core`, `@aba/core/testing` | im `ng test aba-x1` (TestBed, jsdom) |
+| `apps/aba-x1` | App: `src/`, `public/`, `src-tauri/`, `site/`, `ngsw-config.json`, `package.json` (Version) | `ng test aba-x1` |
+| `scripts/` | gemeinsam, App über `scripts/apps.mjs` (`--app`, `APP=`) | `node --test` |
+
+Pfad-Aliase in `tsconfig.json`, Abhängigkeiten zentral in der Root-`package.json`, pnpm-Workspace
+`apps/*` + `packages/*`. Ausgabe: `dist/<app>/desktop`, `dist/<app>/web`.
 
 ## 3. Persistenz (ADR 0005)
 
@@ -45,7 +59,7 @@ Die Auswahl der Implementierung je Plattform passiert **nur** in `src/app/app.co
 - Desktop: `<app_data_dir>/<key>.json` (macOS `~/Library/Application Support/io.github.krocon.abax/`).
   Commands: `storage_load(key) → { value, setAside }`, `storage_save(key, value)`, `storage_remove(key)`;
   Fehler `{ code, message }` mit `invalid_key`, `too_large`, `io`, `no_data_dir`.
-- Web: IndexedDB `aba-x` / Store `documents`; ohne IndexedDB → `{ code: 'unavailable' }`, die App läuft weiter.
+- Web: IndexedDB `aba-x` (je App eigener Name über `STORAGE_DB_NAME`, alle Apps teilen die Origin `krocon.de`) / Store `documents`; ohne IndexedDB → `{ code: 'unavailable' }`, die App läuft weiter.
 - Neuere `schemaVersion` → lesen, nie überschreiben (`sanitizeUiState`).
 
 ## 4. Rechner-Gerät (ADR 0006)

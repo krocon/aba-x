@@ -41,4 +41,4 @@ Tatsächliche Reihenfolge: 001 → 003 → 013 → 009 → 004 → 005 → 006 �
 | 021 | [barrierefreiheit](done/021-barrierefreiheit.md) | Barrierefreiheit, Performance | 006, 007 | M | ✅ 02.11.2026 |
 | 022 | [release-distribution](done/022-release-distribution.md) | Pakete, Release-Workflow, Signierung vorbereiten | 017, 019 | M | ✅ 02.11.2026 |
 | 023 | [readme-screenshots-werbeseite](done/023-readme-screenshots-werbeseite.md) | README, Screenshots, Werbeseite | 010, 014 | S | ✅ 02.11.2026 |
-| 024 | [monorepo-mehrere-rechner](024-monorepo-mehrere-rechner.md) | Monorepo: `packages/math`, `packages/core`, `apps/aba-x1`; Grundlage für weitere Rechner | 001–023 | L | offen |
+| 024 | [monorepo-mehrere-rechner](done/024-monorepo-mehrere-rechner.md) | Monorepo: `packages/math`, `packages/core`, `apps/aba-x1`; Grundlage für weitere Rechner | 001–023 | L | ✅ 03.11.2026 |

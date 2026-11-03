@@ -14,6 +14,8 @@
 | 6 | Graph-Modus | 014–016 | ✅ 02.11.2026 |
 | 7 | Plattform-Integration, Produktreife | 002, 017–021 | ✅ 02.11.2026 |
 | 8 | Distribution | 022, 023 | 🟡 vorbereitet – Veröffentlichung, Signierung und Web-Deployment brauchen Marcs Freigabe |
+| 9 | Monorepo für mehrere Rechner (`packages/math`, `packages/core`, `apps/aba-x1`) | 024 | ✅ 03.11.2026 |
+| 10 | Zweiter Rechner (grafikfähiger Touch-Rechner) | 025 ff. | ⬜ offen |
 
 ## Was funktioniert
 
@@ -21,7 +23,7 @@ Siehe README „Features“. Kurz: exaktes und numerisches Rechnen mit Stack/RPN
 numerisch geprüften Ergebnissen, Funktionsplotter mit Analyse, Verlauf, Export/Import, Einstellungen, Deutsch/
 Englisch, natives Menü (Desktop) bzw. HTML-Menü (Web), Offline-Web-App.
 
-Geprüft: 341 Unit-/Komponenten-Specs, 12 Rust-Tests, E2E in Chromium und WebKit (inkl. offline und axe), macOS-App
+Geprüft (Stand 024): 343 Unit-/Komponenten-Specs (265 `@aba/math` + 78 `ng test`), 27 Skript-Tests, 12 Rust-Tests, E2E in Chromium und WebKit (inkl. offline und axe), macOS-App
 (Debug und Release, `.dmg` 3,9 MB).
 
 ## Offen / nächste Schritte
@@ -31,5 +33,8 @@ Geprüft: 341 Unit-/Komponenten-Specs, 12 Rust-Tests, E2E in Chromium und WebKit
 - **Nicht von Hand geprüft:** Windows, Linux (CI-Matrix vorhanden), Firefox (Playwright startet hier nicht),
   Screenreader-Durchgang (VoiceOver/NVDA/Orca).
 - Meldungen des Mathe-Kerns sind englisch, auch in der deutschen Oberfläche.
+- **Zweiter Rechner (025 ff.):** offene Punkte aus 024 – gemeinsame Rust-Crate `crates/shell`, Laufzeit-Abhängigkeiten
+  je App (Notices), eigenes Testziel für `packages/core`, Herauslösen von Graph-View, Aktionssystem, Menü-Fassade nach
+  Bedarf, e2e-Szenarien und Screenshots je App (ADR 0007).
 - Ausbaustufen laut Master-Prompt §11 und §3.1: komplexe Zahlen, Matrizenrechnung, Ungleichungen, Programmierung,
   Statistik, 3D, Auto-Updater, Mobile-Apps.
