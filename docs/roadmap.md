@@ -36,6 +36,7 @@
 | 036    | Erweiterte Grafiken: Relationen/Ungleichungen mit Intervallarithmetik (garantierte Gebiete), Trace, Galerie | ✅ 03.11.2026 |
 | 046    | 3D-Grafik (Canvas 2D, Drehen/Zoomen, Höhenfarben)                                                           | ✅ 03.11.2026 |
 | 045    | Notizen, Speicherverwaltung, Sicherung (Export/Import), Menü nativ/HTML, About                              | ✅ 03.11.2026 |
+| 039    | Löser: Lösen (E1…E0, Systeme), Linearlöser n×n, Finanzen (TVM, Tilgung, Cashflow …), Dreiecklöser (SSW) | ✅ 03.11.2026 |
 
 ## Was funktioniert
 

@@ -152,3 +152,17 @@ V1 … V0 sind Relationen in X und Y: Gleichungen (`X²+Y²=9`), Ungleichungen (
 Intervallarithmetik: gefärbt ist nur, wo die Relation sicher gilt; grau, wo es sich nicht entscheiden lässt; gestrichelte
 Ränder gehören nicht dazu. ←→ verfolgt einen Rand, ↑↓ wechselt die Relation, Galerie lädt Beispiele. Num listet je X die
 Rand-Y-Werte im Y-Bereich (numerisch). Bricht die Verfeinerung am Zeitbudget ab, sagt die Statuszeile das.
+
+## Löser-Apps (039)
+
+- **Lösen**: Gleichungen E1 … E0 in Symb (`a = b` oder ein Ausdruck = 0, beliebige Variablen). Num zeigt jede Variable
+  mit ihrem Wert (= Startwert); Cursor auf die gesuchte Variable, **Lösen**. Für Systeme je Gleichung eine Unbekannte
+  markieren (gedämpftes Newton). Die Statuszeile unterscheidet Null (Lösung), Vorzeichenwechsel und Extremum (keine
+  Lösung). Plot zeigt beide Seiten über der gewählten Variablen; Tippen/←→ setzt den Startwert.
+- **Linearlöser**: n×n (2 … 6) als Raster mit rechter Seite; eindeutig, unendlich viele (Parameter t1, t2 …) oder keine.
+- **Finanzen**: Blätter (Symb) TVM, Zahlungsströme (NPV, NFV, IRR, MIRR, Amortisation), Zinsumrechnung, Datum (actual,
+  30/360), Abschreibung (linear, degressiv, digital), Kostendeckung, %‑Veränderung, Marge/Aufschlag, Anleihe,
+  Black-Scholes. Lösen berechnet das Feld unter dem Cursor; TVM-Tilgungsplan je Rate oder Jahr; Plot: Restschuld/Zinsen
+  bzw. Kapitalwertkurve. Eingänge positiv, Zahlungen negativ ([`mathematics/finance.md`](mathematics/finance.md)).
+- **Dreiecklöser**: drei von a, b, c, A, B, C (mindestens eine Seite); SSW mit zwei Lösungen (Lsg 1/2), rechtwinkliger
+  Modus, Fläche und Umfang; Plot zeichnet maßstäblich.

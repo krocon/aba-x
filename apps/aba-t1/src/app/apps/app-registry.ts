@@ -12,6 +12,13 @@ import { ExplorerView, initExplorer } from './explorer/explorer-view';
 import { RelationNum, RelationPlot } from './relation/relation-views';
 import { SurfaceNum, SurfacePlot, SurfaceSetup } from './surface/surface-views';
 import { CurveNum, CurveNumSetup, CurvePlot, CurvePlotSetup, CurveSymb } from './curve/curve-views';
+import { SolveNum, SolvePlot } from './solve/solve-views';
+import { LinearView } from './linear-solver/linear-view';
+import { initLinear } from './linear-solver/linear-logic';
+import { FinanceNum, FinancePlot, FinanceSymb } from './finance/finance-views';
+import { initFinance } from './finance/finance-logic';
+import { TriangleNum, TrianglePlot } from './triangle-solver/triangle-views';
+import { initTriangle } from './triangle-solver/triangle-logic';
 
 export const APP_DEFS: AppDef[] = [
   {
@@ -92,5 +99,42 @@ export const APP_DEFS: AppDef[] = [
     version: 1,
     start: 'symb',
     views: { symb: CurveSymb, plot: SurfacePlot, num: SurfaceNum, plotSetup: SurfaceSetup },
+  },
+  // solver apps (prompt 039)
+  {
+    id: 'solve',
+    title: { en: 'Solve', de: 'Lösen' },
+    icon: 'M4 8h7M4 12h7M4 16h7M14 6l6 6-6 6M17 12h-3',
+    init: () => initCurveState('solve'),
+    version: 1,
+    start: 'symb',
+    views: { symb: CurveSymb, plot: SolvePlot, num: SolveNum },
+  },
+  {
+    id: 'linearSolver',
+    title: { en: 'Linear Solver', de: 'Linearlöser' },
+    icon: 'M5 4v16M19 4v16M8 8h3M13 8h3M8 12h3M13 12h3M8 16h3M13 16h3',
+    init: initLinear,
+    version: 1,
+    start: 'num',
+    views: { num: LinearView },
+  },
+  {
+    id: 'finance',
+    title: { en: 'Finance', de: 'Finanzen' },
+    icon: 'M4 20V10M9 20V6M14 20v-8M19 20V4M3 20h18',
+    init: initFinance,
+    version: 1,
+    start: 'num',
+    views: { symb: FinanceSymb, plot: FinancePlot, num: FinanceNum },
+  },
+  {
+    id: 'triangleSolver',
+    title: { en: 'Triangle Solver', de: 'Dreiecklöser' },
+    icon: 'M4 19L12 5l8 14zM9 19a3 3 0 0 0-2-3',
+    init: initTriangle,
+    version: 1,
+    start: 'num',
+    views: { num: TriangleNum, plot: TrianglePlot },
   },
 ];
