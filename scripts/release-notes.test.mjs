@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { parseCommit, renderNotes } from './release-notes.mjs';
+import { APPS } from './apps.mjs';
+import { concernsApp, parseCommit, parseLog, renderNotes, tagPatterns } from './release-notes.mjs';
 
 test('parses conventional headers', () => {
   assert.deepEqual(parseCommit('feat(017): app icon'), {
@@ -35,4 +36,38 @@ test('groups, hides chores and tests', () => {
 
 test('empty range', () => {
   assert.match(renderNotes([]), /No user-facing changes/);
+});
+
+const TWO = {
+  'aba-x1': APPS['aba-x1'],
+  other: { ...APPS['aba-x1'], dir: 'apps/other', tagPrefix: 'other-v', legacyTagPrefix: null },
+};
+
+test('several apps: a commit only in another app is left out, shared changes reach all', () => {
+  assert.equal(concernsApp(['apps/other/src/main.ts'], 'aba-x1', TWO), false);
+  assert.equal(concernsApp(['apps/other/src/main.ts'], 'other', TWO), true);
+  assert.equal(concernsApp(['packages/math/src/result.ts'], 'other', TWO), true);
+  assert.equal(concernsApp(['apps/aba-x1/src/main.ts', 'apps/other/x'], 'other', TWO), true);
+  assert.equal(concernsApp(['pnpm-lock.yaml'], 'aba-x1', TWO), true);
+  assert.equal(concernsApp([], 'other', TWO), true);
+});
+
+test('previous release: app tags, for ABA-X1 also the tags before the monorepo', () => {
+  assert.deepEqual(tagPatterns('aba-x1'), ['aba-x1-v*', 'v[0-9]*']);
+  assert.deepEqual(tagPatterns('other', TWO), ['other-v*']);
+});
+
+test('git log with file names', () => {
+  const raw =
+    '\x1eaaa\x1ffeat: one\x1f\x1f\n\napps/other/a.ts\npackages/math/b.ts\n' +
+    '\x1ebbb\x1ffix: two\x1fbody\n\x1f\n\napps/aba-x1/c.ts\n';
+  assert.deepEqual(parseLog(raw), [
+    {
+      hash: 'aaa',
+      subject: 'feat: one',
+      body: '',
+      files: ['apps/other/a.ts', 'packages/math/b.ts'],
+    },
+    { hash: 'bbb', subject: 'fix: two', body: 'body', files: ['apps/aba-x1/c.ts'] },
+  ]);
 });

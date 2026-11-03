@@ -1,12 +1,14 @@
 #!/usr/bin/env node
 // Release notes from Conventional Commits (adopted from Files and Folders, design 017 E4).
 //
-//   node scripts/release-notes.mjs [<from-ref>] [<to-ref>]   → Markdown on stdout
+//   node scripts/release-notes.mjs [--app aba-x1] [<from-ref>] [<to-ref>]   → Markdown on stdout
 //
-// Default range: last tag (`git describe --tags --abbrev=0`) .. HEAD, or the whole
-// history if there is no tag yet. Merge commits are skipped. Nothing is written or tagged.
+// Default range: last tag of the app (`aba-x1-v*`, before the monorepo `v*`) .. HEAD, or the
+// whole history if there is no tag yet. Merge commits are skipped. Only commits that concern the
+// app (see `concernsApp`). Nothing is written or tagged.
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+import { APPS, appConfig, appFromArgs } from './apps.mjs';
 
 const SECTIONS = [
   ['breaking', 'Breaking changes'],
@@ -54,30 +56,66 @@ export function renderNotes(commits, title = 'Changes') {
   return out.join('\n');
 }
 
+/**
+ * A commit concerns an app unless every file it changes lies in another app's folder: changes of
+ * packages/, scripts and root configuration reach every app. Without file list (empty commit) yes.
+ */
+export function concernsApp(files, app, apps = APPS) {
+  const others = Object.keys(apps)
+    .filter((n) => n !== app)
+    .map((n) => `${appConfig(n, apps).dir}/`);
+  if (files.length === 0) return true;
+  return !files.every((f) => others.some((dir) => f.startsWith(dir)));
+}
+
+/** `git describe` patterns for the previous release of an app (new and legacy tag scheme). */
+export function tagPatterns(app, apps = APPS) {
+  const { tagPrefix, legacyTagPrefix } = appConfig(app, apps);
+  return [`${tagPrefix}*`, ...(legacyTagPrefix ? [`${legacyTagPrefix}[0-9]*`] : [])];
+}
+
+/** Records of `git log --name-only --format=%x1e%H%x1f%s%x1f%b%x1f` → commits with files. */
+export function parseLog(raw) {
+  return raw
+    .split('\x1e')
+    .filter((r) => r.trim())
+    .map((r) => {
+      const [hash, subject, body, names = ''] = r.split('\x1f');
+      return {
+        hash: hash.trim(),
+        subject,
+        body: body.trim(),
+        files: names
+          .split('\n')
+          .map((f) => f.trim())
+          .filter(Boolean),
+      };
+    });
+}
+
 function git(args) {
   return execFileSync('git', args, { encoding: 'utf8' }).trim();
 }
 
-function main([from, to = 'HEAD']) {
+function main(argv) {
+  const { app, rest } = appFromArgs(argv, process.env);
+  const [from, to = 'HEAD'] = rest;
   let start = from;
   if (!start) {
     try {
-      start = git(['describe', '--tags', '--abbrev=0']);
+      const match = tagPatterns(app).flatMap((p) => ['--match', p]);
+      start = git(['describe', '--tags', '--abbrev=0', ...match, to]);
     } catch {
       start = null;
     }
   }
   const range = start ? `${start}..${to}` : to;
-  const raw = git(['log', '--no-merges', '--format=%H%x1f%s%x1f%b%x1e', range]);
-  const commits = raw
-    .split('\x1e')
-    .map((r) => r.trim())
-    .filter(Boolean)
-    .map((r) => {
-      const [hash, subject, body] = r.split('\x1f');
-      return { hash, subject, body };
-    });
-  process.stdout.write(renderNotes(commits, start ? `Changes since ${start}` : 'Changes'));
+  const raw = git(['log', '--no-merges', '--name-only', '--format=%x1e%H%x1f%s%x1f%b%x1f', range]);
+  const commits = parseLog(raw).filter((c) => concernsApp(c.files, app));
+  const title = appConfig(app).title;
+  process.stdout.write(
+    renderNotes(commits, start ? `${title} – changes since ${start}` : `${title} – changes`),
+  );
   return 0;
 }
 
