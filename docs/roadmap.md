@@ -40,6 +40,7 @@
 | 046    | 3D-Grafik (Canvas 2D, Drehen/Zoomen, Höhenfarben)                                                             | ✅ 03.11.2026 |
 | 045    | Notizen, Speicherverwaltung, Sicherung (Export/Import), Menü nativ/HTML, About                                | ✅ 03.11.2026 |
 | 041    | Tabellenkalkulation: Formeln, Bezüge, Namen (auch in der Startansicht), Füllen, Sortieren, Formate, CSV       | ✅ 03.11.2026 |
+| 039    | Löser: Lösen (E1…E0, Systeme), Linearlöser n×n, Finanzen (TVM, Tilgung, Cashflow …), Dreiecklöser (SSW)       | ✅ 03.11.2026 |
 
 ## Was funktioniert
 

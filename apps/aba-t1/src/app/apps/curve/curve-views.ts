@@ -66,7 +66,10 @@ const TITLES: Record<CurveKind, { symb: TextKey; plot: TextKey; num: TextKey }> 
   sequence: { symb: 'curve.seqSymb', plot: 'curve.seqPlot', num: 'curve.seqNum' },
   graph3d: { symb: 'curve.surfSymb', plot: 'surface.plot', num: 'surface.num' },
   relation: { symb: 'rel.symb', plot: 'rel.plot', num: 'rel.num' },
+  solve: { symb: 'solve.symb', plot: 'solve.plot', num: 'solve.num' },
 };
+
+const SYMB_HELP: Partial<Record<CurveKind, string>> = { relation: 'relation', solve: 'solve' };
 
 /** Symbolic view (prompt 035): ten rows with one to three fields; ←→ choose the field. */
 @Component({
@@ -266,7 +269,7 @@ export class CurveSymb implements OnInit, OnDestroy {
         if (!this.editing()) this.edit();
         queueMicrotask(() => this.fieldEl()?.insert(latex));
       },
-      help: this.app.kind() === 'relation' ? 'relation' : 'curve',
+      help: SYMB_HELP[this.app.kind()] ?? 'curve',
     });
   }
 
@@ -279,6 +282,8 @@ export class CurveSymb implements OnInit, OnDestroy {
     const v = KINDS[this.app.kind()].variable.label;
     if (this.editing() && this.app.kind() === 'relation')
       return [b('X'), b('Y'), b('≤'), b('≥'), b(this.i18n.t('rel.logic')), b('OK')];
+    if (this.editing() && this.app.kind() === 'solve')
+      return [b('='), b(''), b(v), b(''), b(this.i18n.t('home.no')), b('OK')];
     if (this.editing()) return [b(''), b(''), b(v), b(''), b(this.i18n.t('home.no')), b('OK')];
     return [
       b(this.i18n.t('data.edit')),
@@ -303,6 +308,7 @@ export class CurveSymb implements OnInit, OnDestroy {
       return;
     }
     if (this.editing()) {
+      if (i === 0 && this.app.kind() === 'solve') this.fieldEl()?.insert('=');
       if (i === 2) this.fieldEl()?.insert(KINDS[this.app.kind()].variable.latex);
       if (i === 4) this.editing.set(false);
       if (i === 5) this.store();

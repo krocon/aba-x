@@ -16,6 +16,23 @@ import { readFile } from 'node:fs/promises';
 
 /** @param {{ axeSource: string }} deps */
 export function t1Scenarios({ axeSource }) {
+  /** axe on one view (serious and critical violations fail) */
+  async function axeOn(page, selector) {
+    if (!(await page.evaluate(() => 'axe' in window)))
+      await page.addScriptTag({ content: axeSource });
+    const r = await page.evaluate(
+      (sel) =>
+        // eslint-disable-next-line no-undef
+        axe.run(document.querySelector(sel), { resultTypes: ['violations'] }),
+      selector,
+    );
+    const bad = r.violations.filter((v) => v.impact === 'serious' || v.impact === 'critical');
+    if (bad.length) {
+      throw new Error(
+        `${selector}: ` + bad.map((v) => `${v.id} (${v.impact}): ${v.nodes[0]?.target}`).join('; '),
+      );
+    }
+  }
   const checks = {
     async loads(page) {
       await page.waitForSelector('app-t1-device .lcd', { timeout: 20000 });
@@ -578,6 +595,161 @@ export function t1Scenarios({ axeSource }) {
         if (bad.length)
           throw new Error(`${v}: ${bad.map((x) => `${x.id} ${x.nodes[0]?.target}`).join('; ')}`);
       }
+      await keys('home');
+      await page.waitForSelector('app-home-view math-field');
+    },
+    async solveApp(page) {
+      const keys = async (...ks) => {
+        for (const k of ks) await page.click(`.key[data-key="${k}"]`);
+      };
+      await keys('apps');
+      await page.click('app-library .tile:has(span:text-is("Solve"))');
+      await keys('enter');
+      await page.waitForSelector('app-curve-symb');
+      await keys('enter');
+      await page.click('app-curve-symb math-field');
+      await page.keyboard.type('A=B*C');
+      await page.keyboard.press('Enter');
+      await keys('num');
+      await page.waitForSelector('app-solve-num input[aria-label="C"]');
+      await page.fill('app-solve-num input[aria-label="B"]', '4');
+      await page.press('app-solve-num input[aria-label="B"]', 'Enter');
+      await page.fill('app-solve-num input[aria-label="C"]', '2.5');
+      await page.press('app-solve-num input[aria-label="C"]', 'Enter');
+      await page.click('app-solve-num input[aria-label="A"]');
+      await page.click('app-t1-device .mb:nth-child(6)'); // Solve
+      await page.waitForFunction(
+        () =>
+          document.querySelector('app-solve-num input[aria-label="A"]')?.value === '10' &&
+          /Zero/.test(document.querySelector('app-solve-num .msg')?.textContent ?? ''),
+      );
+      // no real solution: the status says extremum, not zero
+      await keys('symb');
+      await page.waitForSelector('app-curve-symb');
+      await page.dispatchEvent('.rk.down', 'pointerdown');
+      await page.dispatchEvent('.rk.down', 'pointerup');
+      await keys('enter');
+      await page.click('app-curve-symb math-field');
+      await page.keyboard.type('X^2+1=0');
+      await page.keyboard.press('Enter');
+      await page.click('app-curve-symb .check'); // E1 off
+      await keys('num');
+      await page.click('app-solve-num input[aria-label="X"]');
+      await page.click('app-t1-device .mb:nth-child(6)');
+      await page.waitForFunction(() =>
+        /Extremum/.test(document.querySelector('app-solve-num .msg')?.textContent ?? ''),
+      );
+      await axeOn(page, 'app-solve-num');
+      await keys('plot');
+      await page.waitForSelector('app-solve-plot canvas');
+      await keys('home');
+      await page.waitForSelector('app-home-view math-field');
+    },
+    async linearSolver(page) {
+      const keys = async (...ks) => {
+        for (const k of ks) await page.click(`.key[data-key="${k}"]`);
+      };
+      await keys('apps');
+      await page.click('app-library .tile:has-text("Linear Solver")');
+      await keys('enter');
+      await page.waitForSelector('app-linear-view input[data-cell="2-3"]');
+      const m = [
+        [2, 1, -1, 8],
+        [-3, -1, 2, -11],
+        [-2, 1, 2, -3],
+      ];
+      for (let i = 0; i < 3; i++) {
+        for (let j = 0; j < 4; j++) {
+          const sel = `app-linear-view input[data-cell="${i}-${j}"]`;
+          await page.fill(sel, String(m[i][j]));
+          await page.press(sel, 'Enter');
+        }
+      }
+      await page.waitForFunction(() => {
+        const t = document.querySelector('app-linear-view .sol')?.textContent ?? '';
+        return t.includes('x1 = 2') && t.includes('x2 = 3') && t.includes('x3 = -1');
+      });
+      await axeOn(page, 'app-linear-view');
+      await keys('home');
+      await page.waitForSelector('app-home-view math-field');
+    },
+    async finance(page) {
+      const keys = async (...ks) => {
+        for (const k of ks) await page.click(`.key[data-key="${k}"]`);
+      };
+      await keys('apps');
+      await page.click('app-library .tile:has-text("Finance")');
+      await keys('enter');
+      // 30-year mortgage of 200 000 at 6 % (the defaults): the monthly payment
+      await page.waitForSelector('app-finance-num input[aria-label="PMT"]');
+      await page.click('app-finance-num input[aria-label="PMT"]');
+      await page.click('app-t1-device .mb:nth-child(2)'); // Solve
+      await page.waitForFunction(() =>
+        document
+          .querySelector('app-finance-num input[aria-label="PMT"]')
+          ?.value.startsWith('-1199.10'),
+      );
+      await page.click('app-t1-device .mb:nth-child(3)'); // Amort
+      await page.waitForFunction(
+        () =>
+          document.querySelectorAll('app-amort-table tbody tr').length === 360 &&
+          document.querySelector('app-amort-table tfoot')?.textContent.includes('-200000.00'),
+      );
+      await axeOn(page, 'app-amort-table');
+      await page.click('app-t1-device .mb:nth-child(6)'); // OK
+      await axeOn(page, 'app-finance-num');
+      await keys('symb');
+      await page.waitForSelector('app-finance-symb');
+      await axeOn(page, 'app-finance-symb');
+      await page.click('app-finance-symb button:has-text("Cash flows")');
+      // CF0 −1000, then 300, 400, 500: IRR 8.896 %
+      await page.waitForFunction(() =>
+        /^IRR %\s*8\.89/.test(
+          [...document.querySelectorAll('app-finance-num .row')]
+            .map((r) => r.textContent.trim())
+            .find((t) => t.startsWith('IRR')) ?? '',
+        ),
+      );
+      await keys('plot');
+      await page.waitForSelector('app-finance-plot canvas');
+      await keys('home');
+      await page.waitForSelector('app-home-view math-field');
+    },
+    async triangleSolver(page) {
+      const keys = async (...ks) => {
+        for (const k of ks) await page.click(`.key[data-key="${k}"]`);
+      };
+      await keys('apps');
+      await page.click('app-library .tile:has-text("Triangle Solver")');
+      await keys('enter');
+      await page.waitForSelector('app-triangle-num input[aria-label="a"]');
+      for (const [k, v] of [
+        ['a', '6'],
+        ['b', '8'],
+        ['A (°)', '35'],
+      ]) {
+        const sel = `app-triangle-num input[aria-label="${k}"]`;
+        await page.fill(sel, v);
+        await page.press(sel, 'Enter');
+      }
+      // SSA: two triangles
+      await page.waitForFunction(() =>
+        /two triangles/.test(document.querySelector('app-triangle-num .msg')?.textContent ?? ''),
+      );
+      const angle = () =>
+        page.$eval('app-triangle-num input[aria-label="B (°)"]', (e) => Number(e.value));
+      const b1 = await angle();
+      await page.click('app-t1-device .mb:nth-child(5)'); // Sol 1/2
+      await page.waitForFunction(
+        (b) =>
+          Number(document.querySelector('app-triangle-num input[aria-label="B (°)"]')?.value) !== b,
+        b1,
+      );
+      const b2 = await angle();
+      if (Math.abs(b1 + b2 - 180) > 1e-6) throw new Error(`B ${b1} + ${b2} ≠ 180`);
+      await axeOn(page, 'app-triangle-num');
+      await keys('plot');
+      await page.waitForSelector('app-triangle-plot canvas');
       await keys('home');
       await page.waitForSelector('app-home-view math-field');
     },

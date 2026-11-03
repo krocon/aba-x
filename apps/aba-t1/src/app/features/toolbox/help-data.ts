@@ -840,4 +840,20 @@ export const VIEW_HELP: Record<string, TopicHelp> = {
     en: 'Toolbox: the menu buttons choose Math, CAS, App, User or Catalogue. ↑↓ choose, → or Enter opens, ← goes back, Help explains the selected command. In the catalogue a letter jumps.',
     de: 'Toolbox: Die Menütasten wählen Math, CAS, App, Nutzer oder Katalog. ↑↓ wählt, → oder Enter öffnet, ← geht zurück, Help erklärt den gewählten Befehl. Im Katalog springt ein Buchstabe.',
   },
+  solve: {
+    en: 'Solve: write equations E1 … E0 in Symb (a = b, or an expression meaning = 0; any variable names). Num lists every variable with its value – the value is the start value. Put the cursor on a variable and press Solve; for a system mark one unknown per equation (Mark) first. The status line says what was found: a zero (a solution), a sign change or an extremum (both: no solution, the value shows the closest point). Plot draws both sides over the selected variable; tap or ←→ moves the start value, Var switches the variable.',
+    de: 'Lösen: Gleichungen E1 … E0 in Symb eingeben (a = b oder ein Ausdruck, gemeint = 0; beliebige Variablennamen). Num zeigt jede Variable mit ihrem Wert – er ist der Startwert. Cursor auf eine Variable, dann Lösen; für ein System zuerst je Gleichung eine Unbekannte markieren (Unbek.). Die Statuszeile sagt, was gefunden wurde: eine Nullstelle (Lösung), ein Vorzeichenwechsel oder ein Extremum (beides keine Lösung, der Wert zeigt die nächste Stelle). Plot zeichnet beide Seiten über der gewählten Variablen; Tippen oder ←→ setzt den Startwert, die Variablen-Taste wechselt sie.',
+  },
+  linear: {
+    en: 'Linear solver: coefficients of x1 … xn and the right side of each equation. Arrows or the rocker move, typing replaces a cell (expressions allowed), Enter stores and moves on. The result updates at once: a unique solution, infinitely many (with free parameters t1, t2 …) or none. 2×2, 3×3, n −/n + change the size (up to 6).',
+    de: 'Linearlöser: Koeffizienten von x1 … xn und die rechte Seite jeder Gleichung. Pfeile oder Wippe bewegen, Tippen ersetzt eine Zelle (Ausdrücke erlaubt), Enter speichert und rückt weiter. Das Ergebnis erscheint sofort: eindeutig, unendlich viele (mit freien Parametern t1, t2 …) oder keine Lösung. 2×2, 3×3, n −/n + ändern die Größe (bis 6).',
+  },
+  finance: {
+    en: 'Finance: Sheets (or Symb) chooses a worksheet – time value of money, cash flows, interest conversion, dates, depreciation, break-even, percent change, margin, bond, Black–Scholes. Money received is positive, money paid negative. TVM: enter four of N, I%YR, PV, PMT, FV, put the cursor on the fifth and press Solve; Amort shows the amortization table (per payment or per year). Plot: balance and interest (TVM) or the NPV over the rate (cash flows). Dates are typed as YYYY-MM-DD.',
+    de: 'Finanzen: Blätter (oder Symb) wählt ein Arbeitsblatt – Zeitwert des Geldes, Zahlungsströme, Zinsumrechnung, Datum, Abschreibung, Kostendeckung, Prozentänderung, Marge, Anleihe, Black-Scholes. Eingänge sind positiv, Zahlungen negativ. TVM: vier von N, I%YR, PV, PMT, FV eingeben, Cursor auf den fünften, Lösen; Tilgung zeigt den Tilgungsplan (je Rate oder je Jahr). Plot: Restschuld und Zinsen (TVM) oder Kapitalwert über dem Zins (Zahlungsströme). Daten als JJJJ-MM-TT eingeben.',
+  },
+  triangle: {
+    en: 'Triangle solver: sides a, b, c and the opposite angles A, B, C. Enter any three values with at least one side; the others are computed (italic). Two sides and a non-enclosed angle can give two triangles – Sol 1/2 switches. An empty entry or Delete removes a value. Right-angled mode fixes C = 90°. Plot draws the triangle to scale (the second solution dashed).',
+    de: 'Dreiecklöser: Seiten a, b, c und die gegenüberliegenden Winkel A, B, C. Drei beliebige Werte mit mindestens einer Seite eingeben; die übrigen werden berechnet (kursiv). Zwei Seiten und ein nicht eingeschlossener Winkel können zwei Dreiecke ergeben – Lsg 1/2 wechselt. Leere Eingabe oder Entf. entfernt einen Wert. Rechtwinklig setzt C = 90°. Plot zeichnet das Dreieck maßstäblich (die zweite Lösung gestrichelt).',
+  },
 };
