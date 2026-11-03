@@ -34,15 +34,27 @@ module.exports = defineConfig([
     },
   },
   {
-    // The mathematical core is framework-free (master prompt §1, docs/architecture.md §2).
-    files: ['src/math/**/*.ts'],
+    // The mathematical core is framework-free (master prompt §1, docs/architecture.md §2, ADR 0007).
+    files: ['packages/math/**/*.ts'],
     rules: {
       'no-restricted-imports': [
         'error',
         {
           patterns: [
-            { group: ['@angular/*', '@tauri-apps/*', 'mathlive'], message: 'src/math must stay framework-free.' },
-            { group: ['**/app/**', '**/testing/**'], message: 'src/math must not depend on the app.' },
+            {
+              group: ['@angular/*', '@tauri-apps/*', 'mathlive'],
+              message: 'packages/math must stay framework-free.',
+            },
+            {
+              group: [
+                '@aba/core',
+                '@aba/core/*',
+                '**/apps/**',
+                '**/packages/core/**',
+                '**/src/app/**',
+              ],
+              message: 'packages/math must not depend on core or an app.',
+            },
           ],
         },
       ],

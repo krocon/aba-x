@@ -1,4 +1,4 @@
-import { parseText } from '../../../math/parser/text-parser';
+import { parseText } from '@aba/math/parser/text-parser';
 import { functionsDoc, loadFunctions, loadVariables, variablesDoc, varsMenu } from './vars-logic';
 
 const p = (s: string) => {

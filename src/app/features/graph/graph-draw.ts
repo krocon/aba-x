@@ -2,9 +2,9 @@
  * Draws the plot on a canvas (prompt 014) – used by the LCD view and by the PNG export, so both look
  * the same. LCD style: dark ink on green, functions told apart by line style, not colour.
  */
-import type { PointOfInterest } from '../../../math/graph/analysis';
-import { type Polyline, sample } from '../../../math/graph/sampler';
-import { type Viewport, niceStep, ticks, toScreenX, toScreenY } from '../../../math/graph/viewport';
+import type { PointOfInterest } from '@aba/math/graph/analysis';
+import { type Polyline, sample } from '@aba/math/graph/sampler';
+import { type Viewport, niceStep, ticks, toScreenX, toScreenY } from '@aba/math/graph/viewport';
 import { DASHES } from './graph-export';
 import type { AreaMark, PlotFunction } from './graph-store';
 

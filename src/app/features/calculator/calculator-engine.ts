@@ -1,11 +1,11 @@
 import { Injectable, inject } from '@angular/core';
-import { freeSymbols, substitute } from '../../../math/ast/build';
-import type { Expr } from '../../../math/ast/nodes';
-import { type AngleMode, type UserFunction, evaluateNumeric } from '../../../math/numeric/evaluate';
-import { parseLatex } from '../../../math/parser/latex-parser';
-import { parseLatexStatement } from '../../../math/parser/statement';
-import { type MathResult, fail, ok } from '../../../math/result';
-import { toLatex } from '../../../math/serializer';
+import { freeSymbols, substitute } from '@aba/math/ast/build';
+import type { Expr } from '@aba/math/ast/nodes';
+import { type AngleMode, type UserFunction, evaluateNumeric } from '@aba/math/numeric/evaluate';
+import { parseLatex } from '@aba/math/parser/latex-parser';
+import { parseLatexStatement } from '@aba/math/parser/statement';
+import { type MathResult, fail, ok } from '@aba/math/result';
+import { toLatex } from '@aba/math/serializer';
 import { ComputeClient } from '../../core/compute/compute-client';
 import { SettingsStore } from '../settings/settings-store';
 import { pickVariable, solutionsDisplay, variablesOf, withConstant } from '../cas/cas-logic';

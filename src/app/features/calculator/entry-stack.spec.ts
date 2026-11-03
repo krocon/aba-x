@@ -1,4 +1,4 @@
-import type { Expr } from '../../../math/ast/nodes';
+import type { Expr } from '@aba/math/ast/nodes';
 import {
   STACK_LIMIT,
   drop,

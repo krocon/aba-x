@@ -3,7 +3,7 @@
  * holds a result: its AST (for Ans and stack operations), LaTeX and an optional approximation.
  * Immutable updates, pure functions.
  */
-import type { Expr } from '../../../math/ast/nodes';
+import type { Expr } from '@aba/math/ast/nodes';
 
 export interface StackEntry {
   readonly id: number;

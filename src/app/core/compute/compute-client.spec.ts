@@ -1,8 +1,8 @@
 import { TestBed } from '@angular/core/testing';
-import { parseText } from '../../../math/parser/text-parser';
-import { toText } from '../../../math/serializer';
-import type { ComputeRequest, ComputeResponse } from '../../../math/worker/protocol';
-import { handle } from '../../../math/worker/host';
+import { parseText } from '@aba/math/parser/text-parser';
+import { toText } from '@aba/math/serializer';
+import type { ComputeRequest, ComputeResponse } from '@aba/math/worker/protocol';
+import { handle } from '@aba/math/worker/host';
 import { COMPUTE_WORKER_FACTORY, ComputeClient } from './compute-client';
 
 const p = (s: string) => {

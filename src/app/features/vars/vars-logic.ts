@@ -3,11 +3,11 @@
  * Stored as text (our own syntax, parsed again on load) so files stay readable and survive AST
  * changes; broken items are skipped, a newer schema is read but never overwritten.
  */
-import type { Expr } from '../../../math/ast/nodes';
-import type { UserFunction } from '../../../math/numeric/evaluate';
-import { parseText } from '../../../math/parser/text-parser';
-import { isFreeName } from '../../../math/parser/statement';
-import { toText } from '../../../math/serializer';
+import type { Expr } from '@aba/math/ast/nodes';
+import type { UserFunction } from '@aba/math/numeric/evaluate';
+import { parseText } from '@aba/math/parser/text-parser';
+import { isFreeName } from '@aba/math/parser/statement';
+import { toText } from '@aba/math/serializer';
 
 export const VARS_SCHEMA = 1;
 

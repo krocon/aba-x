@@ -1,6 +1,6 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
-import { freeSymbols } from '../../../math/ast/build';
-import type { Expr } from '../../../math/ast/nodes';
+import { freeSymbols } from '@aba/math/ast/build';
+import type { Expr } from '@aba/math/ast/nodes';
 import {
   type PointOfInterest,
   area,
@@ -8,8 +8,8 @@ import {
   intersections,
   roots,
   tangent,
-} from '../../../math/graph/analysis';
-import { autoY } from '../../../math/graph/sampler';
+} from '@aba/math/graph/analysis';
+import { autoY } from '@aba/math/graph/sampler';
 import {
   STANDARD_VIEW,
   TRIG_VIEW,
@@ -17,9 +17,9 @@ import {
   pan,
   valid,
   zoom,
-} from '../../../math/graph/viewport';
-import { compile } from '../../../math/numeric/evaluate';
-import { toText } from '../../../math/serializer';
+} from '@aba/math/graph/viewport';
+import { compile } from '@aba/math/numeric/evaluate';
+import { toText } from '@aba/math/serializer';
 import { StorageApi } from '../../core/storage/storage-api';
 import { CalculatorEngine } from '../calculator/calculator-engine';
 import { formatNumber } from '../calculator/evaluation-logic';

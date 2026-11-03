@@ -1,5 +1,5 @@
 /** Settings document (prompt 018): defaults, sanitizing, newer schema = read-only. */
-import type { AngleMode } from '../../../math/numeric/evaluate';
+import type { AngleMode } from '@aba/math/numeric/evaluate';
 import type { Lang } from '../../core/i18n/i18n';
 
 export const SETTINGS_SCHEMA = 1;

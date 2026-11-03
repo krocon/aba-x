@@ -9,7 +9,7 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
-import { toWorldX, toWorldY } from '../../../math/graph/viewport';
+import { toWorldX, toWorldY } from '@aba/math/graph/viewport';
 import { drawPlot } from './graph-draw';
 import { GraphStore } from './graph-store';
 

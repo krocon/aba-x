@@ -1,10 +1,10 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { I18n } from '../../core/i18n/i18n';
 import { SettingsStore } from '../settings/settings-store';
-import { bin, neg } from '../../../math/ast/build';
-import type { BinaryOp, Expr } from '../../../math/ast/nodes';
-import type { MathResult } from '../../../math/result';
-import { isFreeName } from '../../../math/parser/statement';
+import { bin, neg } from '@aba/math/ast/build';
+import type { BinaryOp, Expr } from '@aba/math/ast/nodes';
+import type { MathResult } from '@aba/math/result';
+import { isFreeName } from '@aba/math/parser/statement';
 import type { VarsMenuEntry } from '../vars/vars-logic';
 import type { MenuName } from './device/softkeys';
 import { GraphStore } from '../graph/graph-store';
@@ -12,7 +12,7 @@ import { VarsStore } from '../vars/vars-store';
 import { HistoryStore } from '../history/history-store';
 import { UiStateStore } from '../../core/ui-state/ui-state-store';
 import { CalculatorEngine, type CasOp, type Evaluation } from './calculator-engine';
-import { toText } from '../../../math/serializer';
+import { toText } from '@aba/math/serializer';
 import {
   type StackEntry,
   drop,

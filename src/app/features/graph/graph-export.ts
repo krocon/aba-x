@@ -1,6 +1,6 @@
 /** SVG export of a plot (prompt 014): the same polylines the canvas draws, as a standalone file. */
-import type { Polyline } from '../../../math/graph/sampler';
-import { type Viewport, niceStep, ticks, toScreenX, toScreenY } from '../../../math/graph/viewport';
+import type { Polyline } from '@aba/math/graph/sampler';
+import { type Viewport, niceStep, ticks, toScreenX, toScreenY } from '@aba/math/graph/viewport';
 
 export const DASHES: readonly number[][] = [[], [7, 4], [2, 3], [9, 3, 2, 3], [1, 2], [12, 5]];
 

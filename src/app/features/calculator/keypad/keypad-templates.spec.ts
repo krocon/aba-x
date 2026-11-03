@@ -1,4 +1,4 @@
-import { parseLatex } from '../../../../math/parser/latex-parser';
+import { parseLatex } from '@aba/math/parser/latex-parser';
 import { ALL_KEYS } from './keypad-model';
 
 describe('keypad templates', () => {

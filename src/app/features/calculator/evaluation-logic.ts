@@ -2,9 +2,9 @@
  * Pure helpers of the evaluation (prompt 005): degree handling, function inlining, number
  * formatting and the decision what the display shows.
  */
-import { freeSymbols, substitute } from '../../../math/ast/build';
-import type { Expr } from '../../../math/ast/nodes';
-import type { UserFunction } from '../../../math/numeric/evaluate';
+import { freeSymbols, substitute } from '@aba/math/ast/build';
+import type { Expr } from '@aba/math/ast/nodes';
+import type { UserFunction } from '@aba/math/numeric/evaluate';
 
 const TRIG = new Set(['sin', 'cos', 'tan', 'cot', 'sec', 'csc']);
 const INVERSE_TRIG = new Set(['arcsin', 'arccos', 'arctan']);

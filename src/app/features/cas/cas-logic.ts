@@ -1,9 +1,9 @@
 /** Pure helpers of the CAS mode (prompts 010–012). */
-import { freeSymbols } from '../../../math/ast/build';
-import type { Expr } from '../../../math/ast/nodes';
-import type { Solutions } from '../../../math/symbolic/engine';
-import { evaluateNumeric } from '../../../math/numeric/evaluate';
-import { toLatex } from '../../../math/serializer';
+import { freeSymbols } from '@aba/math/ast/build';
+import type { Expr } from '@aba/math/ast/nodes';
+import type { Solutions } from '@aba/math/symbolic/engine';
+import { evaluateNumeric } from '@aba/math/numeric/evaluate';
+import { toLatex } from '@aba/math/serializer';
 
 const CONSTANTS = new Set(['pi', 'e', 'i', 'inf']);
 

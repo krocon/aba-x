@@ -1,11 +1,11 @@
 import { Injectable, InjectionToken, OnDestroy, inject } from '@angular/core';
-import { type MathResult, fail } from '../../../math/result';
+import { type MathResult, fail } from '@aba/math/result';
 import type {
   ComputeOp,
   ComputeRequest,
   ComputeResponse,
   ComputeResults,
-} from '../../../math/worker/protocol';
+} from '@aba/math/worker/protocol';
 
 /** Creates the worker; `null` = run in-thread (tests, browsers without module workers). */
 export const COMPUTE_WORKER_FACTORY = new InjectionToken<() => Worker | null>(
@@ -68,7 +68,7 @@ export class ComputeClient implements OnDestroy {
   private async runInline<K extends ComputeOp['op']>(
     task: ComputeOp,
   ): Promise<MathResult<ComputeResults[K]>> {
-    const { execute } = await import('../../../math/worker/host');
+    const { execute } = await import('@aba/math/worker/host');
     return execute(task) as MathResult<ComputeResults[K]>;
   }
 

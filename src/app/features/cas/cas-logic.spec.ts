@@ -1,6 +1,6 @@
-import { parseText } from '../../../math/parser/text-parser';
+import { parseText } from '@aba/math/parser/text-parser';
 import { pickVariable, solutionsDisplay, variablesOf, withConstant } from './cas-logic';
-import { toText } from '../../../math/serializer';
+import { toText } from '@aba/math/serializer';
 
 const p = (s: string) => {
   const r = parseText(s);
