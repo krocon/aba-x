@@ -1,7 +1,10 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { MenuService } from './menu-service';
 
-/** HTML menu of the web build (prompt 045): one button per menu, a dropdown with the actions. */
+/**
+ * HTML menu of the web build (prompt 045): one button per menu, a list with the actions. It sits below the device,
+ * so the lists open upwards.
+ */
 @Component({
   selector: 'app-web-menu',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -36,8 +39,7 @@ import { MenuService } from './menu-service';
       display: flex;
       gap: 0.25rem;
       justify-content: center;
-      padding: 0.3rem 0;
-      font-size: 0.85rem;
+      padding: 0;
     }
     .m {
       position: relative;
@@ -59,7 +61,7 @@ import { MenuService } from './menu-service';
       position: absolute;
       z-index: 20;
       left: 0;
-      top: 100%;
+      bottom: calc(100% + 4px);
       min-width: 13rem;
       margin: 0;
       padding: 0.25rem 0;

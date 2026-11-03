@@ -77,9 +77,6 @@ import { PopupView } from './features/toolbox/popup-view';
     Modal,
   ],
   template: `
-    @if (!menu.native) {
-      <app-web-menu />
-    }
     <main>
       <h1 class="visually-hidden">ABA-T1</h1>
       <app-t1-device
@@ -147,12 +144,18 @@ import { PopupView } from './features/toolbox/popup-view';
           <app-popup />
         }
       </app-t1-device>
-      <p class="foot" aria-live="polite">
-        @if (backup.message(); as m) {
-          <span class="msg">{{ m }}</span>
+      <div class="foot">
+        <span aria-live="polite">
+          @if (backup.message(); as m) {
+            <span class="msg">{{ m }}</span>
+          }
+        </span>
+        <!-- the menu of the web build sits below the device, next to the shortcut help -->
+        @if (!menu.native) {
+          <app-web-menu />
         }
         <button type="button" class="link" (click)="keyboard.helpOpen.set(true)">Keyboard</button>
-      </p>
+      </div>
     </main>
     @if (keyboard.helpOpen()) {
       <app-shortcuts-dialog (closed)="keyboard.helpOpen.set(false)" />
@@ -183,6 +186,11 @@ import { PopupView } from './features/toolbox/popup-view';
       padding: 16px 0 24px;
     }
     .foot {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 0.25rem 0.75rem;
       margin: 10px 0 0;
       font-size: 0.85rem;
     }
