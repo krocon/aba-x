@@ -9,10 +9,11 @@ import type { Viewport } from '@aba/math/graph/viewport';
 import { type AngleMode, compile, evaluateNumeric } from '@aba/math/numeric/evaluate';
 import { LOGIC_FUNCTIONS, compileRelation } from '@aba/math/interval/eval';
 import { parseLatex } from '@aba/math/parser/latex-parser';
+import { equationSides } from '@aba/math/numeric/equations';
 import { catalogNames, markCommands, markSlots } from '../../core/latex/typed-names';
 import { FN_COLORS, type PlotOptions, DEFAULT_PLOT } from '../function/function-logic';
 
-export type CurveKind = 'parametric' | 'polar' | 'sequence' | 'graph3d' | 'relation';
+export type CurveKind = 'parametric' | 'polar' | 'sequence' | 'graph3d' | 'relation' | 'solve';
 
 const DIGITS = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
 
@@ -53,6 +54,12 @@ export const KINDS: Record<CurveKind, KindConfig> = {
     fields: (d) => [`V${d}`],
     name: (d) => `V${d}`,
   },
+  // solve app (prompt 039): equations in any variables
+  solve: {
+    variable: { latex: 'X', name: 'X', label: 'X' },
+    fields: (d) => [`E${d}`],
+    name: (d) => `E${d}`,
+  },
 };
 
 export interface CurveRow {
@@ -78,6 +85,10 @@ export interface CurveState {
   camera?: { azimuth: number; elevation: number; zoom: number };
   gridN?: number;
   box?: boolean;
+  /** solve app (prompt 039): values of the variables, marked unknowns, last message */
+  values?: Record<string, number>;
+  unknowns?: string[];
+  selected?: string;
 }
 
 export function initCurveState(kind: CurveKind): CurveState {
@@ -115,6 +126,18 @@ export function initCurveState(kind: CurveKind): CurveState {
         tmax: 20,
         tstep: 1,
         numStep: 1,
+      };
+    case 'solve':
+      return {
+        ...base,
+        rows: rows.map((r) => ({ ...r, on: true })),
+        view: { xmin: -10, xmax: 10, ymin: -6.5, ymax: 6.5 },
+        tmin: 0,
+        tmax: 1,
+        tstep: 1,
+        numStep: 1,
+        values: {},
+        unknowns: [],
       };
     case 'relation':
       return {
@@ -182,6 +205,21 @@ export function relations(rows: readonly CurveRow[]): Relation[] {
   return out;
 }
 
+/** Error of an equation of the solve app (null = fine or empty). */
+export function equationError(src: string): string | null {
+  const e = parseEquation(src);
+  return typeof e === 'string' ? e : null;
+}
+
+/** An equation of the solve app (prompt 039): `left = right` or an expression (= 0). */
+export function parseEquation(src: string): Expr | string | null {
+  if (!src.trim()) return null;
+  const p = parseLatex(markSlots(markCommands(src, catalogNames())));
+  if (!p.ok) return p.error.message;
+  const s = equationSides(p.value);
+  return s.ok ? p.value : s.error.message;
+}
+
 /** Home variables without X and Y (those are the plot variables of a relation). */
 export function relationScope(scope: CurveScope): CurveScope {
   const variables = new Map(scope.variables);
@@ -218,6 +256,7 @@ export interface Curve {
 
 /** Errors per row and field (null = fine or empty). */
 export function rowErrors(kind: CurveKind, rows: readonly CurveRow[]): (string | null)[][] {
+  if (kind === 'solve') return rows.map((r) => [equationError(r.fields[0])]);
   if (kind === 'relation') {
     return rows.map((r) => {
       const p = parseRelation(r.fields[0]);

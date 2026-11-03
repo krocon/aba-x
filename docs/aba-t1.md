@@ -195,3 +195,16 @@ Befehle (`GA = point(1, 2)`, `GC = circle(GA, GB)` …): Bearbeiten, ✓, Neu, U
 stellt Schieberegler. Num führt Messungen und Tests (`distance(A, B)`, `angle(A, B, C)`, `area(t)`, `isCollinear(…)`),
 alle numerisch. ⇧Plot: Fenster, gleiche Achsen, Gitter. Mathematik: [`docs/mathematics/geometry.md`](mathematics/geometry.md).
 
+## Löser-Apps (039)
+
+- **Lösen**: Gleichungen E1 … E0 in Symb (`a = b` oder ein Ausdruck = 0, beliebige Variablen). Num zeigt jede Variable
+  mit ihrem Wert (= Startwert); Cursor auf die gesuchte Variable, **Lösen**. Für Systeme je Gleichung eine Unbekannte
+  markieren (gedämpftes Newton). Die Statuszeile unterscheidet Null (Lösung), Vorzeichenwechsel und Extremum (keine
+  Lösung). Plot zeigt beide Seiten über der gewählten Variablen; Tippen/←→ setzt den Startwert.
+- **Linearlöser**: n×n (2 … 6) als Raster mit rechter Seite; eindeutig, unendlich viele (Parameter t1, t2 …) oder keine.
+- **Finanzen**: Blätter (Symb) TVM, Zahlungsströme (NPV, NFV, IRR, MIRR, Amortisation), Zinsumrechnung, Datum (actual,
+  30/360), Abschreibung (linear, degressiv, digital), Kostendeckung, %‑Veränderung, Marge/Aufschlag, Anleihe,
+  Black-Scholes. Lösen berechnet das Feld unter dem Cursor; TVM-Tilgungsplan je Rate oder Jahr; Plot: Restschuld/Zinsen
+  bzw. Kapitalwertkurve. Eingänge positiv, Zahlungen negativ ([`mathematics/finance.md`](mathematics/finance.md)).
+- **Dreiecklöser**: drei von a, b, c, A, B, C (mindestens eine Seite); SSW mit zwei Lösungen (Lsg 1/2), rechtwinkliger
+  Modus, Fläche und Umfang; Plot zeichnet maßstäblich.
