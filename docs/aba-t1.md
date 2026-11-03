@@ -182,3 +182,16 @@ kursiv, Farbe, Breite), Name (benennt die Auswahl; der Name ist danach auch eine
 Auswahl, Mehr (Kopieren/Einfügen alles/Werte/Formeln/Formate – auch ⇧View/⇧Menu –, Füllen, Sortieren, Zeilen/Spalten
 einfügen/löschen, Spalten → L1, L2 …, CSV importieren/exportieren). ⇧Num: Spaltenbreite und CSV-Format. Neuberechnung
 nur der abhängigen Zellen. Nicht enthalten: CAS-Zellen, Bezüge `Spreadsheet.A1` aus anderen Apps (Design 041).
+
+## Geometrie (042)
+
+Plot ist das Konstruktionsblatt: Die Menütasten öffnen Ansicht (Auswählen/Ziehen, Zoom, Alles zeigen, Spuren löschen,
+PNG), Linien, Vieleck, Kreise, Abbild. und Messen. Ein Werkzeug fragt seine Objekte Tipp für Tipp ab; eine freie Stelle
+erzeugt einen freien Punkt (auf ≈ 2 px gerundet), das Punkt-Werkzeug auf einer Geraden/einem Kreis einen Punkt darauf.
+Ohne Werkzeug wählt ein Tipp ein Objekt aus (Menü: Spur, Farbe, Verbergen, Löschen, Messen, OK), Ziehen bewegt freie
+Punkte – alles Abhängige und die eingeblendeten Messungen folgen –, sonst verschiebt es die Ebene; Pinch, Doppeltipp
+und +/− zoomen. Tastatur: Enter zeigt ein Kreuz, die Wippe bewegt es, Enter tippt dort; Esc bricht ab. Symb listet die
+Befehle (`GA = point(1, 2)`, `GC = circle(GA, GB)` …): Bearbeiten, ✓, Neu, Umbenennen, Löschen (kaskadierend); ←→
+stellt Schieberegler. Num führt Messungen und Tests (`distance(A, B)`, `angle(A, B, C)`, `area(t)`, `isCollinear(…)`),
+alle numerisch. ⇧Plot: Fenster, gleiche Achsen, Gitter. Mathematik: [`docs/mathematics/geometry.md`](mathematics/geometry.md).
+
