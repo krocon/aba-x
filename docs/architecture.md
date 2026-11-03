@@ -108,3 +108,12 @@ MathLive-Zeile ──LaTeX──► parseLatexStatement ──AST──► Calcu
 | `nerdamer` 2.0.1 | CAS | Apache-2.0 | ADR 0004, nur im Worker-Chunk |
 | Rust: `tauri` 2.12, `tauri-plugin-dialog` 2.8, `tauri-plugin-window-state` 2.5, `serde`, `serde_json` | Desktop | MIT/Apache-2.0 | minimal |
 | Dev: `@tauri-apps/cli`, ESLint/angular-eslint, Prettier, Vitest, jsdom, `fake-indexeddb` (Apache-2.0), `playwright` (Apache-2.0), `axe-core` (MPL-2.0), Rust `tempfile` | Werkzeuge, Tests | – | nicht im Produkt |
+
+## Python-Laufzeit (ABA-T1, Prompt 047)
+
+MicroPython (`@micropython/micropython-webassembly-pyscript`, MIT, 450 kB WASM + 110 kB JS) läuft in einem eigenen Web
+Worker (`apps/aba-t1/src/app/apps/python/python.worker.ts`), geladen beim ersten Python-Befehl aus den Assets
+`python/` (Service Worker: prefetch, damit offline). Abbruch = Worker beenden (On, Zeitlimit). Variablen gehen als
+JSON-Momentaufnahme hinein, `calc.set` kommt zurück; Grafik als dieselben Befehle wie bei der Programmiersprache (043).
+Desktop: CSP mit `'wasm-unsafe-eval'` und `connect-src 'self'`.
+

@@ -14,7 +14,7 @@
       "installMode": "prefetch",
       "updateMode": "prefetch",
       "resources": {
-        "files": ["/logo.svg", "/icons/**", "/mathlive/**"]
+        "files": ["/logo.svg", "/icons/**", "/mathlive/**", "/python/**"]
       }
     }
   ]

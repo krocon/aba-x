@@ -75,5 +75,5 @@ Empfohlene Reihenfolge: 025 → 026 → 027 → 028 → 029 → 030 → 031 → 
 | 044 | [t1-programm-editor-eigene-apps](done/044-t1-programm-editor-eigene-apps.md) | Programmkatalog, Editor, Debugger, eigene Apps, Nutzer-Tasten                 | 043, 033     | M       | Pflicht | ✅ 03.11.2026 |
 | 045 | [t1-notizen-speicher-backup](done/045-t1-notizen-speicher-backup.md)         | Notizen, Info, Speicherverwaltung, Backup, Menü                               | 033          | M       | Pflicht | ✅ 03.11.2026 |
 | 046 | [t1-3d-grafiken](done/046-t1-3d-grafiken.md)                                 | 3D-Flächen (WebGL)                                                            | 034          | M       | Kann    | ✅ 03.11.2026 |
-| 047 | [t1-python-app](047-t1-python-app.md)                                        | Python (MicroPython/WASM)                                                     | 044          | M       | Kann    | offen         |
+| 047 | [t1-python-app](done/047-t1-python-app.md)                                   | Python (MicroPython/WASM)                                                     | 044          | M       | Kann    | ✅ 03.11.2026 |
 | 048 | [t1-produktreife-release](048-t1-produktreife-release.md)                    | Barrierefreiheit, i18n, PWA, E2E, Release, README, Werbeseite                 | 025–045      | M       | Pflicht | offen         |

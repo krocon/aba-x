@@ -2,6 +2,7 @@
  * The built-in apps of ABA-T1 (prompt 033 ff.). Icons are our own simple glyphs on a 24×24 grid.
  */
 import type { AppDef } from './app-contract';
+import { PythonPlot, PythonScripts, PythonShell, initPython } from './python/python-views';
 import { FunctionNum } from './function/function-num';
 import { FunctionPlot } from './function/function-plot';
 import { FunctionSymb } from './function/function-symb';
@@ -192,5 +193,14 @@ export const APP_DEFS: AppDef[] = [
     version: 1,
     start: 'num',
     views: { num: TriangleNum, plot: TrianglePlot },
+  },
+  {
+    id: 'python',
+    title: { en: 'Python', de: 'Python' },
+    icon: 'M8 3h6a3 3 0 0 1 3 3v4H9a3 3 0 0 0-3 3v2H5a2 2 0 0 1-2-2V9a3 3 0 0 1 3-3h2zM16 21h-6a3 3 0 0 1-3-3v-4h8a3 3 0 0 0 3-3V9h1a2 2 0 0 1 2 2v4a3 3 0 0 1-3 3h-2zM10 6h.1M14 18h.1',
+    init: initPython,
+    version: 1,
+    start: 'num',
+    views: { symb: PythonScripts, num: PythonShell, plot: PythonPlot },
   },
 ];

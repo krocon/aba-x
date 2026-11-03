@@ -219,3 +219,10 @@ schreibt ins Terminal, Grafikbefehle zeichnen auf G0–G9; On bricht ab. Eigene 
 (exportiert START, RESET, SYMB, PLOT, NUM); Nutzertasten: ⇧Help, dann ruft eine Taste `K_<Taste>`. Sprache:
 `docs/ppl/language.md`, Werkzeuge: `docs/ppl/editor.md`.
 
+## Python (047)
+
+App Python: Num ist die Shell (Zeile wie in einer REPL, ↑↓ frühere Zeilen), Symb die Skripte (Bearbeiten, Neu, Löschen,
+Start), Plot der Bildschirm G0. Laufzeit: MicroPython als WebAssembly im Worker (offline, ≈ 560 kB). Module: `math`,
+`cmath`, `random`, `json`, `calc` (`calc.get("A")`, `calc.set("B", wert)` – Rechnervariablen) und `graphic`
+(Zeichnen auf G0). On bricht ab, Zeitlimit 60 s.
+

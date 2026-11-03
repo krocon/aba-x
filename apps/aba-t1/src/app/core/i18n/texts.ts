@@ -584,6 +584,9 @@ export const EN = {
   'prog.replaced': '{n} replaced',
   'prog.screen': 'Graphics screen G0',
   'prog.clear': 'Clear',
+  'py.shell': 'Python shell',
+  'py.input': 'Python line',
+  'py.scripts': 'Python scripts',
 };
 
 export type TextKey = keyof typeof EN;
@@ -1172,4 +1175,7 @@ export const DE: Record<TextKey, string> = {
   'prog.replaced': '{n} ersetzt',
   'prog.screen': 'Grafikbildschirm G0',
   'prog.clear': 'Leeren',
+  'py.shell': 'Python-Shell',
+  'py.input': 'Python-Zeile',
+  'py.scripts': 'Python-Skripte',
 };

@@ -51,8 +51,8 @@ export class DeviceStore {
   readonly status = signal<string[]>([]);
   private readonly stack = signal<ViewContext[]>([]);
   private readonly globals = new Map<string, () => void>();
-  /** sees every key first (a running program – prompt 043); true = consumed */
-  private interceptor: ((p: KeyPress) => boolean) | null = null;
+  /** see every key first (running programs – prompts 043, 047); true = consumed */
+  private interceptors: ((p: KeyPress) => boolean)[] = [];
   private litTimer: ReturnType<typeof setTimeout> | undefined;
 
   readonly top = computed(() => this.stack().at(-1) ?? null);
@@ -78,9 +78,9 @@ export class DeviceStore {
 
   /** Lets one handler see every key first (a running program); returns its removal. */
   intercept(f: (p: KeyPress) => boolean): () => void {
-    this.interceptor = f;
+    this.interceptors.push(f);
     return () => {
-      if (this.interceptor === f) this.interceptor = null;
+      this.interceptors = this.interceptors.filter((g) => g !== f);
     };
   }
 
@@ -124,7 +124,7 @@ export class DeviceStore {
   }
 
   private dispatch(p: KeyPress): void {
-    if (!this.off() && this.interceptor?.(p)) return;
+    if (!this.off() && this.interceptors.some((f) => f(p))) return;
     if (p.id === 'on') {
       if (p.layer === 'shift') this.off.set(true);
       else if (this.off()) this.off.set(false);

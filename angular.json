@@ -4,9 +4,7 @@
   "cli": {
     "packageManager": "pnpm",
     "analytics": false,
-    "schematicCollections": [
-      "angular-eslint"
-    ]
+    "schematicCollections": ["angular-eslint"]
   },
   "newProjectRoot": "apps",
   "projects": {
@@ -39,13 +37,9 @@
                 "output": "mathlive/fonts"
               }
             ],
-            "styles": [
-              "apps/aba-x1/src/styles.css"
-            ],
+            "styles": ["apps/aba-x1/src/styles.css"],
             "webWorkerTsConfig": "apps/aba-x1/tsconfig.worker.json",
-            "allowedCommonJsDependencies": [
-              "nerdamer"
-            ]
+            "allowedCommonJsDependencies": ["nerdamer"]
           },
           "configurations": {
             "production": {
@@ -107,19 +101,13 @@
         "test": {
           "builder": "@angular/build:unit-test",
           "options": {
-            "include": [
-              "**/*.spec.ts",
-              "../../../packages/core/**/*.spec.ts"
-            ]
+            "include": ["**/*.spec.ts", "../../../packages/core/**/*.spec.ts"]
           }
         },
         "lint": {
           "builder": "@angular-eslint/builder:lint",
           "options": {
-            "lintFilePatterns": [
-              "apps/aba-x1/**/*.ts",
-              "apps/aba-x1/**/*.html"
-            ]
+            "lintFilePatterns": ["apps/aba-x1/**/*.ts", "apps/aba-x1/**/*.html"]
           }
         }
       }
@@ -151,15 +139,16 @@
                 "glob": "**/*.woff2",
                 "input": "node_modules/mathlive/fonts",
                 "output": "mathlive/fonts"
+              },
+              {
+                "glob": "micropython.{mjs,wasm}",
+                "input": "node_modules/@micropython/micropython-webassembly-pyscript",
+                "output": "python"
               }
             ],
-            "styles": [
-              "apps/aba-t1/src/styles.css"
-            ],
+            "styles": ["apps/aba-t1/src/styles.css"],
             "webWorkerTsConfig": "apps/aba-t1/tsconfig.worker.json",
-            "allowedCommonJsDependencies": [
-              "nerdamer"
-            ]
+            "allowedCommonJsDependencies": ["nerdamer"]
           },
           "configurations": {
             "production": {
@@ -221,18 +210,13 @@
         "test": {
           "builder": "@angular/build:unit-test",
           "options": {
-            "include": [
-              "**/*.spec.ts"
-            ]
+            "include": ["**/*.spec.ts"]
           }
         },
         "lint": {
           "builder": "@angular-eslint/builder:lint",
           "options": {
-            "lintFilePatterns": [
-              "apps/aba-t1/**/*.ts",
-              "apps/aba-t1/**/*.html"
-            ]
+            "lintFilePatterns": ["apps/aba-t1/**/*.ts", "apps/aba-t1/**/*.html"]
           }
         }
       }

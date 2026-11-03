@@ -22,6 +22,8 @@ import { t1Scenarios } from './aba-t1.mjs';
 const TYPES = {
   '.html': 'text/html',
   '.js': 'text/javascript',
+  '.mjs': 'text/javascript',
+  '.wasm': 'application/wasm',
   '.css': 'text/css',
   '.json': 'application/json',
   '.webmanifest': 'application/manifest+json',
@@ -255,7 +257,10 @@ async function main({ root, base }, { checks, offline, state }) {
     });
     const t0 = Date.now();
     await page.goto(url);
+    // E2E_ONLY=a,b runs only these checks (plus `loads`) – for debugging one scenario
+    const only = process.env.E2E_ONLY?.split(',');
     for (const [check, run] of Object.entries(checks)) {
+      if (only && check !== 'loads' && !only.includes(check)) continue;
       try {
         const info = await run(page);
         const extra =

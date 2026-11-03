@@ -859,6 +859,73 @@ export function t1Scenarios({ axeSource }) {
       await keys('home');
       await page.waitForSelector('app-home-view math-field');
     },
+    async python(page) {
+      const keys = async (...ks) => {
+        for (const k of ks) await page.click(`.key[data-key="${k}"]`);
+      };
+      const menu = (label) => page.click(`app-t1-device button.mb:text-is("${label}")`);
+      await keys('home');
+      await page.click('app-home-view math-field');
+      await page.keyboard.type('3');
+      await page.keyboard.press('Enter');
+      await lastResult(page, '3');
+      await keys('apps');
+      await page.click('app-library .tile:has-text("Python")');
+      await keys('enter');
+      const line = 'app-python-shell .line input';
+      // a shell line, then wait until Python is idle again (▶ in the title while it runs)
+      const py = async (code) => {
+        await page.fill(line, code);
+        await page.press(line, 'Enter');
+        await page.waitForFunction(
+          () => !document.querySelector('app-t1-device .title')?.textContent.includes('▶'),
+          null,
+          { timeout: 30000 },
+        );
+      };
+      await page.waitForSelector(line);
+      await py('print(sum(range(10)))');
+      await page.waitForFunction(
+        () => /^45$/m.test(document.querySelector('app-python-shell .out')?.textContent ?? ''),
+        null,
+        { timeout: 30000 },
+      );
+      // the bridge: calc.set stores into the home view
+      await py('import calc; calc.set("B", calc.get("Ans") * 2)');
+      // an error names its line
+      await py('exec("a = 1\\nb = 1/0")');
+      await page.waitForFunction(() =>
+        [...document.querySelectorAll('app-python-shell .out .err')].some((e) =>
+          /line 2/.test(e.textContent),
+        ),
+      );
+      // the demo script draws on G0
+      await keys('symb');
+      await page.waitForSelector('app-python-scripts li');
+      await menu('Run');
+      await page.waitForSelector('app-python-plot canvas');
+      await page.waitForFunction(() => {
+        const c = document.querySelector('app-python-plot canvas');
+        const d = c?.getContext('2d')?.getImageData(0, 0, 320, 240).data;
+        if (!d) return false;
+        for (let i = 0; i < d.length; i += 4) if (d[i] < 200 && d[i + 1] < 200) return true;
+        return false;
+      });
+      // an endless loop stops with On
+      await keys('num');
+      await page.fill(line, 'while True: pass');
+      await page.press(line, 'Enter');
+      await page.waitForTimeout(500);
+      await keys('on');
+      await page.waitForFunction(() =>
+        document.querySelector('app-python-shell .out')?.textContent.includes('KeyboardInterrupt'),
+      );
+      await keys('home');
+      await page.click('app-home-view math-field');
+      await page.keyboard.type('B');
+      await page.keyboard.press('Enter');
+      await lastResult(page, '6');
+    },
     async keypad(page) {
       const r = await page.$$eval('app-t1-device .key', (keys) => ({
         count: keys.length,
