@@ -1,0 +1,11 @@
+{
+  "name": "@aba/ppl",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Framework-free structured programming language of the ABA calculators (PPL-like): lexer, parser, interpreter, host interface",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "test": "tsc -p tsconfig.json --noEmit && vitest run"
+  }
+}
