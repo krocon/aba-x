@@ -346,6 +346,53 @@ export function t1Scenarios({ axeSource }) {
       await keys('home');
       await page.waitForSelector('app-home-view math-field');
     },
+    async statistics(page) {
+      const keys = async (...ks) => {
+        for (const k of ks) await page.click(`.key[data-key="${k}"]`);
+      };
+      const menu = (label) => page.click(`app-t1-device button.mb:text-is("${label}")`);
+      const enter = async (...vs) => {
+        for (const v of vs) {
+          await page.keyboard.type(String(v));
+          await page.keyboard.press('Enter');
+        }
+      };
+      // 1 Var: D1 = 1…5, statistics and the histogram
+      await keys('apps');
+      await page.click('app-library .tile:has-text("Statistics 1Var")');
+      await keys('enter');
+      await page.waitForSelector('app-columns-editor input.line');
+      await page.click('app-columns-editor input.line');
+      await enter(1, 2, 3, 4, 5);
+      await menu('Stats');
+      await page.waitForFunction(() =>
+        [...document.querySelectorAll('app-stats-num .stats tbody tr')].some(
+          (r) => r.textContent.replace(/\s+/g, '') === 'x̄3',
+        ),
+      );
+      await keys('esc', 'plot');
+      await page.waitForSelector('app-stats-plot canvas');
+      // 2 Var: C1 = 1…4, C2 = 3, 5, 7, 9 → linear fit, Pred Y at 10 = 21
+      await keys('apps');
+      await page.click('app-library .tile:has-text("Statistics 2Var")');
+      await keys('enter');
+      await page.waitForSelector('app-columns-editor input.line');
+      await page.click('app-columns-editor input.line');
+      await enter(1, 2, 3, 4);
+      await page.keyboard.press('ArrowRight');
+      for (let i = 0; i < 4; i++) await page.keyboard.press('ArrowUp');
+      await enter(3, 5, 7, 9);
+      await keys('plot');
+      await page.waitForSelector('app-stats-plot canvas');
+      await menu('Pred Y');
+      await page.fill('app-stats-plot .bar input', '10');
+      await page.press('app-stats-plot .bar input', 'Enter');
+      await page.waitForFunction(() =>
+        document.querySelector('app-stats-plot .bar')?.textContent.includes('Y: 21'),
+      );
+      await keys('home');
+      await page.waitForSelector('app-home-view math-field');
+    },
     async keypad(page) {
       const r = await page.$$eval('app-t1-device .key', (keys) => ({
         count: keys.length,

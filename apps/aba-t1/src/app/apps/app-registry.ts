@@ -9,6 +9,8 @@ import { FunctionNumSetup, FunctionPlotSetup } from './function/function-setup';
 import { initFunctionState } from './function/function-logic';
 import { initCurveState } from './curve/curve-logic';
 import { ExplorerView, initExplorer } from './explorer/explorer-view';
+import { initStats1, initStats2 } from './stats/stats-logic';
+import { StatsNum, StatsPlot, StatsPlotSetup, StatsSymb } from './stats/stats-views';
 import { RelationNum, RelationPlot } from './relation/relation-views';
 import { SurfaceNum, SurfacePlot, SurfaceSetup } from './surface/surface-views';
 import { CurveNum, CurveNumSetup, CurvePlot, CurvePlotSetup, CurveSymb } from './curve/curve-views';
@@ -84,6 +86,21 @@ export const APP_DEFS: AppDef[] = [
       numSetup: CurveNumSetup,
     },
   },
+  ...(['stats1', 'stats2'] as const).map((id): AppDef => ({
+    id,
+    title: {
+      stats1: { en: 'Statistics 1Var', de: 'Statistik 1Var' },
+      stats2: { en: 'Statistics 2Var', de: 'Statistik 2Var' },
+    }[id],
+    icon: {
+      stats1: 'M3 20h18M5 20v-6h3v6M10 20V8h3v12M15 20v-9h3v9',
+      stats2: 'M3 20h18M4 3v18M6 16l12-9M7 13h.1M10 14h.1M12 9h.1M15 10h.1M17 6h.1',
+    }[id],
+    init: id === 'stats1' ? initStats1 : initStats2,
+    version: 1,
+    start: 'num',
+    views: { symb: StatsSymb, plot: StatsPlot, num: StatsNum, plotSetup: StatsPlotSetup },
+  })),
   {
     id: 'graph3d',
     title: { en: '3D Graphing', de: '3D-Grafik' },

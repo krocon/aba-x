@@ -152,3 +152,13 @@ V1 … V0 sind Relationen in X und Y: Gleichungen (`X²+Y²=9`), Ungleichungen (
 Intervallarithmetik: gefärbt ist nur, wo die Relation sicher gilt; grau, wo es sich nicht entscheiden lässt; gestrichelte
 Ränder gehören nicht dazu. ←→ verfolgt einen Rand, ↑↓ wechselt die Relation, Galerie lädt Beispiele. Num listet je X die
 Rand-Y-Werte im Y-Bereich (numerisch). Bricht die Verfeinerung am Zeitbudget ab, sagt die Statuszeile das.
+
+## Statistik 1Var und 2Var (037)
+
+Num enthält zehn Datenspalten (D1…D0 bzw. C1…C0): Wert tippen, Enter speichert und geht weiter; Sortieren, Mehr
+(absteigend, leeren, 20 Zufallswerte, aus/nach Listen L0…L9 kopieren) und Stats (alle Kennzahlen je Analyse). Symb legt
+bis zu fünf Analysen an – 1Var: Daten- und Häufigkeitsspalte und Diagramm (Histogramm, Boxplot, Normalwahrscheinlichkeit,
+Linie, Säule, Pareto, Kontrollkarte, Punkt, Stamm-Blatt, Kreis); 2Var: X, Y und Anpassung (linear, logarithmisch,
+exponentiell, Potenz, Exponent, invers, logistisch, quadratisch, kubisch, quartisch, trigonometrisch). Plot: ←→ verfolgt
+Klassen oder Punkte, ↑↓ wechselt die Analyse, Auto passt die Ansicht an, Tippen wählt den nächsten Punkt; 2Var: Pred Y
+und Pred X. ⇧Plot: Ansicht, Histogramm-Klassen, Raster, Achsen. Definitionen: `docs/mathematics/statistics.md`.
