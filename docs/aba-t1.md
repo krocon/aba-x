@@ -162,3 +162,12 @@ Linie, Säule, Pareto, Kontrollkarte, Punkt, Stamm-Blatt, Kreis); 2Var: X, Y und
 exponentiell, Potenz, Exponent, invers, logistisch, quadratisch, kubisch, quartisch, trigonometrisch). Plot: ←→ verfolgt
 Klassen oder Punkte, ↑↓ wechselt die Analyse, Auto passt die Ansicht an, Tippen wählt den nächsten Punkt; 2Var: Pred Y
 und Pred X. ⇧Plot: Ansicht, Histogramm-Klassen, Raster, Achsen. Definitionen: `docs/mathematics/statistics.md`.
+
+## Inferenz und Verteilungen (038)
+
+Startansicht/Toolbox → Math → Wahrscheinlichkeit: `normalpdf`, `normalcdf` (P(X ≤ x)), `invnorm` und dieselbe Form für t,
+χ², F, Exponential, Gleichverteilung, Binomial, Poisson, Geometrisch; Zufall mit `random`, `randint`, `randnorm`,
+`randbin`, `randseed`. Inferenz-App: Symb wählt Verfahren, Alternative und Poolen; Num nimmt die Eingaben (Import von
+x̄, s, n aus Statistik 1Var) und zeigt Entscheidung, Teststatistik, P, kritische Werte bzw. das Intervall; Plot zeigt
+die Verteilung mit schattiertem Bereich. Details: `docs/mathematics/distributions.md`.
+

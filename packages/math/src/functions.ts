@@ -3,6 +3,8 @@
  * evaluator and the allow-list of the CAS adapter (design 003 E4, technical evaluation §3).
  */
 
+import { STAT_ARITY, STAT_HELP } from './stats/functions';
+
 export interface FunctionDef {
   /** Canonical name in the AST and in text input. */
   readonly name: string;
@@ -23,6 +25,11 @@ const f = (
   help: string,
   extra: Partial<FunctionDef> = {},
 ): FunctionDef => ({ name, minArgs, maxArgs, help, ...extra });
+
+/** Probability functions (prompt 038), see `stats/functions.ts`. */
+const STATS: FunctionDef[] = Object.entries(STAT_ARITY).map(([name, [min, max]]) =>
+  f(name, min, max, STAT_HELP[name] ?? name),
+);
 
 export const FUNCTIONS: readonly FunctionDef[] = [
   f('sin', 1, 1, 'sine', { latex: 'sin' }),
@@ -111,6 +118,7 @@ export const FUNCTIONS: readonly FunctionDef[] = [
   f('eigval', 1, 1, 'eigenvalues'),
   f('eigvec', 1, 1, 'eigenvectors of a symmetric matrix (columns)'),
   f('linsolve', 2, 2, 'linsolve(A, b): solution of A·x = b'),
+  ...STATS,
 ];
 
 /** Names that build their own node type in text input: diff(f, x[, n]), integrate(f, x[, a, b]), … */

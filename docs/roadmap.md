@@ -35,6 +35,7 @@
 | 040    | Explorer: linear, quadratisch, trigonometrisch mit Übungsmodus                                              | ✅ 03.11.2026 |
 | 036    | Erweiterte Grafiken: Relationen/Ungleichungen mit Intervallarithmetik (garantierte Gebiete), Trace, Galerie | ✅ 03.11.2026 |
 | 037    | Statistik 1Var/2Var: 10 Diagrammtypen, 11 Anpassungen, Kennzahlen, Vorhersage; Kern `@aba/math/stats`       | ✅ 03.11.2026 |
+| 038    | Inferenz-App (Z/T-Tests, Intervalle, χ², Regression) und Verteilungen im Katalog (pdf/cdf/inv, Zufall)      | ✅ 03.11.2026 |
 | 046    | 3D-Grafik (Canvas 2D, Drehen/Zoomen, Höhenfarben)                                                           | ✅ 03.11.2026 |
 | 045    | Notizen, Speicherverwaltung, Sicherung (Export/Import), Menü nativ/HTML, About                              | ✅ 03.11.2026 |
 

@@ -3,6 +3,7 @@
  * plotter and as the integrand of the numerical methods. Never guesses: undefined values become
  * typed errors (`domain`, `division-by-zero`, `not-evaluable`, …).
  */
+import { STAT_FUNCTIONS } from '../stats/functions';
 import type { Expr } from '../ast/nodes';
 import { type MathErrorCode, type MathResult, fail, ok } from '../result';
 import { integrateAdaptive } from './quadrature';
@@ -311,8 +312,15 @@ class Evaluator {
       }
       case 'erf':
         return erf(x);
-      default:
+      default: {
+        // probability functions (prompt 038)
+        const sf = STAT_FUNCTIONS[name];
+        if (sf) {
+          const r = sf(a);
+          return r.ok ? r.value : err(r.error.code, r.error.message);
+        }
         return err('unknown-function', `unknown function ${name}`);
+      }
     }
   }
 

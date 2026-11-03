@@ -111,6 +111,9 @@ export class SetupForm implements OnInit, OnDestroy {
   readonly title = input('Setup');
   readonly fields = input<SetupItem[]>([]);
   readonly close = input<() => void>(() => undefined);
+  /** own menu buttons 1–5 (button 6 is OK) */
+  readonly extra = input<{ label: string; run: () => void }[]>([]);
+  readonly help = input('settings');
   private readonly home = inject(HomeStore);
   private readonly device = inject(DeviceStore);
   private readonly host = inject(ElementRef<HTMLElement>);
@@ -125,20 +128,17 @@ export class SetupForm implements OnInit, OnDestroy {
       id: 'setup',
       title: () => this.title(),
       menu: () => [
-        { label: '' },
-        { label: '' },
-        { label: '' },
-        { label: '' },
-        { label: '' },
+        ...[0, 1, 2, 3, 4].map((k) => ({ label: this.extra()[k]?.label ?? '' })),
         { label: 'OK' },
       ],
       key: (p) => this.key(p),
       menuPress: (i) => {
         if (i === 5) this.close()();
+        else this.extra()[i]?.run();
       },
       rocker: (d) => this.rocker(d),
       insert: (_l, text) => this.typeText(text),
-      help: 'settings',
+      help: this.help(),
     });
     queueMicrotask(() => this.input(0)?.focus());
   }

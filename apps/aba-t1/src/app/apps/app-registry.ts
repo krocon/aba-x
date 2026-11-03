@@ -9,6 +9,8 @@ import { FunctionNumSetup, FunctionPlotSetup } from './function/function-setup';
 import { initFunctionState } from './function/function-logic';
 import { initCurveState } from './curve/curve-logic';
 import { ExplorerView, initExplorer } from './explorer/explorer-view';
+import { initInference } from './inference/inference-logic';
+import { InferenceNum, InferencePlotView, InferenceSymb } from './inference/inference-views';
 import { initStats1, initStats2 } from './stats/stats-logic';
 import { StatsNum, StatsPlot, StatsPlotSetup, StatsSymb } from './stats/stats-views';
 import { RelationNum, RelationPlot } from './relation/relation-views';
@@ -101,6 +103,15 @@ export const APP_DEFS: AppDef[] = [
     start: 'num',
     views: { symb: StatsSymb, plot: StatsPlot, num: StatsNum, plotSetup: StatsPlotSetup },
   })),
+  {
+    id: 'inference',
+    title: { en: 'Inference', de: 'Inferenz' },
+    icon: 'M3 20h18M4 19c3 0 4-13 8-13s5 13 8 13M15 19v-7',
+    init: initInference,
+    version: 1,
+    start: 'symb',
+    views: { symb: InferenceSymb, num: InferenceNum, plot: InferencePlotView },
+  },
   {
     id: 'graph3d',
     title: { en: '3D Graphing', de: '3D-Grafik' },

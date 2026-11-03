@@ -5,6 +5,7 @@
  * for complex arguments, or for real arguments outside the real domain when complex results are on.
  * Relations (`A = 5`, `x < 3`) are tests: 1 (true) or 0 (false). Never guesses.
  */
+import { STAT_FUNCTIONS } from '../stats/functions';
 import type { Expr } from '../ast/nodes';
 import { type AngleMode, type UserFunction, evaluateNumeric } from '../numeric/evaluate';
 import { type MathErrorCode, type MathResult, fail, ok } from '../result';
@@ -352,6 +353,14 @@ class ValueEvaluator {
           local,
         );
       }
+    }
+    const sf = STAT_FUNCTIONS[name];
+    if (sf) {
+      // probability functions (prompt 038) take real arguments only
+      if (!args.every((a) => a.kind === 'real'))
+        return err('domain', `${name} needs real arguments`);
+      const r = sf(args.map((a) => (a as { v: number }).v));
+      return r.ok ? real(r.value) : err(r.error.code, r.error.message);
     }
     const complexFns = ['re', 'im', 'conj', 'arg', 'abs'];
     if (args.every((a) => a.kind === 'real') && !complexFns.includes(name)) {

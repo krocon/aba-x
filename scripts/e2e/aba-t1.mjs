@@ -393,6 +393,33 @@ export function t1Scenarios({ axeSource }) {
       await keys('home');
       await page.waitForSelector('app-home-view math-field');
     },
+    async inference(page) {
+      const keys = async (...ks) => {
+        for (const k of ks) await page.click(`.key[data-key="${k}"]`);
+      };
+      // normal distribution in the home view
+      await keys('home');
+      await page.click('app-home-view math-field');
+      await page.keyboard.type('normalcdf(1.96)');
+      await page.keyboard.press('Enter');
+      await lastResult(page, '0.975002104852');
+      // T test with D1 = 1…5 of Statistics 1Var imported: T = 4.2426, P = 0.0132
+      await keys('apps');
+      await page.click('app-library .tile:has-text("Inference")');
+      await keys('enter', 'num');
+      await page.waitForSelector('app-inference-num');
+      await page.click('app-t1-device button.mb:text-is("Import")');
+      await keys('enter');
+      await page.waitForFunction(() =>
+        [...document.querySelectorAll('app-inference-num .results tr')].some((r) =>
+          r.textContent.replace(/\s+/g, '').startsWith('P0.0132'),
+        ),
+      );
+      await keys('plot');
+      await page.waitForSelector('app-inference-plot canvas');
+      await keys('home');
+      await page.waitForSelector('app-home-view math-field');
+    },
     async keypad(page) {
       const r = await page.$$eval('app-t1-device .key', (keys) => ({
         count: keys.length,
