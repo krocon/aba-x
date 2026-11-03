@@ -811,6 +811,54 @@ export function t1Scenarios({ axeSource }) {
           ?.textContent.includes('cancelled'),
       );
     },
+    async programTools(page) {
+      const keys = async (...ks) => {
+        for (const k of ks) await page.click(`.key[data-key="${k}"]`);
+      };
+      const menu = (label) => page.click(`app-t1-device button.mb:text-is("${label}")`);
+      const create = async (name, lines) => {
+        await keys('shift', 'd1');
+        await page.waitForSelector('app-program-catalog');
+        await menu('New');
+        await page.fill('app-program-catalog .ask input', name);
+        await page.press('app-program-catalog .ask input', 'Enter');
+        await page.waitForSelector('app-program-editor textarea');
+        await page.fill('app-program-editor textarea', lines.join('\n'));
+      };
+      // debugger: breakpoint on line 4, the local a = 1, then continue
+      await create('DBG', [
+        'EXPORT DBG()',
+        'BEGIN',
+        '  LOCAL a := 1;',
+        '  a := a + 1;',
+        '  RETURN a;',
+        'END;',
+      ]);
+      await page.click('app-program-editor .ln:text-is("4")');
+      await menu('Debug');
+      await page.waitForFunction(() =>
+        document.querySelector('app-program-editor .vars')?.textContent.includes('a = 1'),
+      );
+      await menu('Cont.');
+      await page.waitForFunction(() =>
+        document.querySelector('app-program-editor .status')?.textContent.includes('finished'),
+      );
+      // user key: ⇧Help, then SIN runs K_SIN
+      await create('KEYS', ['EXPORT K_SIN()', 'BEGIN', '  RETURN 42;', 'END;']);
+      await keys('esc', 'home');
+      await keys('shift', 'help', 'sin');
+      await lastResult(page, '42');
+      // app program: START of a program named like the app runs when the app starts
+      await create('Function', ['EXPORT START()', 'BEGIN', '  PRINT("started");', 'END;']);
+      await keys('esc', 'apps');
+      await page.click('app-library .tile:has-text("Function")');
+      await keys('enter');
+      await page.waitForFunction(() =>
+        document.querySelector('app-terminal-view pre')?.textContent.includes('started'),
+      );
+      await keys('home');
+      await page.waitForSelector('app-home-view math-field');
+    },
     async keypad(page) {
       const r = await page.$$eval('app-t1-device .key', (keys) => ({
         count: keys.length,

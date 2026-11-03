@@ -34,7 +34,7 @@ import { allKeys } from '../device/keypad-model';
 import { HomeStore } from '../home/home-store';
 import { SettingsStore } from '../settings/settings-store';
 import { drawCommand } from './program-graphics';
-import { ProgramStore } from './program-store';
+import { type ExportedFunction, ProgramStore } from './program-store';
 
 /** A dialog a running program waits for (INPUT, MSGBOX, CHOOSE). */
 export type ProgramDialog =
@@ -208,6 +208,21 @@ export class ProgramRunner {
   ): Promise<MathResult<Value>> {
     const fn = this.store.exports().get(name.toLowerCase());
     if (!fn) return fail('unknown-function', `no exported function ${name}`);
+    return this.exec(fn, args, hook);
+  }
+
+  /** An exported function of one program (app programs: START, PLOT … – prompt 044). */
+  find(program: string, name: string): ExportedFunction | null {
+    const c = this.store.compiled().find((x) => x.doc.name.toLowerCase() === program.toLowerCase());
+    const e = c?.program?.exports.find((x) => x.name.toLowerCase() === name.toLowerCase());
+    return c?.program && e ? { ...e, program: c.doc.name, compiled: c.program } : null;
+  }
+
+  async exec(
+    fn: ExportedFunction,
+    args: readonly Value[],
+    hook?: StatementHook,
+  ): Promise<MathResult<Value>> {
     if (this.running()) return fail('not-evaluable', `${this.running()} is still running`);
     // a debugged start (prompt 044) hands its hook over for the next call
     hook ??= this.nextHook?.(fn.program) ?? undefined;
@@ -249,7 +264,7 @@ export class ProgramRunner {
 
   /** While a program runs, keys go to its key buffer; On cancels it. */
   private onKey(p: KeyPress): boolean {
-    if (!this.running()) return false;
+    if (!this.running()) return this.userKey(p);
     if (p.id === 'on') {
       this.cancel();
       return true;
@@ -261,6 +276,31 @@ export class ProgramRunner {
       this.down.add(code);
       setTimeout(() => this.down.delete(code), 150);
     }
+    return true;
+  }
+
+  /**
+   * User keys (prompt 044): in user mode (⇧Help) a key runs the exported function `K_<key>`
+   * (`K_<key>_S` for the shifted key), e.g. `K_SIN`, `K_D7_S`. Once-mode ends after one key.
+   */
+  readonly userMode = signal<'off' | 'once' | 'locked'>('off');
+
+  toggleUserMode(): void {
+    this.userMode.update((m) => (m === 'off' ? 'once' : m === 'once' ? 'locked' : 'off'));
+  }
+
+  /** the function a user key would run */
+  userFunction(p: KeyPress): ExportedFunction | null {
+    const name = `k_${p.id}${p.layer === 'shift' ? '_s' : ''}`.toLowerCase();
+    return this.store.exports().get(name) ?? null;
+  }
+
+  private userKey(p: KeyPress): boolean {
+    if (this.userMode() === 'off' || p.id === 'on' || p.id === 'help') return false;
+    const fn = this.userFunction(p);
+    if (this.userMode() === 'once') this.userMode.set('off');
+    if (!fn) return false;
+    void this.home.submit(`${fn.name}()`, 'text');
     return true;
   }
 

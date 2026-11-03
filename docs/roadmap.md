@@ -38,6 +38,7 @@
 | 038    | Inferenz-App (Z/T-Tests, Intervalle, χ², Regression) und Verteilungen im Katalog (pdf/cdf/inv, Zufall)            | ✅ 03.11.2026 |
 | 042    | Geometrie: dynamische Konstruktionen (Werkzeuge, Ziehen, Kegelschnitte, Abbildungen, Ortslinie), Messen/Tests     | ✅ 03.11.2026 |
 | 043    | Programmiersprache `@aba/ppl` (Parser, Interpreter, Budgets), Aufruf aus der Startansicht, Terminal, Grafik G0–G9 | ✅ 03.11.2026 |
+| 044    | Programmkatalog, Editor (Hervorhebung, Einrückung, Vorlagen, Suchen), Debugger, App-Programme, Nutzertasten       | ✅ 03.11.2026 |
 | 046    | 3D-Grafik (Canvas 2D, Drehen/Zoomen, Höhenfarben)                                                                 | ✅ 03.11.2026 |
 | 045    | Notizen, Speicherverwaltung, Sicherung (Export/Import), Menü nativ/HTML, About                                    | ✅ 03.11.2026 |
 | 041    | Tabellenkalkulation: Formeln, Bezüge, Namen (auch in der Startansicht), Füllen, Sortieren, Formate, CSV           | ✅ 03.11.2026 |

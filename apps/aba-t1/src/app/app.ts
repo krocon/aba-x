@@ -24,6 +24,7 @@ import { WebMenu } from './features/menus/web-menu';
 import { NotesStore } from './features/notes/notes-store';
 import { ProgramRunner } from './features/programs/program-runner';
 import { ProgramStore } from './features/programs/program-store';
+import { AppPrograms } from './features/programs/app-programs';
 import {
   ProgramCatalog,
   ProgramDialogView,
@@ -221,13 +222,20 @@ export class App implements OnInit {
   private readonly programs = inject(ProgramStore);
   /** created at start: takes the keys while a program runs, lets the home view call programs */
   private readonly runner = inject(ProgramRunner);
+  private readonly appPrograms = inject(AppPrograms);
   protected readonly i18n = inject(I18n);
   protected readonly aboutOpen = signal(false);
 
   constructor() {
-    effect(() =>
-      this.device.status.set([this.settings.settings().angle === 'deg' ? 'DEG' : 'RAD']),
-    );
+    effect(() => {
+      const user = this.runner.userMode();
+      this.device.status.set([
+        ...(user === 'once' ? ['1U'] : user === 'locked' ? ['U'] : []),
+        this.settings.settings().angle === 'deg' ? 'DEG' : 'RAD',
+      ]);
+    });
+    // user keys (prompt 044): ⇧Help – once, twice locked, a third time off
+    this.device.onGlobal('help.shift', () => this.runner.toggleUserMode());
     this.device.onGlobal('home', () => this.nav.go('home'));
     this.device.onGlobal('home.shift', () => this.nav.go('homeSettings'));
     this.device.onGlobal('cas', () => this.nav.go('cas'));
@@ -287,6 +295,12 @@ export class App implements OnInit {
   }
 
   private openApp(view: Parameters<AppStore['show']>[0]): void {
+    // an app program may take over Symb/Plot/Num (prompt 044)
+    const hook = ({ symb: 'SYMB', plot: 'PLOT', num: 'NUM' } as const)[view as 'symb'];
+    if (hook && this.appPrograms.hook(hook)) {
+      void this.appPrograms.run(hook);
+      return;
+    }
     if (this.apps.show(view)) this.nav.go('app');
   }
 

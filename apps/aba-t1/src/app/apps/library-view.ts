@@ -1,3 +1,4 @@
+import { AppPrograms } from '../features/programs/app-programs';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -187,18 +188,24 @@ export class LibraryView implements OnInit, OnDestroy {
       this.naming.set(true);
       queueMicrotask(() => this.nameEl()?.nativeElement.focus());
     }
-    if (i === 1) this.apps.reset(sel.id);
+    if (i === 1) {
+      this.apps.reset(sel.id);
+      if (sel.id === this.apps.currentId()) void this.appPrograms.run('RESET');
+    }
     if (i === 2) this.apps.toggleSort();
     if (i === 3 && sel.copy) this.apps.remove(sel.id);
     if (i === 4) void this.backup.exportApp(sel);
     if (i === 5) this.start();
   }
 
+  private readonly appPrograms = inject(AppPrograms);
+
   protected start(): void {
     const sel = this.selected();
     if (!sel) return;
     this.apps.start(sel.id);
     this.nav.go('app');
+    void this.appPrograms.run('START');
   }
 
   protected saveCopy(): void {

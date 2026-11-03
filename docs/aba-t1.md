@@ -215,5 +215,7 @@ alle numerisch. ⇧Plot: Fenster, gleiche Achsen, Gitter. Mathematik: [`docs/mat
 Terminal; Start). Exportierte Funktionen (`EXPORT FAK(n) … END;`) sind in der Startansicht aufrufbar (`FAK(5)`) und
 stehen in Toolbox → Nutzer. Editor mit Hervorhebung, automatischer Einrückung, Vorlagen, Prüfen (Sprung zum Fehler),
 Suchen/Ersetzen; Debug mit Haltepunkten (Zeilennummer antippen), Schritt, Weiter, Stopp und Variablenanzeige. PRINT
-schreibt ins Terminal, Grafikbefehle zeichnen auf G0–G9; On bricht ab. Sprache: `docs/ppl/language.md`.
+schreibt ins Terminal, Grafikbefehle zeichnen auf G0–G9; On bricht ab. Eigene Apps: ein Programm mit dem Namen der App
+(exportiert START, RESET, SYMB, PLOT, NUM); Nutzertasten: ⇧Help, dann ruft eine Taste `K_<Taste>`. Sprache:
+`docs/ppl/language.md`, Werkzeuge: `docs/ppl/editor.md`.
 
