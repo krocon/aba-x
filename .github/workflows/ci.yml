@@ -1,5 +1,6 @@
-# CI after the model of Files and Folders: frontend checks once, Rust on all three desktop platforms
-# (the #[cfg(target_os)] code is otherwise never compiled on Windows/macOS/Linux).
+# CI after the model of Files and Folders: frontend checks once for all packages and apps, Rust on
+# all three desktop platforms for every app (the #[cfg(target_os)] code is otherwise never compiled
+# on Windows/macOS/Linux). Apps: scripts/apps.mjs – a new app gets a `matrix.app` entry.
 name: CI
 
 on:
@@ -21,7 +22,7 @@ env:
 
 jobs:
   frontend:
-    name: Frontend (format, lint, test, desktop + web build)
+    name: Frontend (format, lint, test, desktop + web build of every app)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -40,11 +41,12 @@ jobs:
       - run: pnpm build:web
 
   rust:
-    name: Rust (${{ matrix.os }})
+    name: Rust ${{ matrix.app }} (${{ matrix.os }})
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
+        app: [aba-x1]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v5
@@ -58,7 +60,7 @@ jobs:
           components: rustfmt, clippy
       - uses: Swatinem/rust-cache@v2
         with:
-          workspaces: src-tauri
-      - run: cargo fmt --manifest-path src-tauri/Cargo.toml --check
-      - run: cargo clippy --manifest-path src-tauri/Cargo.toml --all-targets --locked -- -D warnings
-      - run: cargo test --manifest-path src-tauri/Cargo.toml --locked
+          workspaces: apps/${{ matrix.app }}/src-tauri
+      - run: cargo fmt --manifest-path apps/${{ matrix.app }}/src-tauri/Cargo.toml --check
+      - run: cargo clippy --manifest-path apps/${{ matrix.app }}/src-tauri/Cargo.toml --all-targets --locked -- -D warnings
+      - run: cargo test --manifest-path apps/${{ matrix.app }}/src-tauri/Cargo.toml --locked

@@ -1,5 +1,6 @@
 // The apps of the monorepo (prompt 024, ADR 0007): one place for their folders, names, web base,
 // Rust crate and release tags. Every script takes `--app <name>` (or `APP=<name>`), default ABA-X1.
+import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -63,4 +64,42 @@ export function appPaths(name, root = ROOT, apps = APPS) {
     distDesktop: join(root, 'dist', name, 'desktop', 'browser'),
     distWeb: join(root, 'dist', name, 'web', 'browser'),
   };
+}
+
+/**
+ * Release tag → app and version: `aba-x1-v0.2.0` → { app: 'aba-x1', version: '0.2.0' }.
+ * Legacy tags (`v0.1.1`) belong to the app with that legacy prefix. `null` if no app matches.
+ */
+export function appFromTag(tag, apps = APPS) {
+  for (const [app, c] of Object.entries(apps)) {
+    if (tag.startsWith(c.tagPrefix)) return { app, version: tag.slice(c.tagPrefix.length) };
+  }
+  for (const [app, c] of Object.entries(apps)) {
+    if (c.legacyTagPrefix && new RegExp(`^${c.legacyTagPrefix}\\d`).test(tag))
+      return { app, version: tag.slice(c.legacyTagPrefix.length) };
+  }
+  return null;
+}
+
+// CI helper (release.yml): `node scripts/apps.mjs release <tag-or-empty> <app-input>` prints
+// `app=…`, `version=…` (from apps/<app>/package.json) and `title=…`; exit 1 if the tag does not
+// match the app's version.
+if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
+  const [cmd, tag, input] = process.argv.slice(2);
+  if (cmd !== 'release') {
+    console.error('usage: node scripts/apps.mjs release <tag|""> <app>');
+    process.exit(2);
+  }
+  const fromTag = tag ? appFromTag(tag) : null;
+  if (tag && !fromTag) {
+    console.error(`tag ${tag} names no app (expected <app>-v<version>)`);
+    process.exit(1);
+  }
+  const app = appConfig(fromTag?.app ?? input);
+  const version = JSON.parse(readFileSync(appPaths(app.name).pkg, 'utf8')).version;
+  if (fromTag && fromTag.version !== version) {
+    console.error(`tag ${tag} does not match ${app.dir}/package.json version ${version}`);
+    process.exit(1);
+  }
+  console.log(`app=${app.name}\nversion=${version}\ntitle=${app.title}`);
 }

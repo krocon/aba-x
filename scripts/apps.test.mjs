@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { existsSync, readFileSync } from 'node:fs';
 import { test } from 'node:test';
-import { APPS, DEFAULT_APP, appConfig, appFromArgs, appPaths } from './apps.mjs';
+import { APPS, DEFAULT_APP, appConfig, appFromArgs, appFromTag, appPaths } from './apps.mjs';
 
 const TWO = {
   'aba-x1': APPS['aba-x1'],
@@ -11,6 +11,8 @@ const TWO = {
     title: 'Other',
     crate: 'other',
     base: '/products/other/',
+    tagPrefix: 'other-v',
+    legacyTagPrefix: null,
   },
 };
 
@@ -51,4 +53,15 @@ test('paths per app', () => {
   assert.equal(p.cargoLock, '/r/apps/other/src-tauri/Cargo.lock');
   assert.equal(p.notices, '/r/apps/other/THIRD-PARTY-NOTICES.txt');
   assert.equal(p.distWeb, '/r/dist/other/web/browser');
+});
+
+test('release tags name app and version; the old v* tags belong to ABA-X1', () => {
+  assert.deepEqual(appFromTag('aba-x1-v0.2.0'), { app: 'aba-x1', version: '0.2.0' });
+  assert.deepEqual(appFromTag('v0.1.1'), { app: 'aba-x1', version: '0.1.1' });
+  assert.deepEqual(appFromTag('other-v1.0.0-beta.1', TWO), {
+    app: 'other',
+    version: '1.0.0-beta.1',
+  });
+  assert.equal(appFromTag('nightly'), null);
+  assert.equal(appFromTag('vnext'), null);
 });

@@ -2,7 +2,9 @@
 # macOS (universal .dmg/.app), Windows (.msi + NSIS .exe) and Linux (.deb, .rpm, .AppImage)
 # with tauri-apps/tauri-action and attaches them to a DRAFT GitHub release.
 #
-# Triggers: manually (Actions → Release → Run workflow) or by pushing a tag `v*`.
+# One app per run (monorepo, prompt 024): the tag names it – `aba-x1-v0.2.0` builds ABA-X1 0.2.0
+# (scripts/apps.mjs; the tags v0.1.0/v0.1.1 from before the monorepo are not rebuilt).
+# Triggers: manually (Actions → Release → Run workflow, choose the app) or by pushing a tag `<app>-v*`.
 # Nothing is published automatically: the release stays a draft until Marc publishes it.
 #
 # Signing is optional. Without the secrets below the packages are built unsigned
@@ -12,12 +14,17 @@ name: Release
 on:
   workflow_dispatch:
     inputs:
+      app:
+        description: 'App to build (scripts/apps.mjs)'
+        type: choice
+        options: [aba-x1]
+        default: aba-x1
       draft:
         description: 'Create the GitHub release as a draft'
         type: boolean
         default: true
   push:
-    tags: ['v*']
+    tags: ['*-v*']
 
 permissions:
   contents: write # create the (draft) release and upload assets
@@ -30,18 +37,20 @@ jobs:
   check:
     runs-on: ubuntu-latest
     outputs:
+      app: ${{ steps.v.outputs.app }}
       version: ${{ steps.v.outputs.version }}
+      title: ${{ steps.v.outputs.title }}
     steps:
       - uses: actions/checkout@v5
-      - name: Versions agree (and match the tag, if any)
+      - name: App and version (from the tag or the input); versions agree
         id: v
+        env:
+          TAG: ${{ github.ref_type == 'tag' && github.ref_name || '' }}
+          APP_INPUT: ${{ inputs.app || 'aba-x1' }}
         run: |
-          node scripts/version.mjs check
-          v=$(node -p "require('./package.json').version")
-          echo "version=$v" >> "$GITHUB_OUTPUT"
-          if [[ "$GITHUB_REF_TYPE" == "tag" && "$GITHUB_REF_NAME" != "v$v" ]]; then
-            echo "::error::tag $GITHUB_REF_NAME does not match package.json version $v"; exit 1
-          fi
+          out=$(node scripts/apps.mjs release "$TAG" "$APP_INPUT")
+          echo "$out" | tee -a "$GITHUB_OUTPUT"
+          node scripts/version.mjs check --app "$(echo "$out" | sed -n 's/^app=//p')"
 
   build:
     needs: check
@@ -63,6 +72,7 @@ jobs:
     env:
       # secrets cannot be used in `if:` directly
       HAS_WINDOWS_CERT: ${{ secrets.WINDOWS_CERTIFICATE != '' }}
+      APP_DIR: apps/${{ needs.check.outputs.app }}
     steps:
       - uses: actions/checkout@v5
 
@@ -82,11 +92,11 @@ jobs:
           targets: ${{ matrix.rust_targets }}
       - uses: Swatinem/rust-cache@v2
         with:
-          workspaces: src-tauri
+          workspaces: apps/${{ needs.check.outputs.app }}/src-tauri
       - run: pnpm install --frozen-lockfile
       # THIRD-PARTY-NOTICES.txt goes into every package (tauri.conf.json `bundle.resources`):
       # refuse to ship it out of date (`pnpm notices` regenerates it)
-      - run: pnpm notices:check
+      - run: pnpm notices:check --app ${{ needs.check.outputs.app }}
 
       # --- Windows code signing (optional) ------------------------------------------
       # Imports a .pfx (base64 in WINDOWS_CERTIFICATE) into the user store and tells
@@ -104,9 +114,10 @@ jobs:
           $pw = ConvertTo-SecureString -String $env:WINDOWS_CERTIFICATE_PASSWORD -AsPlainText -Force
           $cert = Import-PfxCertificate -FilePath $pfx -CertStoreLocation Cert:\CurrentUser\My -Password $pw
           Remove-Item $pfx
-          $conf = Get-Content src-tauri/tauri.conf.json -Raw | ConvertFrom-Json
+          $confPath = "$env:APP_DIR/src-tauri/tauri.conf.json"
+          $conf = Get-Content $confPath -Raw | ConvertFrom-Json
           $conf.bundle.windows.certificateThumbprint = $cert.Thumbprint
-          $conf | ConvertTo-Json -Depth 32 | Set-Content src-tauri/tauri.conf.json -Encoding utf8
+          $conf | ConvertTo-Json -Depth 32 | Set-Content $confPath -Encoding utf8
 
       # --- macOS signing + notarisation (optional) ------------------------------------
       # Only non-empty secrets are exported: an empty APPLE_CERTIFICATE would make the
@@ -143,8 +154,10 @@ jobs:
           # TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
           # TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
         with:
-          tagName: v__VERSION__
-          releaseName: ABA-X1 v__VERSION__
+          projectPath: ${{ env.APP_DIR }}
+          tauriScript: pnpm tauri
+          tagName: ${{ needs.check.outputs.app }}-v__VERSION__
+          releaseName: ${{ needs.check.outputs.title }} v__VERSION__
           releaseBody: "Unsigned preview build unless noted. Release notes: generate with `pnpm release:notes` (docs/release.md) and paste here before publishing."
           releaseDraft: ${{ github.event_name != 'workflow_dispatch' || inputs.draft }}
           prerelease: ${{ startsWith(needs.check.outputs.version, '0.') }}
@@ -161,9 +174,9 @@ jobs:
           node-version: 24
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - run: pnpm build:web
+      - run: pnpm --filter ${{ needs.check.outputs.app }} build:web
       # the static web version as a workflow artifact (deployment: docs/deployment.md, prompt 020)
       - uses: actions/upload-artifact@v4
         with:
-          name: aba-x-web-${{ needs.check.outputs.version }}
-          path: dist/web/browser
+          name: ${{ needs.check.outputs.app }}-web-${{ needs.check.outputs.version }}
+          path: dist/${{ needs.check.outputs.app }}/web/browser
