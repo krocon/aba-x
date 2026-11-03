@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, Component, OnInit, effect, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  computed,
+  effect,
+  inject,
+} from '@angular/core';
 import { T1Keyboard } from './core/actions/t1-keyboard';
 import { DeviceStore } from './core/device/device-store';
 import { NavStore } from './core/nav/nav-store';
@@ -6,6 +13,8 @@ import { T1Device } from './features/device/t1-device';
 import { ShortcutsDialog } from './features/help/shortcuts-dialog';
 import { HomeStore } from './features/home/home-store';
 import { HomeView } from './features/home/home-view';
+import { RpnStore } from './features/rpn/rpn-store';
+import { RpnView } from './features/rpn/rpn-view';
 import { SettingsStore } from './features/settings/settings-store';
 import { SettingsView } from './features/settings/settings-view';
 
@@ -17,7 +26,7 @@ import { SettingsView } from './features/settings/settings-view';
 @Component({
   selector: 'app-root',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [T1Device, ShortcutsDialog, HomeView, SettingsView],
+  imports: [T1Device, ShortcutsDialog, HomeView, RpnView, SettingsView],
   template: `
     <main>
       <h1 class="visually-hidden">ABA-T1</h1>
@@ -39,7 +48,11 @@ import { SettingsView } from './features/settings/settings-view';
             <app-settings-view />
           }
           @default {
-            <app-home-view />
+            @if (rpnEntry()) {
+              <app-rpn-view />
+            } @else {
+              <app-home-view />
+            }
           }
         }
       </app-t1-device>
@@ -83,6 +96,8 @@ export class App implements OnInit {
   protected readonly nav = inject(NavStore);
   private readonly settings = inject(SettingsStore);
   private readonly home = inject(HomeStore);
+  private readonly rpn = inject(RpnStore);
+  protected readonly rpnEntry = computed(() => this.settings.settings().entry === 'rpn');
 
   constructor() {
     effect(() =>
@@ -93,6 +108,6 @@ export class App implements OnInit {
   }
 
   async ngOnInit(): Promise<void> {
-    await Promise.all([this.settings.load(), this.home.load()]);
+    await Promise.all([this.settings.load(), this.home.load(), this.rpn.load()]);
   }
 }

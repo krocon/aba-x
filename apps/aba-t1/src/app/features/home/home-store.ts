@@ -1,7 +1,10 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { ComputeClient } from '@aba/core/compute/compute-client';
 import { StorageApi } from '@aba/core/storage/storage-api';
+import type { Expr } from '@aba/math/ast/nodes';
 import type { UserFunction } from '@aba/math/numeric/evaluate';
+import type { MathResult } from '@aba/math/result';
+import type { ValueScope } from '@aba/math/value/evaluate-value';
 import type { Value } from '@aba/math/value/value';
 import { SettingsStore } from '../settings/settings-store';
 import {
@@ -78,13 +81,7 @@ export class HomeStore {
       this.append({ input: src, kind, value: null, note: 'Done' });
       return true;
     }
-    this.busy.set(true);
-    const r = await this.compute.run({
-      op: 'evaluate',
-      expr: st.expr,
-      scope: scopeOf(this.settingsStore.settings(), this.variables(), this.functions()),
-    });
-    this.busy.set(false);
+    const r = await this.evaluate(st.expr);
     if (!r.ok) {
       this.append({ input: src, kind, value: null, note: r.error.message, error: true });
       return true;
@@ -95,6 +92,28 @@ export class HomeStore {
     this.variables.set(vars);
     this.append({ input: src, kind, value: r.value });
     return true;
+  }
+
+  /** Evaluates an expression with the current variables, functions and settings (worker). */
+  async evaluate(expr: Expr): Promise<MathResult<Value>> {
+    this.busy.set(true);
+    try {
+      return await this.compute.run({ op: 'evaluate', expr, scope: this.scope() });
+    } finally {
+      this.busy.set(false);
+    }
+  }
+
+  scope(): ValueScope {
+    return scopeOf(this.settingsStore.settings(), this.variables(), this.functions());
+  }
+
+  /** Stores a value under a name (RPN Sto ▶). */
+  store(name: string, v: Value): void {
+    const vars = new Map(this.variables());
+    vars.set(name, v);
+    this.variables.set(vars);
+    this.save();
   }
 
   /** On: abandons a running evaluation. */

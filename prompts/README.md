@@ -57,7 +57,7 @@ Empfohlene Reihenfolge: 025 → 026 → 027 → 028 → 029 → 030 → 031 → 
 | 025 | [t1-produkt-geruest](done/025-t1-produkt-geruest.md) | Name, Logo, Bundle-ID, `apps/aba-t1`, `crates/shell`, leeres Gerät | 024 | L | Pflicht | ✅ 03.11.2026 |
 | 026 | [t1-geraet-tastenfeld-touch](done/026-t1-geraet-tastenfeld-touch.md) | Tastenfeld (Shift/Alpha), Wippe, Touch-Gesten, Dispatcher nach core | 025 | L | Pflicht | ✅ 03.11.2026 |
 | 027 | [t1-startansicht](done/027-t1-startansicht.md) | Startansicht, Textbuch/Algebraisch, Verlauf, Vorlagen, Einstellungen, Komplex | 026 | L | Pflicht | ✅ 03.11.2026 |
-| 028 | [t1-rpn-modus](028-t1-rpn-modus.md) | RPN-Stack in der Startansicht | 027 | M | Pflicht | offen |
+| 028 | [t1-rpn-modus](done/028-t1-rpn-modus.md) | RPN-Stack in der Startansicht | 027 | M | Pflicht | ✅ 03.11.2026 |
 | 029 | [t1-cas-ansicht](029-t1-cas-ansicht.md) | CAS-Ansicht, CAS-Einstellungen, Engine-Entscheidung (Nerdamer/Giac) | 027 | L | Pflicht | offen |
 | 030 | [t1-toolbox-katalog-hilfe](030-t1-toolbox-katalog-hilfe.md) | Toolbox (Math/CAS/App/Nutzer/Katalog), Vars, Zeichen, Hilfe | 027, 029 | M | Pflicht | offen |
 | 031 | [t1-einheiten-konstanten-basen](031-t1-einheiten-konstanten-basen.md) | Einheiten, Konstanten (CODATA), Ganzzahl-Basen | 030 | M | Pflicht | offen |

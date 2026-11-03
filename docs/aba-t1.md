@@ -51,3 +51,11 @@ sind bewusst nicht belegt (Browser/OS).
   10⁻⁶ ≤ |x| < 10¹²; Fest/Wissenschaftlich/Technisch mit 0–11 Stellen), Dezimalpunkt/-komma, komplexe Ergebnisse
   (aus, a+b·i, r∠θ), Eingabe, Sprache, Schriftgröße. Annunciator RAD/DEG.
 - Gespeichert (Desktop: App-Datenordner, Web: IndexedDB `aba-t1`): Verlauf (200), Variablen, Funktionen, Einstellungen.
+
+## RPN (028)
+
+Einstellung „Eingabe: RPN“ zeigt statt des Verlaufs den Stack (Ebene 1 unten, eigener Speicher `rpn`). Enter legt die
+Zeile ab (leere Zeile: DUP), ⌫ in leerer Zeile = DROP, Operatoren und Funktionen (auch ⇧-Funktionen, `!`, `1/x`, `|x|`,
+`ʸ√x` mit x auf Ebene 2) wirken sofort; eine nicht leere Zeile wird vorher abgelegt. Menü: Sto ▶ (Name eintippen,
+speichert Ebene 1, die bleibt), SWAP, DROP, DUP. Ebene mit Wippe ↑/↓ wählen: PICK, ROLL, ROLLD, DROPN, ECHO (Wert in
+die Zeile); Enter = ECHO, Esc hebt die Auswahl auf. ⇧Esc leert den Stack nach Rückfrage. Kein Rückgängig.

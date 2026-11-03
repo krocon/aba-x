@@ -35,6 +35,38 @@ export function t1Scenarios({ axeSource }) {
       await page.keyboard.press('Enter');
       await lastResult(page, '42');
     },
+    async rpn(page) {
+      const setEntry = async (v) => {
+        await page.click('.key[data-key="shift"]');
+        await page.click('.key[data-key="home"]');
+        await page.selectOption('#set-entry', v);
+        await page.click('app-t1-device .mb:nth-child(6)');
+      };
+      await setEntry('rpn');
+      await page.waitForSelector('app-rpn-view math-field', { timeout: 20000 });
+      const keys = async (...ks) => {
+        for (const k of ks) await page.click(`.key[data-key="${k}"]`);
+      };
+      const level1 = (want) =>
+        page.waitForFunction(
+          (w) =>
+            [...document.querySelectorAll('app-rpn-view .val')]
+              .at(-1)
+              ?.getAttribute('data-value') === w,
+          want,
+          { timeout: 15000 },
+        );
+      await keys('d3', 'enter', 'd4', 'add');
+      await level1('7');
+      await keys('d2', 'enter', 'd3', 'pow');
+      await level1('8');
+      await page.click('app-t1-device .mb:nth-child(2)'); // SWAP
+      await level1('7');
+      await keys('bksp', 'bksp');
+      await page.waitForFunction(() => document.querySelectorAll('app-rpn-view .val').length === 0);
+      await setEntry('textbook');
+      await page.waitForSelector('app-home-view math-field', { timeout: 20000 });
+    },
     async keypad(page) {
       const r = await page.$$eval('app-t1-device .key', (keys) => ({
         count: keys.length,

@@ -9,3 +9,4 @@ export { toLatex, toText } from './serializer';
 export * from './value/value';
 export { evaluateValue, type ValueScope } from './value/evaluate-value';
 export * from './value/format';
+export * as rpn from './rpn/rpn-stack';
