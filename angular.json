@@ -4,34 +4,32 @@
   "cli": {
     "packageManager": "pnpm",
     "analytics": false,
-    "schematicCollections": [
-      "angular-eslint"
-    ]
+    "schematicCollections": ["angular-eslint"]
   },
-  "newProjectRoot": "projects",
+  "newProjectRoot": "apps",
   "projects": {
-    "aba-x": {
+    "aba-x1": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
           "style": "css"
         }
       },
-      "root": "",
-      "sourceRoot": "src",
+      "root": "apps/aba-x1",
+      "sourceRoot": "apps/aba-x1/src",
       "prefix": "app",
       "architect": {
         "build": {
           "builder": "@angular/build:application",
           "options": {
-            "browser": "src/main.ts",
-            "tsConfig": "tsconfig.app.json",
+            "browser": "apps/aba-x1/src/main.ts",
+            "tsConfig": "apps/aba-x1/tsconfig.app.json",
             "inlineStyleLanguage": "css",
-            "outputPath": "dist/desktop",
+            "outputPath": "dist/aba-x1/desktop",
             "assets": [
               {
                 "glob": "**/*",
-                "input": "public"
+                "input": "apps/aba-x1/public"
               },
               {
                 "glob": "**/*.woff2",
@@ -39,13 +37,9 @@
                 "output": "mathlive/fonts"
               }
             ],
-            "styles": [
-              "src/styles.css"
-            ],
-            "webWorkerTsConfig": "tsconfig.worker.json",
-            "allowedCommonJsDependencies": [
-              "nerdamer"
-            ]
+            "styles": ["apps/aba-x1/src/styles.css"],
+            "webWorkerTsConfig": "apps/aba-x1/tsconfig.worker.json",
+            "allowedCommonJsDependencies": ["nerdamer"]
           },
           "configurations": {
             "production": {
@@ -64,9 +58,9 @@
               "outputHashing": "all"
             },
             "web": {
-              "outputPath": "dist/web",
+              "outputPath": "dist/aba-x1/web",
               "baseHref": "/products/aba-x1/",
-              "serviceWorker": "ngsw-config.json",
+              "serviceWorker": "apps/aba-x1/ngsw-config.json",
               "budgets": [
                 {
                   "type": "initial",
@@ -96,24 +90,24 @@
           },
           "configurations": {
             "production": {
-              "buildTarget": "aba-x:build:production"
+              "buildTarget": "aba-x1:build:production"
             },
             "development": {
-              "buildTarget": "aba-x:build:development"
+              "buildTarget": "aba-x1:build:development"
             }
           },
           "defaultConfiguration": "development"
         },
         "test": {
-          "builder": "@angular/build:unit-test"
+          "builder": "@angular/build:unit-test",
+          "options": {
+            "include": ["**/*.spec.ts", "../../../packages/core/**/*.spec.ts"]
+          }
         },
         "lint": {
           "builder": "@angular-eslint/builder:lint",
           "options": {
-            "lintFilePatterns": [
-              "src/**/*.ts",
-              "src/**/*.html"
-            ]
+            "lintFilePatterns": ["apps/aba-x1/**/*.ts", "apps/aba-x1/**/*.html"]
           }
         }
       }

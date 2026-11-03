@@ -4,13 +4,13 @@
 //
 //   node scripts/screenshots/run.mjs            # README images (light + dark) → docs/screenshots/
 //   node scripts/screenshots/run.mjs examples   # worked examples (light)       → docs/screenshots/examples/
-//   node scripts/screenshots/run.mjs site       # pictures of the product page       → site/img/
+//   node scripts/screenshots/run.mjs site       # pictures of the product page       → apps/aba-x1/site/img/
 //   node scripts/screenshots/run.mjs all
 import { mkdir } from 'node:fs/promises';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { chromium } from 'playwright';
-import { BASE, serve } from '../e2e/run.mjs';
+import { serve, webBuild } from '../e2e/run.mjs';
 
 const OUT = join(fileURLToPath(new URL('.', import.meta.url)), '../../docs/screenshots');
 
@@ -84,7 +84,7 @@ const examples = [
 ];
 
 /** Product page (site/): wide full-size shots and the device. Viewport per scene. */
-const SITE = join(fileURLToPath(new URL('.', import.meta.url)), '../../site/img');
+const SITE = join(fileURLToPath(new URL('.', import.meta.url)), '../../apps/aba-x1/site/img');
 
 async function fullSize(page) {
   // the floating web menu button is not part of the calculator picture
@@ -222,8 +222,10 @@ async function shoot(browser, url, scene, scheme, dir) {
 }
 
 async function main(group = 'readme') {
-  const server = await serve();
-  const url = `http://127.0.0.1:${server.address().port}${BASE}`;
+  // the scenes are those of ABA-X1 (a second app gets its own, prompt 025 ff.)
+  const { root, base } = webBuild('aba-x1');
+  const server = await serve(root, base);
+  const url = `http://127.0.0.1:${server.address().port}${base}`;
   const browser = await chromium.launch();
   if (group === 'readme' || group === 'all') {
     for (const scheme of ['light', 'dark'])

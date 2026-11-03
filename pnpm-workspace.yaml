@@ -1,0 +1,4 @@
+# Monorepo for several calculators (prompt 024, ADR 0007). Dependencies stay in the root package.json.
+packages:
+  - 'apps/*'
+  - 'packages/*'

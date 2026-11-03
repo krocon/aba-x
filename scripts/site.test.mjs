@@ -1,12 +1,12 @@
-// The product page (site/) stays a single static file: no scripts, no external resources,
+// The product page (apps/aba-x1/site/) stays a single static file: no scripts, no external resources,
 // every picture present with its real size and an alt text.
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { appPaths } from './apps.mjs';
 import { test } from 'node:test';
-import { fileURLToPath } from 'node:url';
 
-const SITE = join(fileURLToPath(new URL('.', import.meta.url)), '../site');
+const SITE = appPaths('aba-x1').site;
 const html = readFileSync(join(SITE, 'index.html'), 'utf8');
 
 /** Width and height of a PNG from its IHDR chunk. */

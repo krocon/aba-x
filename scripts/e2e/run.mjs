@@ -5,14 +5,16 @@
 //
 //   node scripts/e2e/run.mjs                 # chromium, webkit, firefox
 //   E2E_BROWSERS=chromium node scripts/e2e/run.mjs
+//   node scripts/e2e/run.mjs --serve 4300    # local preview of the web build, as hosted
+// `--app <name>` / `APP=<name>` picks the app (scripts/apps.mjs); the scenarios exist for ABA-X1.
 import { readFile } from 'node:fs/promises';
 import { createServer } from 'node:http';
 import { createRequire } from 'node:module';
 import { extname, join, normalize } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { chromium, firefox, webkit } from 'playwright';
+import { DEFAULT_APP, appConfig, appFromArgs, appPaths } from '../apps.mjs';
 
-const ROOT = join(fileURLToPath(new URL('.', import.meta.url)), '../../dist/web/browser');
 const TYPES = {
   '.html': 'text/html',
   '.js': 'text/javascript',
@@ -24,11 +26,13 @@ const TYPES = {
   '.woff2': 'font/woff2',
 };
 
-/** Where the web version is hosted (angular.json, configuration `web`): krocon.de/products/aba-x1/. */
-export const BASE = '/products/aba-x1/';
+/** Web build and hosting path of an app (angular.json `web`: krocon.de/products/<app>/). */
+export function webBuild(app = DEFAULT_APP) {
+  return { root: appPaths(app).distWeb, base: appConfig(app).base };
+}
 
-/** Serves the build under BASE only – like the real server, so wrong absolute paths show up as 404. */
-export function serve(root = ROOT, base = BASE) {
+/** Serves the build under its base only – like the real server, so wrong absolute paths show up as 404. */
+export function serve(root = webBuild().root, base = webBuild().base) {
   const server = createServer(async (req, res) => {
     const url = decodeURIComponent(new URL(req.url, 'http://x').pathname);
     if (!url.startsWith(base)) {
@@ -208,9 +212,9 @@ async function offline(browser, url) {
   await ctx.close();
 }
 
-async function main() {
-  const server = await serve();
-  const url = `http://127.0.0.1:${server.address().port}${BASE}`;
+async function main({ root, base }) {
+  const server = await serve(root, base);
+  const url = `http://127.0.0.1:${server.address().port}${base}`;
   const wanted = (process.env.E2E_BROWSERS ?? 'chromium,webkit,firefox').split(',');
   const engines = { chromium, webkit, firefox };
   let failed = 0;
@@ -278,15 +282,20 @@ async function main() {
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  if (process.argv[2] === '--serve') {
-    // local preview exactly as hosted: http://localhost:<port>/products/aba-x1/
-    const port = Number(process.argv[3] ?? 4300);
-    const server = await serve();
+  const { app, rest } = appFromArgs(process.argv.slice(2), process.env);
+  const { root, base } = webBuild(app);
+  if (rest[0] === '--serve') {
+    // local preview exactly as hosted: http://localhost:<port>/products/<app>/
+    const port = Number(rest[1] ?? 4300);
+    const server = await serve(root, base);
     server.close();
     createServer((req, res) => server.emit('request', req, res)).listen(port, () =>
-      console.log(`web build at http://localhost:${port}${BASE}`),
+      console.log(`web build of ${app} at http://localhost:${port}${base}`),
     );
+  } else if (app !== 'aba-x1') {
+    console.error(`no end-to-end scenarios for ${app} yet (scripts/e2e/run.mjs)`);
+    process.exitCode = 1;
   } else {
-    await main();
+    await main({ root, base });
   }
 }

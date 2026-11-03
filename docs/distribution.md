@@ -7,6 +7,6 @@
 | Linux | `.deb`, `.rpm`, `.AppImage` | `libwebkit2gtk-4.1` nötig (deb/rpm-Abhängigkeit) |
 | Web | statischer Ordner | siehe `docs/deployment.md` |
 
-Alle Pakete enthalten `THIRD-PARTY-NOTICES.txt`. Daten liegen im App-Datenordner (macOS
+Alle Pakete enthalten `THIRD-PARTY-NOTICES.txt` (Quelle `apps/aba-x1/THIRD-PARTY-NOTICES.txt`). Daten liegen im App-Datenordner (macOS
 `~/Library/Application Support/io.github.krocon.abax/`, Windows `%APPDATA%\io.github.krocon.abax\`, Linux
 `~/.local/share/io.github.krocon.abax/`) bzw. im Browser (IndexedDB) – Umzug über Export/Import.

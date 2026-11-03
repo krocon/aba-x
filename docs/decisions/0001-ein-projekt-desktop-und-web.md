@@ -1,6 +1,6 @@
 # ADR 0001 – Ein Angular-Projekt für Desktop (Tauri 2) und Web
 
-- Status: angenommen · Datum: 02.11.2026
+- Status: angenommen, Pfade seit 03.11.2026 durch [ADR 0007](0007-monorepo-mehrere-rechner.md) ergänzt (Monorepo) · Datum: 02.11.2026
 
 ## Kontext
 ABA-X1 soll als Desktop-App (macOS, Windows, Linux) und als reine Webseite erscheinen (Master-Prompt §2.1).

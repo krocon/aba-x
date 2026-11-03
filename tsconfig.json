@@ -14,7 +14,14 @@
     "importHelpers": true,
     "target": "ES2022",
     "module": "preserve",
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "paths": {
+      "@aba/math": ["./packages/math/src/index.ts"],
+      "@aba/math/*": ["./packages/math/src/*"],
+      "@aba/core": ["./packages/core/src/index.ts"],
+      "@aba/core/testing": ["./packages/core/testing/index.ts"],
+      "@aba/core/*": ["./packages/core/src/*"]
+    }
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
@@ -25,10 +32,10 @@
   "files": [],
   "references": [
     {
-      "path": "./tsconfig.app.json"
+      "path": "./apps/aba-x1/tsconfig.app.json"
     },
     {
-      "path": "./tsconfig.spec.json"
+      "path": "./apps/aba-x1/tsconfig.spec.json"
     }
   ]
 }

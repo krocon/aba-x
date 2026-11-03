@@ -1,6 +1,6 @@
 # ADR 0002 – Mathematik nur in TypeScript, Kern ohne Framework
 
-- Status: angenommen · Datum: 02.11.2026
+- Status: angenommen, Pfade seit 03.11.2026 durch [ADR 0007](0007-monorepo-mehrere-rechner.md) ergänzt (Monorepo) · Datum: 02.11.2026
 
 ## Kontext
 Web und Desktop müssen dieselben Ergebnisse liefern; der Kern soll unabhängig von Angular bleiben.
