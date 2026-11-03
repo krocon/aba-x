@@ -36,3 +36,7 @@ Shift hellblau, Alpha orange. Weiterhin gilt: eigener Name (ABA-T1), eigenes Log
 -logos, -grafiken oder Handbuchtexte. Die Farben stehen als `--dev-*`/`--key-*`/`--lcd-*`/`--metal-*`-Tokens in
 `features/device/t1-device.css`.
 
+Display: weiße Schrift auf Schwarz (`--lcd-*`-Tokens am Gerät, die alle Ansichten im Display übernehmen; Plots mit
+`DARK_PLOT` aus `@aba/core/graph/plot-draw`, Kurvenfarben aufgehellt). Programm-Grafikbildschirme G0–G9 bleiben weiß
+(ihre Farben bestimmt das Programm).
+

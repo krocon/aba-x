@@ -250,7 +250,7 @@ export function chart1(
           [v.median, y0],
           [v.median, y1],
         ],
-        color: '#10201d',
+        color: '#f2f2f2',
       });
       prims.push({
         kind: 'line',
@@ -258,7 +258,7 @@ export function chart1(
           [v.lowerWhisker, mid],
           [v.q1, mid],
         ],
-        color: '#10201d',
+        color: '#f2f2f2',
       });
       prims.push({
         kind: 'line',
@@ -266,7 +266,7 @@ export function chart1(
           [v.q3, mid],
           [v.upperWhisker, mid],
         ],
-        color: '#10201d',
+        color: '#f2f2f2',
       });
       for (const o of v.outliers) prims.push({ kind: 'dot', x: o, y: mid, color });
       const names: [string, number][] = [
@@ -312,7 +312,7 @@ export function chart1(
             [1, y],
             [n, y],
           ],
-          color: '#5a6c67',
+          color: '#9aa0a6',
           dash,
         });
         prims.push(h(mean, false), h(mean + 3 * sigma, true), h(mean - 3 * sigma, true));
@@ -330,7 +330,7 @@ export function chart1(
         const cum: [number, number][] = [];
         let acc = 0;
         bars.forEach((b, i) => cum.push([i + 1, (acc += b.v)]));
-        prims.push({ kind: 'line', pts: cum, color: '#10201d' });
+        prims.push({ kind: 'line', pts: cum, color: '#f2f2f2' });
       }
       bars.forEach((b, i) => {
         const at = type === 'pareto' ? i + 1 : b.k;

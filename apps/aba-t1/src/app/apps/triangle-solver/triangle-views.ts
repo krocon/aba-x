@@ -212,9 +212,9 @@ export class TriangleNum {
       margin: 0;
       padding: 0.05em 0.4em;
       font-size: 3.4cqw;
-      background: #fff;
-      border-top: 1px solid #dde4df;
-      color: #10201d;
+      background: var(--lcd-bg);
+      border-top: 1px solid var(--lcd-line);
+      color: var(--lcd-text);
     }
   `,
 })
@@ -239,7 +239,7 @@ export class TrianglePlot implements OnInit, OnDestroy {
 
   private paint(frame: PlotFrame, all: Triangle[], pick: number, unit: 'deg' | 'rad'): void {
     const { ctx, width, height } = frame;
-    ctx.fillStyle = '#ffffff';
+    ctx.fillStyle = '#000000';
     ctx.fillRect(0, 0, width, height);
     if (!all.length) return;
     const pts = all.map((t) => corners(t, unit));
@@ -264,7 +264,7 @@ export class TrianglePlot implements OnInit, OnDestroy {
         ctx.fillStyle = 'rgba(26,95,122,0.12)';
         ctx.fill();
       }
-      ctx.strokeStyle = main ? '#1a5f7a' : '#8a9a95';
+      ctx.strokeStyle = main ? '#5cb8ea' : '#9aa0a6';
       ctx.lineWidth = main ? 2.5 : 1.5;
       ctx.setLineDash(main ? [] : [6, 5]);
       ctx.stroke();
@@ -276,7 +276,7 @@ export class TrianglePlot implements OnInit, OnDestroy {
     const q = pts[pick].map(P);
     const cx = (q[0][0] + q[1][0] + q[2][0]) / 3;
     const cy = (q[0][1] + q[1][1] + q[2][1]) / 3;
-    ctx.fillStyle = '#10201d';
+    ctx.fillStyle = '#f2f2f2';
     ctx.font = '12px system-ui, sans-serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
@@ -302,7 +302,7 @@ export class TrianglePlot implements OnInit, OnDestroy {
       ['b', t.b, 0, 2],
       ['c', t.c, 0, 1],
     ];
-    ctx.fillStyle = '#1a5f7a';
+    ctx.fillStyle = '#5cb8ea';
     for (const [name, v, i, j] of sides) {
       const [x, y] = away((q[i][0] + q[j][0]) / 2, (q[i][1] + q[j][1]) / 2, 12);
       text(`${name} ${fmt(Number(v.toPrecision(5)))}`, x, y);

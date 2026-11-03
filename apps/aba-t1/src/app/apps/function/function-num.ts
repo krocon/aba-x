@@ -62,18 +62,18 @@ const ROWS = 9;
     th,
     td {
       padding: 0.1em 0.3em;
-      border-bottom: 1px solid #dde4df;
+      border-bottom: 1px solid var(--lcd-line);
       text-align: right;
       white-space: nowrap;
     }
     thead th {
-      background: #e8eeea;
+      background: var(--lcd-head);
       position: sticky;
       top: 0;
       border-bottom: 3px solid transparent;
     }
     tbody th {
-      background: #f1f5f2;
+      background: var(--lcd-head);
     }
   `,
 })

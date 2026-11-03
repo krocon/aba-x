@@ -98,8 +98,8 @@ import {
     .row > span {
       flex: 0 0 5.2em;
       padding: 0.1em 0.3em;
-      border-right: 1px solid #dde4df;
-      border-bottom: 1px solid #dde4df;
+      border-right: 1px solid var(--lcd-line);
+      border-bottom: 1px solid var(--lcd-line);
       text-align: right;
       overflow: hidden;
       white-space: nowrap;
@@ -108,28 +108,28 @@ import {
     .row > .rh,
     .row > .corner {
       flex-basis: 1.8em;
-      color: #5a6c67;
-      background: #e8eeea;
+      color: var(--lcd-muted);
+      background: var(--lcd-head);
     }
     .head > span {
-      background: #e8eeea;
-      color: #5a6c67;
+      background: var(--lcd-head);
+      color: var(--lcd-muted);
       text-align: center;
     }
     .cell {
       cursor: pointer;
     }
     .cell.cur {
-      background: #ffe2d8;
-      outline: 1px solid #e8603f;
+      background: var(--lcd-cur);
+      outline: 1px solid var(--lcd-accent);
     }
     .line {
       border: 0;
-      border-top: 2px solid #1b3533;
+      border-top: 2px solid var(--lcd-line-strong);
       padding: 0.2em 0.4em;
       font: inherit;
       font-family: var(--font-mono);
-      background: #fff;
+      background: var(--lcd-bg);
       outline: none;
     }
   `,

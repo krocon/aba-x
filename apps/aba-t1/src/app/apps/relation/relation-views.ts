@@ -10,7 +10,13 @@ import {
 } from '@angular/core';
 import type { Gesture } from '@aba/core/actions/gestures';
 import { PlotCanvas, type PlotPainter } from '@aba/core/graph/plot-canvas';
-import { type PlotFrame, drawAxes, drawLines, drawPoint } from '@aba/core/graph/plot-draw';
+import {
+  type PlotFrame,
+  drawAxes,
+  drawLines,
+  drawPoint,
+  DARK_PLOT,
+} from '@aba/core/graph/plot-draw';
 import type { Expr } from '@aba/math/ast/nodes';
 import {
   type ImplicitPlot,
@@ -108,7 +114,7 @@ function translucent(hex: string, alpha: number): string {
       right: 0;
       bottom: 0;
       padding: 0.05em 0.4em;
-      background: rgb(255 255 255 / 0.85);
+      background: var(--lcd-overlay);
       font-size: 3.3cqw;
       white-space: nowrap;
       overflow: hidden;
@@ -193,7 +199,7 @@ export class RelationPlot implements OnInit, OnDestroy {
     cur: { x: number; y: number } | null,
     tr: Relation | null,
   ): void {
-    drawAxes(frame, undefined, s.plot);
+    drawAxes(frame, DARK_PLOT, s.plot);
     const { ctx } = frame;
     const kx = frame.width / Math.max(1, Math.round(frame.width));
     const ky = frame.height / Math.max(1, Math.round(frame.height));
@@ -459,12 +465,12 @@ export class RelationPlot implements OnInit, OnDestroy {
     th,
     td {
       padding: 0.1em 0.3em;
-      border-bottom: 1px solid #dde4df;
+      border-bottom: 1px solid var(--lcd-line);
       text-align: right;
       white-space: nowrap;
     }
     thead th {
-      background: #e8eeea;
+      background: var(--lcd-head);
       position: sticky;
       top: 0;
       border-bottom: 3px solid transparent;

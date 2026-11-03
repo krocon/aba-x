@@ -40,9 +40,9 @@ const ENTRY_STYLES = `
     display: flex;
     align-items: center;
     gap: 0.3em;
-    border-top: 2px solid #1b3533;
+    border-top: 2px solid var(--lcd-line-strong);
     padding: 0.1em 0.4em;
-    background: #fff;
+    background: var(--lcd-bg);
   }
   .entry input {
     flex: 1;
@@ -52,7 +52,7 @@ const ENTRY_STYLES = `
   .msg {
     margin: 0;
     padding: 0.05em 0.4em;
-    color: #b42318;
+    color: var(--lcd-error);
     font-size: 0.85em;
   }
 `;
@@ -141,20 +141,20 @@ const ENTRY_STYLES = `
       align-items: center;
       gap: 0.35em;
       padding: 0.1em 0.4em;
-      border-bottom: 1px solid #dde4df;
+      border-bottom: 1px solid var(--lcd-line);
       min-height: 1.5em;
       white-space: nowrap;
       cursor: pointer;
     }
     li.cur {
-      background: #fff1ec;
+      background: var(--lcd-cur-soft);
     }
     li.off .def,
     li.off .name {
-      color: #6b7c77;
+      color: var(--lcd-muted);
     }
     li.empty {
-      color: #3d514c;
+      color: var(--lcd-muted);
       white-space: normal;
       cursor: default;
     }
@@ -162,9 +162,9 @@ const ENTRY_STYLES = `
       width: 1.1em;
       height: 1.1em;
       padding: 0;
-      border: 1px solid #5a6c67;
+      border: 1px solid var(--lcd-line-strong);
       border-radius: 0.15em;
-      background: #fff;
+      background: var(--lcd-bg);
       font: inherit;
       font-size: 0.8em;
       line-height: 1;
@@ -186,14 +186,14 @@ const ENTRY_STYLES = `
     }
     .val {
       margin-left: auto;
-      color: #3d514c;
+      color: var(--lcd-muted);
       font-size: 0.85em;
       overflow: hidden;
       text-overflow: ellipsis;
       max-width: 45%;
     }
     .val.undef {
-      color: #b42318;
+      color: var(--lcd-error);
     }
     ${ENTRY_STYLES}
   `,
@@ -469,7 +469,7 @@ export class GeometrySymb implements OnInit, OnDestroy {
     th,
     td {
       padding: 0.1em 0.3em;
-      border-bottom: 1px solid #dde4df;
+      border-bottom: 1px solid var(--lcd-line);
       white-space: nowrap;
       text-align: left;
     }
@@ -477,7 +477,7 @@ export class GeometrySymb implements OnInit, OnDestroy {
       text-align: right;
     }
     thead th {
-      background: #e8eeea;
+      background: var(--lcd-head);
       position: sticky;
       top: 0;
     }
@@ -485,21 +485,21 @@ export class GeometrySymb implements OnInit, OnDestroy {
       font-weight: 400;
     }
     tr.cur {
-      background: #fff1ec;
+      background: var(--lcd-cur-soft);
     }
     td.err {
-      color: #b42318;
+      color: var(--lcd-error);
       font-size: 0.85em;
     }
     td.empty {
       text-align: left;
       white-space: normal;
-      color: #3d514c;
+      color: var(--lcd-muted);
     }
     .note {
       margin: 0.2em 0.4em;
       font-size: 0.8em;
-      color: #3d514c;
+      color: var(--lcd-muted);
     }
     ${ENTRY_STYLES}
   `,

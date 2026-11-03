@@ -89,19 +89,19 @@ const isChoice = (f: SetupItem): f is SetupChoice => 'choices' in f;
       border-radius: 0.2em;
     }
     .row.cur {
-      background: #ffe2d8;
+      background: var(--lcd-cur);
     }
     input,
     select {
       width: 45%;
       font: inherit;
       text-align: right;
-      border: 1px solid #c9d5d1;
+      border: 1px solid var(--lcd-line);
       border-radius: 0.2em;
-      background: #fff;
+      background: var(--lcd-bg);
     }
     .msg {
-      color: #b42318;
+      color: var(--lcd-error);
       margin: 0.3em 0 0;
       font-size: 0.85em;
     }

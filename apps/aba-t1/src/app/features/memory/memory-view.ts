@@ -63,7 +63,7 @@ const size = (x: unknown) => new Blob([JSON.stringify(x ?? null)]).size;
     th,
     td {
       padding: 0.2em 0.5em;
-      border-bottom: 1px solid #dde4df;
+      border-bottom: 1px solid var(--lcd-line);
       text-align: right;
     }
     th {
@@ -71,7 +71,7 @@ const size = (x: unknown) => new Blob([JSON.stringify(x ?? null)]).size;
       font-weight: 400;
     }
     tr.cur {
-      background: #ffe2d8;
+      background: var(--lcd-cur);
     }
   `,
 })

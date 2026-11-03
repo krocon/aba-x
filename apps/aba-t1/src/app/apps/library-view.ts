@@ -95,14 +95,14 @@ const COLS = 4;
       cursor: pointer;
     }
     .tile.cur {
-      background: #ffe2d8;
+      background: var(--lcd-cur);
     }
     svg {
       width: 11cqw;
       height: 11cqw;
       padding: 1cqw;
       border-radius: 2cqw;
-      background: #1b3533;
+      background: var(--lcd-head);
       fill: none;
       stroke: #b9dc6e;
       stroke-width: 1.8;
@@ -113,9 +113,9 @@ const COLS = 4;
       display: flex;
       gap: 0.4em;
       padding: 0.2em 0.5em;
-      border-top: 2px solid #1b3533;
+      border-top: 2px solid var(--lcd-line-strong);
       font-size: 4cqw;
-      background: #fff;
+      background: var(--lcd-bg);
     }
     .name input {
       flex: 1;

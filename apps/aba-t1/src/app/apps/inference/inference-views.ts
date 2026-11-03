@@ -8,7 +8,7 @@ import {
   signal,
 } from '@angular/core';
 import { PlotCanvas, type PlotPainter } from '@aba/core/graph/plot-canvas';
-import { type PlotFrame, drawAxes, drawLines, sx, sy } from '@aba/core/graph/plot-draw';
+import { type PlotFrame, drawAxes, drawLines, sx, sy, DARK_PLOT } from '@aba/core/graph/plot-draw';
 import type { Viewport } from '@aba/math/graph/viewport';
 import { chiSquare, normal, studentT } from '@aba/math/stats/distributions';
 import type { Alternative } from '@aba/math/stats/inference';
@@ -180,7 +180,7 @@ export class InferenceSymb {
     .results {
       max-height: 45cqw;
       overflow: auto;
-      border-top: 2px solid #1b3533;
+      border-top: 2px solid var(--lcd-line-strong);
       font-size: 3.6cqw;
     }
     table {
@@ -191,7 +191,7 @@ export class InferenceSymb {
     th,
     td {
       padding: 0.05em 0.5em;
-      border-bottom: 1px solid #dde4df;
+      border-bottom: 1px solid var(--lcd-line);
       text-align: right;
     }
     th {
@@ -203,7 +203,7 @@ export class InferenceSymb {
     }
     .err {
       margin: 0.3em 0.5em;
-      color: #b42318;
+      color: var(--lcd-error);
     }
   `,
 })
@@ -382,7 +382,7 @@ const fmt = (x: number) =>
       right: 0;
       bottom: 0;
       padding: 0.05em 0.4em;
-      background: rgb(255 255 255 / 0.85);
+      background: var(--lcd-overlay);
       font-size: 3.3cqw;
       white-space: nowrap;
       overflow: hidden;
@@ -461,7 +461,7 @@ export class InferencePlotView implements OnInit, OnDestroy {
     p: InferencePlot | null,
     f: ((x: number) => number) | null,
   ): void {
-    drawAxes(frame, undefined, { grid: false });
+    drawAxes(frame, DARK_PLOT, { grid: false });
     if (!p || !f) return;
     const { ctx, view } = frame;
     const inside = (x: number): boolean => {
@@ -507,7 +507,7 @@ export class InferencePlotView implements OnInit, OnDestroy {
             [p.statistic, view.ymax],
           ],
         ],
-        '#10201d',
+        '#f2f2f2',
         1.5,
         [4, 3],
       );

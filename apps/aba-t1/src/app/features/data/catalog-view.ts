@@ -61,17 +61,17 @@ import { type DataKind, SLOTS, sizeText } from './data-logic';
       grid-template-columns: 2.4em 3.6em 1fr;
       gap: 0.4em;
       padding: 0.15em 0.5em;
-      border-bottom: 1px solid #dde4df;
+      border-bottom: 1px solid var(--lcd-line);
       cursor: pointer;
     }
     li.cur {
-      background: #ffe2d8;
+      background: var(--lcd-cur);
     }
     .name {
       font-weight: 600;
     }
     .size {
-      color: #5a6c67;
+      color: var(--lcd-muted);
     }
     .preview {
       overflow: hidden;

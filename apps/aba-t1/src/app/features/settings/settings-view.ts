@@ -69,19 +69,19 @@ import { SettingsStore } from './settings-store';
       border-radius: 0.2em;
     }
     .row.cur {
-      background: #ffe2d8;
+      background: var(--lcd-cur);
     }
     select {
       font: inherit;
       min-width: 45%;
       color: inherit;
-      background: #fff;
-      border: 1px solid #c9d5d1;
+      background: var(--lcd-bg);
+      border: 1px solid var(--lcd-line);
       border-radius: 0.2em;
     }
     .hint {
       margin: 0.4em 0 0;
-      color: #5a6c67;
+      color: var(--lcd-muted);
       font-size: 0.8em;
     }
   `,

@@ -28,9 +28,18 @@
   --leg-alpha-dark: #f6a04d;
   --leg-shift-metal: #0f4f86;
   --leg-alpha-metal: #9a3f00;
-  --lcd-bg: #ffffff;
-  --lcd-text: #111111;
-  --lcd-muted: #555a60;
+  /* display: white on black (also for every view inside it) */
+  --lcd-bg: #000000;
+  --lcd-bg-2: #15171a;
+  --lcd-text: #ffffff;
+  --lcd-muted: #b9bec4;
+  --lcd-line: #33373c;
+  --lcd-line-strong: #8a9097;
+  --lcd-head: #23262a;
+  --lcd-cur: #6b3a0c;
+  --lcd-cur-soft: #2a1f15;
+  --lcd-error: #ff7b6b;
+  --lcd-overlay: rgb(0 0 0 / 0.78);
   --lcd-bar: #1f2226;
   --lcd-bar-text: #f5f5f5;
   --lcd-accent: #f28c28;

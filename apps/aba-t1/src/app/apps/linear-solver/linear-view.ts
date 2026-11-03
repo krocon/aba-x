@@ -95,7 +95,7 @@ const fmt = (x: number) => formatReal(x, { mode: 'standard', digits: 0, decimal:
     }
     th {
       font-weight: normal;
-      color: #3d514c;
+      color: var(--lcd-muted);
       padding: 0 0.2em;
     }
     td {
@@ -103,28 +103,28 @@ const fmt = (x: number) => formatReal(x, { mode: 'standard', digits: 0, decimal:
       border-radius: 0.2em;
     }
     td.cur {
-      background: #ffe2d8;
+      background: var(--lcd-cur);
     }
     td.rhs {
-      border-left: 2px solid #5a6c67;
+      border-left: 2px solid var(--lcd-line-strong);
       padding-left: 0.3em;
     }
     input {
       width: 4.2em;
       font: inherit;
       text-align: right;
-      border: 1px solid #c9d5d1;
+      border: 1px solid var(--lcd-line);
       border-radius: 0.2em;
-      background: #fff;
-      color: #10201d;
+      background: var(--lcd-bg);
+      color: var(--lcd-text);
     }
     .sol {
       overflow-y: auto;
       min-height: 0;
       padding: 0.1em 0.6em;
-      border-top: 1px solid #dde4df;
-      background: #fff;
-      color: #10201d;
+      border-top: 1px solid var(--lcd-line);
+      background: var(--lcd-bg);
+      color: var(--lcd-text);
     }
     .sol p {
       margin: 0.05em 0;

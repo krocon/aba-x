@@ -115,14 +115,14 @@ type Overlay = 'none' | 'templates' | 'confirmClear';
       display: flex;
       flex-direction: column;
       padding: 0.3em 0.5em;
-      border-bottom: 1px solid #dde4df;
+      border-bottom: 1px solid var(--lcd-line);
       cursor: pointer;
     }
     li.sel {
-      background: #ffe2d8;
+      background: var(--lcd-cur);
     }
     li.empty {
-      color: #5a6c67;
+      color: var(--lcd-muted);
       font-size: 0.8em;
       cursor: default;
     }
@@ -141,18 +141,18 @@ type Overlay = 'none' | 'templates' | 'confirmClear';
       font-size: 0.85em;
     }
     li.err .note {
-      color: #b42318;
+      color: var(--lcd-error);
     }
     .badge {
       margin-right: 0.3em;
-      color: #e8603f;
+      color: var(--lcd-accent);
       font-weight: 700;
     }
     .entry {
-      border-top: 2px solid #1b3533;
+      border-top: 2px solid var(--lcd-line-strong);
       padding: 0.15em 0.4em;
       min-height: 1.8em;
-      background: #fff;
+      background: var(--lcd-bg);
     }
   `,
 })

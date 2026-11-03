@@ -11,7 +11,15 @@ import {
 } from '@angular/core';
 import type { Gesture } from '@aba/core/actions/gestures';
 import { PlotCanvas, type PlotPainter } from '@aba/core/graph/plot-canvas';
-import { type PlotFrame, drawAxes, drawLines, drawPoint, sx, sy } from '@aba/core/graph/plot-draw';
+import {
+  type PlotFrame,
+  drawAxes,
+  drawLines,
+  drawPoint,
+  sx,
+  sy,
+  DARK_PLOT,
+} from '@aba/core/graph/plot-draw';
 import { type Viewport, pan, toWorldX, toWorldY } from '@aba/math/graph/viewport';
 import type { RegressionModel } from '@aba/math/stats/regression';
 import { Rng } from '@aba/math/stats/random';
@@ -218,7 +226,7 @@ export class StatsSymb {
       inset: 0;
       z-index: 4;
       overflow: auto;
-      background: #fff;
+      background: var(--lcd-bg);
       font-size: 3.6cqw;
     }
     table {
@@ -229,7 +237,7 @@ export class StatsSymb {
     th,
     td {
       padding: 0.1em 0.4em;
-      border-bottom: 1px solid #dde4df;
+      border-bottom: 1px solid var(--lcd-line);
       text-align: right;
       white-space: nowrap;
     }
@@ -238,14 +246,14 @@ export class StatsSymb {
       font-weight: 400;
     }
     thead th {
-      background: #e8eeea;
+      background: var(--lcd-head);
       position: sticky;
       top: 0;
       border-bottom: 3px solid transparent;
     }
     .note {
       margin: 0.2em 0.4em;
-      color: #3d514c;
+      color: var(--lcd-muted);
     }
   `,
 })
@@ -513,7 +521,7 @@ const fmt = (x: number) =>
       margin: 0;
       padding: 0.3em 0.6em;
       overflow: auto;
-      background: #fff;
+      background: var(--lcd-bg);
       font-size: 3.8cqw;
     }
     .bar {
@@ -522,7 +530,7 @@ const fmt = (x: number) =>
       right: 0;
       bottom: 0;
       padding: 0.05em 0.4em;
-      background: rgb(255 255 255 / 0.85);
+      background: var(--lcd-overlay);
       font-size: 3.3cqw;
       white-space: nowrap;
       overflow: hidden;
@@ -660,7 +668,7 @@ export class StatsPlot implements OnInit, OnDestroy {
   ): void {
     const pie = list.find((d) => d.chart.pie);
     if (pie) return this.paintPie(frame, pie, p);
-    drawAxes(frame, undefined, s.plot);
+    drawAxes(frame, DARK_PLOT, s.plot);
     const { ctx } = frame;
     for (const d of list) {
       for (const q of d.chart.prims) {
@@ -685,12 +693,12 @@ export class StatsPlot implements OnInit, OnDestroy {
       }
       if (d.curve) drawLines(frame, d.curve, d.color, 2);
     }
-    if (p && tr) drawPoint(frame, p.x, p.y, '#e8603f');
+    if (p && tr) drawPoint(frame, p.x, p.y, '#f28c28');
   }
 
   private paintPie(frame: PlotFrame, d: Drawn, p: TracePoint | null): void {
     const { ctx, width, height } = frame;
-    ctx.fillStyle = '#ffffff';
+    ctx.fillStyle = '#000000';
     ctx.fillRect(0, 0, width, height);
     const r = Math.min(width, height) * 0.4;
     const cx = width / 2;
@@ -704,14 +712,14 @@ export class StatsPlot implements OnInit, OnDestroy {
       ctx.closePath();
       ctx.fillStyle = q.color;
       ctx.fill();
-      ctx.strokeStyle = '#ffffff';
+      ctx.strokeStyle = '#000000';
       ctx.stroke();
       const m = (q.a0 + q.a1) / 2;
-      ctx.fillStyle = '#10201d';
+      ctx.fillStyle = '#f2f2f2';
       ctx.fillText(q.label, cx + Math.cos(m) * r * 1.05, cy - Math.sin(m) * r * 1.05);
     }
     if (p) {
-      ctx.strokeStyle = '#e8603f';
+      ctx.strokeStyle = '#f28c28';
       ctx.lineWidth = 2;
       ctx.beginPath();
       ctx.arc(cx + p.x * r, cy - p.y * r, 4, 0, 2 * Math.PI);

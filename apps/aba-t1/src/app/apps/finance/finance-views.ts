@@ -11,7 +11,7 @@ import {
   viewChild,
 } from '@angular/core';
 import { PlotCanvas, type PlotPainter } from '@aba/core/graph/plot-canvas';
-import { drawAxes, drawLines, drawPoint } from '@aba/core/graph/plot-draw';
+import { drawAxes, drawLines, drawPoint, DARK_PLOT } from '@aba/core/graph/plot-draw';
 import type { BlackScholesResult } from '@aba/math/finance/misc';
 import type { Viewport } from '@aba/math/graph/viewport';
 import type { MathResult } from '@aba/math/result';
@@ -117,7 +117,7 @@ const SHEET_TITLES: Record<Sheet, TextKey> = {
       width: 100%;
       text-align: left;
       font: inherit;
-      color: #10201d;
+      color: var(--lcd-text);
       background: transparent;
       border: 0;
       border-radius: 0.2em;
@@ -125,7 +125,7 @@ const SHEET_TITLES: Record<Sheet, TextKey> = {
       cursor: pointer;
     }
     button.cur {
-      background: #ffe2d8;
+      background: var(--lcd-cur);
     }
     button[aria-current='true'] {
       font-weight: 600;
@@ -133,7 +133,7 @@ const SHEET_TITLES: Record<Sheet, TextKey> = {
     .no {
       display: inline-block;
       width: 1.4em;
-      color: #3d514c;
+      color: var(--lcd-muted);
     }
   `,
 })
@@ -252,24 +252,24 @@ export class FinanceSymb implements OnInit, OnDestroy {
     th,
     td {
       padding: 0.05em 0.3em;
-      border-bottom: 1px solid #dde4df;
+      border-bottom: 1px solid var(--lcd-line);
       text-align: right;
-      color: #10201d;
+      color: var(--lcd-text);
     }
     thead th {
-      background: #e8eeea;
+      background: var(--lcd-head);
       position: sticky;
       top: 0;
     }
     tfoot th,
     tfoot td {
       font-weight: 600;
-      background: #f3f6f4;
+      background: var(--lcd-head);
       position: sticky;
       bottom: 0;
     }
     .msg {
-      color: #b42318;
+      color: var(--lcd-error);
       padding: 0.4em;
       font-size: 3.6cqw;
     }
@@ -919,9 +919,9 @@ export class FinanceNum {
       margin: 0;
       padding: 0.05em 0.4em;
       font-size: 3.4cqw;
-      background: #fff;
-      border-top: 1px solid #dde4df;
-      color: #10201d;
+      background: var(--lcd-bg);
+      border-top: 1px solid var(--lcd-line);
+      color: var(--lcd-text);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -995,7 +995,7 @@ export class FinancePlot implements OnInit, OnDestroy {
     const f = this.npv();
     const irrs = this.irrs();
     return (frame) => {
-      drawAxes(frame);
+      drawAxes(frame, DARK_PLOT);
       if (a?.ok) {
         const pv = this.app.state().tvm.pv;
         const bal: [number, number][] = [
@@ -1007,7 +1007,7 @@ export class FinancePlot implements OnInit, OnDestroy {
           [0, 0],
           ...a.value.map((r): [number, number] => [r.period, (cum += r.interest)]),
         ];
-        drawLines(frame, [bal], '#1a5f7a', 2);
+        drawLines(frame, [bal], '#5cb8ea', 2);
         drawLines(frame, [int], '#d1495b', 2, [5, 4]);
       }
       if (f) {
@@ -1018,7 +1018,7 @@ export class FinancePlot implements OnInit, OnDestroy {
           const y = f(x);
           if (Number.isFinite(y)) pts.push([x, y]);
         }
-        drawLines(frame, [pts], '#1a5f7a', 2);
+        drawLines(frame, [pts], '#5cb8ea', 2);
         for (const r of irrs)
           drawPoint(frame, r, 0, '#d1495b', `IRR ${fmt(Number(r.toPrecision(6)))} %`);
       }

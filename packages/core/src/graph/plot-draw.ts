@@ -20,6 +20,14 @@ export const LIGHT_PLOT: PlotPalette = {
   label: '#3d514c',
 };
 
+/** White on black (the ABA-T1 display). */
+export const DARK_PLOT: PlotPalette = {
+  bg: '#000000',
+  grid: '#24272b',
+  axis: '#9aa0a6',
+  label: '#c4c8cd',
+};
+
 export interface PlotFrame {
   ctx: CanvasRenderingContext2D;
   width: number;

@@ -38,7 +38,7 @@ import { AppStore } from './app-store';
       font-size: 4cqw;
       resize: none;
       outline: none;
-      background: #fff;
+      background: var(--lcd-bg);
     }
   `,
 })

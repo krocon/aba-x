@@ -37,8 +37,8 @@ export interface PlotMenuItem {
       max-height: calc(100% - 2cqw);
       overflow-y: auto;
       min-width: 40%;
-      background: #ffffff;
-      border: 1px solid #1b3533;
+      background: var(--lcd-bg);
+      border: 1px solid var(--lcd-line-strong);
       border-radius: 0.3em;
       box-shadow: 0 2px 8px rgb(0 0 0 / 0.25);
       font-size: 3.8cqw;
@@ -48,7 +48,7 @@ export interface PlotMenuItem {
       cursor: pointer;
     }
     li.cur {
-      background: #ffe2d8;
+      background: var(--lcd-cur);
     }
   `,
 })

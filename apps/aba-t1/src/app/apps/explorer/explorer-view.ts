@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import type { Gesture } from '@aba/core/actions/gestures';
 import { PlotCanvas, type PlotPainter } from '@aba/core/graph/plot-canvas';
-import { drawAxes, drawLines } from '@aba/core/graph/plot-draw';
+import { drawAxes, drawLines, DARK_PLOT } from '@aba/core/graph/plot-draw';
 import { MathStatic } from '@aba/core/shared/math-static';
 import {
   DEFAULTS,
@@ -82,14 +82,14 @@ const HORIZONTAL: Record<ExplorerKind, number | null> = { linear: null, quadrati
     .eq {
       padding: 0.1em 0.4em;
       font-size: 4cqw;
-      border-bottom: 1px solid #dde4df;
-      background: #fff;
+      border-bottom: 1px solid var(--lcd-line);
+      background: var(--lcd-bg);
       white-space: nowrap;
       overflow: hidden;
     }
     .det {
       margin-left: 0.6em;
-      color: #3d514c;
+      color: var(--lcd-muted);
       font-size: 0.8em;
     }
     .plot {
@@ -102,7 +102,7 @@ const HORIZONTAL: Record<ExplorerKind, number | null> = { linear: null, quadrati
       right: 0;
       bottom: 0;
       padding: 0.05em 0.4em;
-      background: rgb(255 255 255 / 0.9);
+      background: var(--lcd-overlay);
       font-size: 3.4cqw;
     }
   `,
@@ -127,12 +127,12 @@ export class ExplorerView implements OnInit, OnDestroy {
     const p = this.state().params;
     const t = this.state().test?.target;
     return (frame) => {
-      drawAxes(frame);
+      drawAxes(frame, DARK_PLOT);
       if (t)
         drawLines(
           frame,
           sample((x) => evaluate(kind, t, x), frame.view, frame),
-          '#5a6c67',
+          '#9aa0a6',
           2,
           [6, 5],
         );

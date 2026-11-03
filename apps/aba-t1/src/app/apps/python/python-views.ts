@@ -73,7 +73,7 @@ function pythonApp() {
       grid-template-rows: minmax(0, 1fr) auto;
       height: 100%;
       font-size: 3.6cqw;
-      background: #fff;
+      background: var(--lcd-bg);
     }
     .out {
       margin: 0;
@@ -84,17 +84,17 @@ function pythonApp() {
       font-family: var(--font-mono);
     }
     .err {
-      color: #b42318;
+      color: var(--lcd-error);
     }
     .in {
-      color: #3d514c;
+      color: var(--lcd-muted);
     }
     .line {
       display: flex;
       gap: 0.4em;
       align-items: center;
       padding: 0.1em 0.4em;
-      border-top: 2px solid #1b3533;
+      border-top: 2px solid var(--lcd-line-strong);
       font-family: var(--font-mono);
     }
     .line input {
@@ -292,12 +292,12 @@ export class PythonShell implements OnInit, OnDestroy {
     }
     li {
       padding: 0.15em 0.5em;
-      border-bottom: 1px solid #dde4df;
+      border-bottom: 1px solid var(--lcd-line);
       cursor: pointer;
       font-family: var(--font-mono);
     }
     li.cur {
-      background: #ffe2d8;
+      background: var(--lcd-cur);
     }
     .ed {
       display: grid;
@@ -318,8 +318,8 @@ export class PythonShell implements OnInit, OnDestroy {
     .status {
       margin: 0;
       padding: 0.05em 0.4em;
-      border-top: 1px solid #dde4df;
-      background: #fff;
+      border-top: 1px solid var(--lcd-line);
+      background: var(--lcd-bg);
     }
     .ask {
       position: absolute;
@@ -327,8 +327,8 @@ export class PythonShell implements OnInit, OnDestroy {
       right: 0;
       bottom: 0;
       padding: 0.3em 0.5em;
-      background: #fff;
-      border-top: 2px solid #1b3533;
+      background: var(--lcd-bg);
+      border-top: 2px solid var(--lcd-line-strong);
     }
     .ask input {
       font: inherit;
@@ -532,7 +532,7 @@ export class PythonScripts implements OnInit, OnDestroy {
     :host {
       display: block;
       height: 100%;
-      background: #fff;
+      background: var(--lcd-bg);
     }
     canvas {
       display: block;

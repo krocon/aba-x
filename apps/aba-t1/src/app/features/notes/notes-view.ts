@@ -127,18 +127,18 @@ type Mode = 'list' | 'edit' | 'show';
       justify-content: space-between;
       gap: 0.5em;
       padding: 0.2em 0.5em;
-      border-bottom: 1px solid #dde4df;
+      border-bottom: 1px solid var(--lcd-line);
       cursor: pointer;
     }
     li.cur {
-      background: #ffe2d8;
+      background: var(--lcd-cur);
     }
     li.empty {
-      color: #5a6c67;
+      color: var(--lcd-muted);
       cursor: default;
     }
     .d {
-      color: #5a6c67;
+      color: var(--lcd-muted);
       font-size: 0.8em;
     }
     textarea {

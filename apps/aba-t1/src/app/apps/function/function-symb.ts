@@ -94,20 +94,20 @@ import { FN_COLORS, FN_NAMES, type FunctionState, definitions } from './function
       align-items: center;
       gap: 0.35em;
       padding: 0.1em 0.4em;
-      border-bottom: 1px solid #dde4df;
+      border-bottom: 1px solid var(--lcd-line);
       min-height: 1.6em;
       cursor: pointer;
     }
     li.cur {
-      background: #ffe2d8;
+      background: var(--lcd-cur);
     }
     .check {
       width: 1.1em;
       height: 1.1em;
       padding: 0;
-      border: 1px solid #5a6c67;
+      border: 1px solid var(--lcd-line-strong);
       border-radius: 0.15em;
-      background: #fff;
+      background: var(--lcd-bg);
       font: inherit;
       font-size: 0.8em;
       line-height: 1;
@@ -119,7 +119,7 @@ import { FN_COLORS, FN_NAMES, type FunctionState, definitions } from './function
       border-radius: 50%;
     }
     .name {
-      color: #3d514c;
+      color: var(--lcd-muted);
       white-space: nowrap;
     }
     .def {
@@ -127,22 +127,22 @@ import { FN_COLORS, FN_NAMES, type FunctionState, definitions } from './function
       white-space: nowrap;
     }
     .def.err {
-      outline: 1px dashed #b42318;
+      outline: 1px dashed var(--lcd-error);
     }
     .entry {
       display: flex;
       align-items: center;
       gap: 0.3em;
-      border-top: 2px solid #1b3533;
+      border-top: 2px solid var(--lcd-line-strong);
       padding: 0.1em 0.4em;
-      background: #fff;
+      background: var(--lcd-bg);
     }
     .entry app-math-field {
       flex: 1;
     }
     .prefix {
       white-space: nowrap;
-      color: #3d514c;
+      color: var(--lcd-muted);
     }
   `,
 })

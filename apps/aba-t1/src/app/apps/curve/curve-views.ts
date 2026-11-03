@@ -12,7 +12,13 @@ import {
 import type { Gesture } from '@aba/core/actions/gestures';
 import { FilesApi } from '@aba/core/files/files-api';
 import { PlotCanvas, type PlotPainter } from '@aba/core/graph/plot-canvas';
-import { type PlotFrame, drawAxes, drawLines, drawPoint } from '@aba/core/graph/plot-draw';
+import {
+  type PlotFrame,
+  drawAxes,
+  drawLines,
+  drawPoint,
+  DARK_PLOT,
+} from '@aba/core/graph/plot-draw';
 import { MathField } from '@aba/core/shared/math-field';
 import { MathStatic } from '@aba/core/shared/math-static';
 import { sampleParametric } from '@aba/math/graph/parametric';
@@ -151,19 +157,19 @@ const SYMB_HELP: Partial<Record<CurveKind, string>> = { relation: 'relation', so
       align-items: center;
       gap: 0.35em;
       padding: 0.1em 0.4em;
-      border-bottom: 1px solid #dde4df;
+      border-bottom: 1px solid var(--lcd-line);
       min-height: 1.6em;
     }
     li.cur {
-      background: #fff1ec;
+      background: var(--lcd-cur-soft);
     }
     .check {
       width: 1.1em;
       height: 1.1em;
       padding: 0;
-      border: 1px solid #5a6c67;
+      border: 1px solid var(--lcd-line-strong);
       border-radius: 0.15em;
-      background: #fff;
+      background: var(--lcd-bg);
       font: inherit;
       font-size: 0.8em;
       line-height: 1;
@@ -187,21 +193,21 @@ const SYMB_HELP: Partial<Record<CurveKind, string>> = { relation: 'relation', so
       min-width: 3em;
     }
     .field.cur {
-      background: #ffe2d8;
+      background: var(--lcd-cur);
     }
     .field.err {
-      outline: 1px dashed #b42318;
+      outline: 1px dashed var(--lcd-error);
     }
     .lbl {
-      color: #3d514c;
+      color: var(--lcd-muted);
     }
     .entry {
       display: flex;
       align-items: center;
       gap: 0.3em;
-      border-top: 2px solid #1b3533;
+      border-top: 2px solid var(--lcd-line-strong);
       padding: 0.1em 0.4em;
-      background: #fff;
+      background: var(--lcd-bg);
     }
     .entry app-math-field {
       flex: 1;
@@ -453,7 +459,7 @@ export class CurveSymb implements OnInit, OnDestroy {
       right: 0;
       bottom: 0;
       padding: 0.05em 0.4em;
-      background: rgb(255 255 255 / 0.85);
+      background: var(--lcd-overlay);
       font-size: 3.3cqw;
       white-space: nowrap;
       overflow: hidden;
@@ -533,7 +539,7 @@ export class CurvePlot implements OnInit, OnDestroy {
     cur: { x: number; y: number },
     tc: Curve | null,
   ): void {
-    drawAxes(frame, undefined, s.plot);
+    drawAxes(frame, DARK_PLOT, s.plot);
     if (kind === 'sequence') {
       if (s.seqMode === 'cobweb') this.cobweb(frame, s, cs);
       else for (const c of cs) this.stairs(frame, s, c);
@@ -582,7 +588,7 @@ export class CurvePlot implements OnInit, OnDestroy {
           [v.xmax, v.xmax],
         ],
       ],
-      '#5a6c67',
+      '#9aa0a6',
       1,
     );
     const curve: [number, number][] = [];
@@ -601,7 +607,7 @@ export class CurvePlot implements OnInit, OnDestroy {
       web.push([x, y], [y, y]);
       x = y;
     }
-    drawLines(frame, [web], '#e8603f', 1);
+    drawLines(frame, [web], '#f28c28', 1);
   }
 
   ngOnInit(): void {
@@ -815,18 +821,18 @@ export class CurvePlot implements OnInit, OnDestroy {
     th,
     td {
       padding: 0.1em 0.3em;
-      border-bottom: 1px solid #dde4df;
+      border-bottom: 1px solid var(--lcd-line);
       text-align: right;
       white-space: nowrap;
     }
     thead th {
-      background: #e8eeea;
+      background: var(--lcd-head);
       position: sticky;
       top: 0;
       border-bottom: 3px solid transparent;
     }
     tbody th {
-      background: #f1f5f2;
+      background: var(--lcd-head);
     }
   `,
 })

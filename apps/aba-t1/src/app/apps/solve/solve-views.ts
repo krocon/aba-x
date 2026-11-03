@@ -10,7 +10,13 @@ import {
 } from '@angular/core';
 import type { Gesture } from '@aba/core/actions/gestures';
 import { PlotCanvas, type PlotPainter } from '@aba/core/graph/plot-canvas';
-import { drawAxes, drawCrosshair, drawLines, drawPoint } from '@aba/core/graph/plot-draw';
+import {
+  drawAxes,
+  drawCrosshair,
+  drawLines,
+  drawPoint,
+  DARK_PLOT,
+} from '@aba/core/graph/plot-draw';
 import { autoY, sample } from '@aba/math/graph/sampler';
 import { type Viewport, toWorldX, toWorldY, zoom } from '@aba/math/graph/viewport';
 import { compile } from '@aba/math/numeric/evaluate';
@@ -174,12 +180,12 @@ export class SolveNum {
       margin: 0;
       padding: 0.05em 0.4em;
       font-size: 3.4cqw;
-      background: #fff;
-      border-top: 1px solid #dde4df;
+      background: var(--lcd-bg);
+      border-top: 1px solid var(--lcd-line);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      color: #10201d;
+      color: var(--lcd-text);
     }
   `,
 })
@@ -223,14 +229,14 @@ export class SolvePlot implements OnInit, OnDestroy {
     const s = this.sides();
     const x = this.value();
     return (frame) => {
-      drawAxes(frame);
+      drawAxes(frame, DARK_PLOT);
       if (!s) return;
-      drawLines(frame, sample(s.left, frame.view, frame), '#1a5f7a', 2);
+      drawLines(frame, sample(s.left, frame.view, frame), '#5cb8ea', 2);
       drawLines(frame, sample(s.right, frame.view, frame), '#d1495b', 2);
       const y = s.left(x);
-      drawCrosshair(frame, x, Number.isFinite(y) ? y : 0, '#5a6c67');
+      drawCrosshair(frame, x, Number.isFinite(y) ? y : 0, '#9aa0a6');
       if (Number.isFinite(y) && Math.abs(y - s.right(x)) <= 1e-9 * (1 + Math.abs(y)))
-        drawPoint(frame, x, y, '#10201d', `${this.variable()} = ${fmt(x)}`);
+        drawPoint(frame, x, y, '#f2f2f2', `${this.variable()} = ${fmt(x)}`);
     };
   });
   private pop: (() => void) | null = null;

@@ -18,6 +18,7 @@ import {
   drawCrosshair,
   drawLines,
   drawPoint,
+  DARK_PLOT,
 } from '@aba/core/graph/plot-draw';
 import { type Viewport, pan, toWorldX, toWorldY } from '@aba/math/graph/viewport';
 import { parseText } from '@aba/math/parser/text-parser';
@@ -129,7 +130,7 @@ type MenuKind = 'zoom' | 'fcn' | 'view';
       right: 0;
       bottom: 0;
       padding: 0.05em 0.4em;
-      background: rgb(255 255 255 / 0.85);
+      background: var(--lcd-overlay);
       font-size: 3.3cqw;
       white-space: nowrap;
       overflow: hidden;
@@ -149,10 +150,10 @@ type MenuKind = 'zoom' | 'fcn' | 'view';
     .side td {
       padding: 0 0.3em;
       text-align: right;
-      border-bottom: 1px solid #dde4df;
+      border-bottom: 1px solid var(--lcd-line);
     }
     .side tr.cur {
-      background: #ffe2d8;
+      background: var(--lcd-cur);
     }
   `,
 })
@@ -272,7 +273,7 @@ export class FunctionPlot implements OnInit, OnDestroy {
     t: ReturnType<typeof plottables>[number] | null,
     from: number | undefined,
   ): void {
-    drawAxes(frame, undefined, opt);
+    drawAxes(frame, DARK_PLOT, opt);
     // signed area: shading between the curve and the x axis
     if (r?.kind === 'area' && t) this.shade(frame, t.f, r.a, r.b, t.color);
     for (const f of fns)
@@ -288,14 +289,14 @@ export class FunctionPlot implements OnInit, OnDestroy {
             [v.xmax, line(v.xmax)],
           ],
         ],
-        '#1b3533',
+        '#e6e6e6',
         1,
         [6, 4],
       );
     }
     if (r?.kind === 'point' || r?.kind === 'slope' || r?.kind === 'tangent')
-      drawPoint(frame, r.x, r.y, '#1b3533');
-    if (from !== undefined && t) drawPoint(frame, from, t.f(from), '#e8603f');
+      drawPoint(frame, r.x, r.y, '#e6e6e6');
+    if (from !== undefined && t) drawPoint(frame, from, t.f(from), '#f28c28');
     if (Number.isFinite(cur.y)) {
       if (this.trace() && t) drawPoint(frame, cur.x, cur.y, t.color);
       else drawCrosshair(frame, cur.x, cur.y);

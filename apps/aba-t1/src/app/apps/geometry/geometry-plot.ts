@@ -12,7 +12,7 @@ import {
 import type { Gesture } from '@aba/core/actions/gestures';
 import { FilesApi } from '@aba/core/files/files-api';
 import { PlotCanvas, type PlotPainter } from '@aba/core/graph/plot-canvas';
-import { drawAxes } from '@aba/core/graph/plot-draw';
+import { drawAxes, DARK_PLOT } from '@aba/core/graph/plot-draw';
 import { nearestParameter } from '@aba/math/geometry/constructions';
 import type { GeoObject } from '@aba/math/geometry/model';
 import { renderData } from '@aba/math/geometry/render-data';
@@ -120,7 +120,7 @@ const PICK_PX = 12;
       margin: 0;
       padding: 0.1em 0.4em;
       list-style: none;
-      background: rgb(255 255 255 / 0.85);
+      background: var(--lcd-overlay);
       font-size: 3.1cqw;
       font-variant-numeric: tabular-nums;
       pointer-events: none;
@@ -137,7 +137,7 @@ const PICK_PX = 12;
       right: 0;
       bottom: 0;
       padding: 0.05em 0.4em;
-      background: rgb(255 255 255 / 0.88);
+      background: var(--lcd-overlay);
       font-size: 3.3cqw;
       white-space: nowrap;
       overflow: hidden;
@@ -237,7 +237,7 @@ export class GeometryPlot implements OnInit, OnDestroy {
     const traces = this.traces();
     const c = this.scene().c;
     return (frame) => {
-      drawAxes(frame, undefined, { grid: state.axes, axes: state.axes, labels: state.axes });
+      drawAxes(frame, DARK_PLOT, { grid: state.axes, axes: state.axes, labels: state.axes });
       drawTraces(
         frame,
         Object.entries(traces).map(([n, pts]) => ({

@@ -189,8 +189,8 @@ interface CellView {
       height: 1.5em;
       line-height: 1.5em;
       padding: 0 0.25em;
-      border-right: 1px solid #dde4df;
-      border-bottom: 1px solid #dde4df;
+      border-right: 1px solid var(--lcd-line);
+      border-bottom: 1px solid var(--lcd-line);
       overflow: hidden;
       white-space: nowrap;
       font-variant-numeric: tabular-nums;
@@ -198,8 +198,8 @@ interface CellView {
     .row > .rh,
     .row > .corner {
       width: ${ROW_HEAD}em;
-      color: #3d514c;
-      background: #e8eeea;
+      color: var(--lcd-muted);
+      background: var(--lcd-head);
       text-align: right;
     }
     .row > .corner {
@@ -210,29 +210,29 @@ interface CellView {
       text-align: left;
     }
     .head > .ch {
-      background: #e8eeea;
-      color: #3d514c;
+      background: var(--lcd-head);
+      color: var(--lcd-muted);
       text-align: center;
       cursor: pointer;
     }
     .rh.sel,
     .ch.sel {
-      background: #d3dfda;
-      color: #10201d;
+      background: var(--lcd-bg-2);
+      color: var(--lcd-text);
     }
     .cell {
       cursor: cell;
     }
     .cell.sel {
-      background: #e3eef7;
+      background: var(--lcd-head);
     }
     .cell.cur {
-      background: #ffe2d8;
-      outline: 1px solid #e8603f;
+      background: var(--lcd-cur);
+      outline: 1px solid var(--lcd-accent);
       outline-offset: -1px;
     }
     .cell.err {
-      color: #b42318;
+      color: var(--lcd-error);
     }
     .cell.bold {
       font-weight: 700;
@@ -243,8 +243,8 @@ interface CellView {
     .status {
       padding: 0.05em 0.4em;
       font-size: 0.9em;
-      background: #f3f6f4;
-      border-top: 1px solid #c9d5d1;
+      background: var(--lcd-head);
+      border-top: 1px solid var(--lcd-line);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -252,11 +252,11 @@ interface CellView {
     }
     .line {
       border: 0;
-      border-top: 2px solid #1b3533;
+      border-top: 2px solid var(--lcd-line-strong);
       padding: 0.2em 0.4em;
       font: inherit;
       font-family: var(--font-mono);
-      background: #fff;
+      background: var(--lcd-bg);
       outline: none;
     }
   `,

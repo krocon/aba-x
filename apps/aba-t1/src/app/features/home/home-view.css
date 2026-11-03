@@ -27,18 +27,18 @@
   display: flex;
   flex-direction: column;
   padding: 0.3em 0.5em;
-  border-bottom: 1px solid #dde4df;
+  border-bottom: 1px solid var(--lcd-line);
   cursor: pointer;
 }
 .history li.sel {
-  background: #ffe2d8;
+  background: var(--lcd-cur);
 }
 .history li.err .out {
-  color: #b42318;
+  color: var(--lcd-error);
   font-size: 0.85em;
 }
 .history li.empty {
-  color: #5a6c67;
+  color: var(--lcd-muted);
   font-size: 0.85em;
   cursor: default;
   border: 0;
@@ -57,10 +57,10 @@
   font-weight: 600;
 }
 .entry {
-  border-top: 2px solid #1b3533;
+  border-top: 2px solid var(--lcd-line-strong);
   padding: 0.15em 0.4em;
   min-height: 1.8em;
-  background: #ffffff;
+  background: var(--lcd-bg);
 }
 .entry.inactive {
   opacity: 0.55;
@@ -78,7 +78,7 @@
 .overlay {
   position: absolute;
   inset: 0;
-  background: #f5f7f2;
+  background: var(--lcd-head);
   overflow: auto;
 }
 .show {

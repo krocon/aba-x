@@ -106,14 +106,14 @@ export function drawScene(f: PlotFrame, items: readonly DrawItem[]): void {
         ctx.arc(x, y, 9, 0, 2 * Math.PI);
         ctx.fill();
       }
-      ctx.fillStyle = it.free ? it.color : '#ffffff';
+      ctx.fillStyle = it.free ? it.color : '#000000';
       ctx.strokeStyle = it.color;
       ctx.lineWidth = 2;
       ctx.beginPath();
       ctx.arc(x, y, it.free ? 4.5 : 3.5, 0, 2 * Math.PI);
       ctx.fill();
       ctx.stroke();
-      ctx.fillStyle = '#1b3533';
+      ctx.fillStyle = '#e6e6e6';
       ctx.font = '12px system-ui, sans-serif';
       ctx.textBaseline = 'bottom';
       ctx.textAlign = 'left';
@@ -150,7 +150,7 @@ export function drawCursor(f: PlotFrame, at: Vec): void {
   const x = sx(f, at.x);
   const y = sy(f, at.y);
   ctx.save();
-  ctx.strokeStyle = '#e8603f';
+  ctx.strokeStyle = '#f28c28';
   ctx.lineWidth = 1.5;
   ctx.beginPath();
   ctx.moveTo(x - 8, y);

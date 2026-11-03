@@ -80,13 +80,13 @@ import { RpnStore } from './rpn-store';
       align-items: baseline;
       gap: 0.5em;
       padding: 0.15em 0.5em;
-      border-bottom: 1px solid #dde4df;
+      border-bottom: 1px solid var(--lcd-line);
     }
     li.sel {
-      background: #ffe2d8;
+      background: var(--lcd-cur);
     }
     .lvl {
-      color: #5a6c67;
+      color: var(--lcd-muted);
       min-width: 1.6em;
     }
     .val {
@@ -97,10 +97,10 @@ import { RpnStore } from './rpn-store';
       font-weight: 600;
     }
     .entry {
-      border-top: 2px solid #1b3533;
+      border-top: 2px solid var(--lcd-line-strong);
       padding: 0.15em 0.4em;
       min-height: 1.8em;
-      background: #fff;
+      background: var(--lcd-bg);
     }
   `,
 })

@@ -106,23 +106,23 @@ import { ProgramStore, isProgramName, templateSource } from './program-store';
       justify-content: space-between;
       gap: 1em;
       padding: 0.15em 0.5em;
-      border-bottom: 1px solid #dde4df;
+      border-bottom: 1px solid var(--lcd-line);
       cursor: pointer;
     }
     li.cur {
-      background: #ffe2d8;
+      background: var(--lcd-cur);
     }
     .info {
-      color: #3d514c;
+      color: var(--lcd-muted);
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
     }
     .info.err {
-      color: #b42318;
+      color: var(--lcd-error);
     }
     .empty {
-      color: #3d514c;
+      color: var(--lcd-muted);
       cursor: default;
     }
     .ask {
@@ -131,8 +131,8 @@ import { ProgramStore, isProgramName, templateSource } from './program-store';
       right: 0;
       bottom: 0;
       padding: 0.3em 0.5em;
-      background: #fff;
-      border-top: 2px solid #1b3533;
+      background: var(--lcd-bg);
+      border-top: 2px solid var(--lcd-line-strong);
     }
     .ask input {
       font: inherit;
@@ -459,14 +459,14 @@ export class ProgramCatalog implements OnInit, OnDestroy {
       display: flex;
       overflow: auto;
       min-height: 0;
-      background: #fff;
+      background: var(--lcd-bg);
     }
     .gutter {
       display: flex;
       flex-direction: column;
       padding: 0.2em 0;
-      background: #e8eeea;
-      color: #3d514c;
+      background: var(--lcd-head);
+      color: var(--lcd-muted);
       text-align: right;
       user-select: none;
     }
@@ -482,7 +482,7 @@ export class ProgramCatalog implements OnInit, OnDestroy {
       color: #fff;
     }
     .ln.at {
-      outline: 2px solid #e8603f;
+      outline: 2px solid var(--lcd-accent);
     }
     .area {
       position: relative;
@@ -502,7 +502,7 @@ export class ProgramCatalog implements OnInit, OnDestroy {
     }
     .hl {
       pointer-events: none;
-      color: #10201d;
+      color: var(--lcd-text);
       min-height: 100%;
       box-sizing: border-box;
     }
@@ -516,25 +516,25 @@ export class ProgramCatalog implements OnInit, OnDestroy {
       overflow: hidden;
       background: transparent;
       color: transparent;
-      caret-color: #10201d;
+      caret-color: var(--lcd-text);
       outline: none;
     }
     .kw {
-      color: #7a2e8e;
+      color: #d19bf0;
       font-weight: 600;
     }
     .num {
-      color: #0b5f6b;
+      color: #6fd3e0;
     }
     .str {
-      color: #8a4b08;
+      color: #f2b866;
     }
     .cmt {
-      color: #4d6b63;
+      color: var(--lcd-muted);
       font-style: italic;
     }
     .bad {
-      color: #b42318;
+      color: var(--lcd-error);
       text-decoration: underline wavy;
     }
     .vars {
@@ -544,8 +544,8 @@ export class ProgramCatalog implements OnInit, OnDestroy {
       max-height: 22cqw;
       overflow: auto;
       padding: 0.2em 0.4em;
-      border-top: 2px solid #e8603f;
-      background: #fff8f5;
+      border-top: 2px solid var(--lcd-accent);
+      background: var(--lcd-cur-soft);
     }
     .vars .at {
       font-weight: 600;
@@ -554,8 +554,8 @@ export class ProgramCatalog implements OnInit, OnDestroy {
       display: flex;
       gap: 0.5em;
       padding: 0.2em 0.4em;
-      border-top: 1px solid #dde4df;
-      background: #fff;
+      border-top: 1px solid var(--lcd-line);
+      background: var(--lcd-bg);
     }
     .find input {
       font: inherit;
@@ -564,8 +564,8 @@ export class ProgramCatalog implements OnInit, OnDestroy {
     .status {
       margin: 0;
       padding: 0.05em 0.4em;
-      border-top: 1px solid #dde4df;
-      background: #fff;
+      border-top: 1px solid var(--lcd-line);
+      background: var(--lcd-bg);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -989,7 +989,7 @@ export class ProgramEditor implements OnInit, OnDestroy {
     .term {
       height: 100%;
       overflow: auto;
-      background: #fff;
+      background: var(--lcd-bg);
     }
     pre {
       margin: 0;

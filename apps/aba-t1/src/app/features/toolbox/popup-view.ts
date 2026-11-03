@@ -132,12 +132,12 @@ const TABS: ToolboxTab[] = ['math', 'cas', 'app', 'user', 'catalog'];
       z-index: 2;
       display: flex;
       flex-direction: column;
-      background: #f5f7f2;
+      background: var(--lcd-head);
       font-size: 4.2cqw;
     }
     .crumb {
       padding: 0.15em 0.5em;
-      background: #dde7e2;
+      background: var(--lcd-bg-2);
       font-size: 0.85em;
     }
     .list {
@@ -152,14 +152,14 @@ const TABS: ToolboxTab[] = ['math', 'cas', 'app', 'user', 'catalog'];
       align-items: center;
       gap: 0.5em;
       padding: 0.2em 0.5em;
-      border-bottom: 1px solid #dde4df;
+      border-bottom: 1px solid var(--lcd-line);
       cursor: pointer;
     }
     li.cur {
-      background: #ffe2d8;
+      background: var(--lcd-cur);
     }
     li.empty {
-      color: #5a6c67;
+      color: var(--lcd-muted);
       cursor: default;
     }
     .name {
@@ -167,7 +167,7 @@ const TABS: ToolboxTab[] = ['math', 'cas', 'app', 'user', 'catalog'];
     }
     .detail {
       margin-left: auto;
-      color: #3d514c;
+      color: var(--lcd-muted);
       font-size: 0.85em;
       overflow: hidden;
       white-space: nowrap;
@@ -175,7 +175,7 @@ const TABS: ToolboxTab[] = ['math', 'cas', 'app', 'user', 'catalog'];
       max-width: 60%;
     }
     .more {
-      color: #5a6c67;
+      color: var(--lcd-muted);
     }
     .chars {
       display: grid;
@@ -186,14 +186,14 @@ const TABS: ToolboxTab[] = ['math', 'cas', 'app', 'user', 'catalog'];
     }
     .ch {
       min-height: 1.8em;
-      border: 1px solid #c9d5d1;
+      border: 1px solid var(--lcd-line);
       border-radius: 0.2em;
-      background: #fff;
+      background: var(--lcd-bg);
       font: inherit;
       cursor: pointer;
     }
     .ch.cur {
-      outline: 2px solid #e8603f;
+      outline: 2px solid var(--lcd-accent);
     }
     .help {
       padding: 0.4em 0.6em;

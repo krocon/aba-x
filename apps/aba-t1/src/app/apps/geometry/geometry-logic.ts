@@ -644,7 +644,7 @@ export function fmtValue(s: Shape, f: NumberFormat): string {
 
 // --- colours --------------------------------------------------------------------------------
 
-export const PALETTE = ['#d1495b', '#2e6fba', '#2a9d8f', '#7b4fb0', '#e8603f', '#1b3533'];
+export const PALETTE = ['#ff6b6b', '#5aa0f0', '#4fd1a5', '#c792ea', '#f28c28', '#e6e6e6'];
 
 export function colorOf(o: GeoObject, colors: Record<string, string>): string {
   const own = colors[o.name];

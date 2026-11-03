@@ -138,14 +138,14 @@ const plain = (x: number) => formatReal(x, { mode: 'standard', digits: 0, decima
       border-radius: 0.2em;
     }
     .row.cur {
-      background: #ffe2d8;
+      background: var(--lcd-cur);
     }
     .lbl {
       white-space: nowrap;
-      color: #10201d;
+      color: var(--lcd-text);
     }
     .mark {
-      color: #b42318;
+      color: var(--lcd-error);
       font-size: 0.7em;
       vertical-align: middle;
     }
@@ -155,10 +155,10 @@ const plain = (x: number) => formatReal(x, { mode: 'standard', digits: 0, decima
       width: 55%;
       font: inherit;
       text-align: right;
-      border: 1px solid #c9d5d1;
+      border: 1px solid var(--lcd-line);
       border-radius: 0.2em;
-      background: #fff;
-      color: #10201d;
+      background: var(--lcd-bg);
+      color: var(--lcd-text);
       box-sizing: border-box;
     }
     output {
@@ -170,19 +170,19 @@ const plain = (x: number) => formatReal(x, { mode: 'standard', digits: 0, decima
       white-space: nowrap;
     }
     input.calc {
-      color: #1a5f7a;
+      color: #7cc8f0;
       font-style: italic;
     }
     .msg {
       margin: 0;
       padding: 0.1em 0.5em;
-      border-top: 1px solid #dde4df;
-      background: #fff;
+      border-top: 1px solid var(--lcd-line);
+      background: var(--lcd-bg);
       font-size: 0.85em;
-      color: #10201d;
+      color: var(--lcd-text);
     }
     .msg.err {
-      color: #b42318;
+      color: var(--lcd-error);
     }
   `,
 })

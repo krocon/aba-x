@@ -113,14 +113,14 @@ export class SurfacePlot implements OnInit, OnDestroy {
     const { ctx, width, height } = frame;
     const r = s.range3!;
     const cam = s.camera!;
-    ctx.fillStyle = '#ffffff';
+    ctx.fillStyle = '#000000';
     ctx.fillRect(0, 0, width, height);
     const size = { width, height };
     const p = project(r, cam, size);
     const all = list.flatMap((sf) => faces(sampleSurface(sf.f, r, s.gridN ?? 30), r, cam, size));
     all.sort((a, b) => b.depth - a.depth);
     ctx.lineWidth = 0.5;
-    ctx.strokeStyle = 'rgba(16,32,29,0.35)';
+    ctx.strokeStyle = 'rgba(255,255,255,0.3)';
     for (const f of all) {
       ctx.beginPath();
       f.points.forEach((q, k) => (k ? ctx.lineTo(q.sx, q.sy) : ctx.moveTo(q.sx, q.sy)));
@@ -134,7 +134,7 @@ export class SurfacePlot implements OnInit, OnDestroy {
       const c = [r.xmin, r.xmax];
       const d = [r.ymin, r.ymax];
       const e = [r.zmin, r.zmax];
-      ctx.strokeStyle = '#5a6c67';
+      ctx.strokeStyle = '#9aa0a6';
       ctx.lineWidth = 1;
       const edge = (a: [number, number, number], b: [number, number, number]) => {
         const pa = p(...a);
@@ -147,7 +147,7 @@ export class SurfacePlot implements OnInit, OnDestroy {
       for (const y of d) for (const z of e) edge([c[0], y, z], [c[1], y, z]);
       for (const x of c) for (const z of e) edge([x, d[0], z], [x, d[1], z]);
       for (const x of c) for (const y of d) edge([x, y, e[0]], [x, y, e[1]]);
-      ctx.fillStyle = '#3d514c';
+      ctx.fillStyle = '#b9bec4';
       ctx.font = '11px system-ui, sans-serif';
       const lx = p(r.xmax, r.ymin, r.zmin);
       const ly = p(r.xmin, r.ymax, r.zmin);
@@ -271,11 +271,11 @@ export class SurfacePlot implements OnInit, OnDestroy {
     th,
     td {
       padding: 0.1em 0.3em;
-      border-bottom: 1px solid #dde4df;
+      border-bottom: 1px solid var(--lcd-line);
       text-align: right;
     }
     thead th {
-      background: #e8eeea;
+      background: var(--lcd-head);
       position: sticky;
       top: 0;
       border-bottom: 3px solid transparent;

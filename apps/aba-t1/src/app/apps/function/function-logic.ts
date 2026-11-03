@@ -12,16 +12,16 @@ export const FN_NAMES = ['F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F7', 'F8', 'F9', '
 
 /** Curve colours (distinct in light and dark, colour-blind friendly order). */
 export const FN_COLORS = [
-  '#d1495b',
-  '#00798c',
-  '#edae49',
-  '#3d5a80',
-  '#6a4c93',
-  '#2a9d8f',
-  '#e76f51',
-  '#8d6e63',
-  '#577590',
-  '#43aa8b',
+  '#ff6b6b',
+  '#36c5d6',
+  '#f2c14e',
+  '#7aa2ff',
+  '#c792ea',
+  '#4fd1a5',
+  '#ff9f6b',
+  '#d7a98c',
+  '#8fb3d9',
+  '#6ee7b7',
 ];
 
 export interface FunctionDef {

@@ -35,20 +35,20 @@ import { TEMPLATES } from './templates';
       padding: 0.4em;
       align-content: start;
       overflow: auto;
-      background: #f5f7f2;
+      background: var(--lcd-head);
     }
     .tpl {
       min-height: 2.6em;
-      border: 1px solid #c9d5d1;
+      border: 1px solid var(--lcd-line);
       border-radius: 0.3em;
-      background: #fff;
+      background: var(--lcd-bg);
       color: inherit;
       font: inherit;
       font-size: 0.85em;
       cursor: pointer;
     }
     .tpl.cur {
-      outline: 2px solid #e8603f;
+      outline: 2px solid var(--lcd-accent);
     }
   `,
 })
