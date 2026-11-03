@@ -23,6 +23,7 @@ Der Ordner ist rein statisch (kein Server): `index.html`, Bundles, `ngsw-worker.
 | Ziel | Schritte |
 |---|---|
 | **krocon.de/products/aba-x1** (gewählt) | `pnpm build:web`, den **Inhalt** von `dist/aba-x1/web/browser/` nach `/products/aba-x1/` hochladen (also `…/products/aba-x1/index.html`, `…/ngsw-worker.js` usw.); kein Fallback auf `index.html` nötig (keine Routen) |
+| **krocon.de/products/aba-t1** | `pnpm t1:build:web`, den **Inhalt** von `dist/aba-t1/web/browser/` nach `/products/aba-t1/` hochladen – **nicht** `dist/aba-t1/desktop/` (dort steht `<base href="/">`, alle Bundles laufen auf 404). Prüfen: `index.html` muss `<base href="/products/aba-t1/">` enthalten |
 | GitHub Pages (Alternative) | `docs/ci/pages.yml` (baut mit `--base-href /aba-x/`) nach `.github/workflows/` kopieren, Pages auf „GitHub Actions“ stellen, Workflow manuell starten |
 
 ## Server-Einstellungen

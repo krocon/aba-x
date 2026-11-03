@@ -1,6 +1,6 @@
 {
   "name": "aba-t1",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "description": "ABA-T1 – touch graphing calculator with CAS, apps and a programming language for desktop (Tauri 2) and web",
   "license": "MIT",

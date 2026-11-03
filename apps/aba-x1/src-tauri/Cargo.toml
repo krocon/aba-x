@@ -1,6 +1,6 @@
 [package]
 name = "aba-x"
-version = "0.1.1"
+version = "1.0.0"
 description = "ABA-X1 – scientific & symbolic calculator (Tauri 2 + Angular)"
 authors = ["krocon"]
 license = "MIT"
