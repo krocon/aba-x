@@ -23,6 +23,18 @@ export interface SetupField {
   set: (v: number) => string | null;
 }
 
+/** A choice (checkbox-like on/off or a few options) instead of a number. */
+export interface SetupChoice {
+  label: string;
+  choices: { value: string; label: string }[];
+  value: () => string;
+  set: (v: string) => void;
+}
+
+export type SetupItem = SetupField | SetupChoice;
+
+const isChoice = (f: SetupItem): f is SetupChoice => 'choices' in f;
+
 /**
  * Setup view of an app (prompt 033): number fields. ↑↓ choose a field, typing replaces its value,
  * Enter stores it (any expression, e.g. 2π), Esc leaves the setup.
@@ -33,16 +45,30 @@ export interface SetupField {
   template: `
     <div class="form">
       @for (f of fields(); track f.label; let i = $index) {
-        <label class="row" [class.cur]="cursor() === i">
+        <div class="row" [class.cur]="cursor() === i">
           <span>{{ f.label }}</span>
-          <input
-            type="text"
-            spellcheck="false"
-            [value]="show(f.value())"
-            (focus)="cursor.set(i)"
-            (keydown.enter)="commit(i, $any($event.target).value)"
-          />
-        </label>
+          @if (choice(f); as c) {
+            <select
+              [attr.aria-label]="f.label"
+              [value]="c.value()"
+              (focus)="cursor.set(i)"
+              (change)="c.set($any($event.target).value)"
+            >
+              @for (o of c.choices; track o.value) {
+                <option [value]="o.value" [selected]="o.value === c.value()">{{ o.label }}</option>
+              }
+            </select>
+          } @else {
+            <input
+              type="text"
+              spellcheck="false"
+              [attr.aria-label]="f.label"
+              [value]="show(num(f).value())"
+              (focus)="cursor.set(i)"
+              (keydown.enter)="commit(i, $any($event.target).value)"
+            />
+          }
+        </div>
       }
       @if (message()) {
         <p class="msg" role="alert">{{ message() }}</p>
@@ -65,7 +91,8 @@ export interface SetupField {
     .row.cur {
       background: #ffe2d8;
     }
-    input {
+    input,
+    select {
       width: 45%;
       font: inherit;
       text-align: right;
@@ -82,7 +109,7 @@ export interface SetupField {
 })
 export class SetupForm implements OnInit, OnDestroy {
   readonly title = input('Setup');
-  readonly fields = input<SetupField[]>([]);
+  readonly fields = input<SetupItem[]>([]);
   readonly close = input<() => void>(() => undefined);
   private readonly home = inject(HomeStore);
   private readonly device = inject(DeviceStore);
@@ -120,22 +147,43 @@ export class SetupForm implements OnInit, OnDestroy {
     this.pop?.();
   }
 
+  protected choice(f: SetupItem): SetupChoice | null {
+    return isChoice(f) ? f : null;
+  }
+
+  protected num(f: SetupItem): SetupField {
+    return f as SetupField;
+  }
+
+  /** ←→ / Enter on a choice: the next option. */
+  private cycle(i: number, step: 1 | -1): boolean {
+    const f = this.fields()[i];
+    if (!f || !isChoice(f)) return false;
+    const k = f.choices.findIndex((c) => c.value === f.value());
+    f.set(f.choices[(k + step + f.choices.length) % f.choices.length].value);
+    return true;
+  }
+
   protected show(v: number): string {
     return formatReal(v, { mode: 'standard', digits: 0, decimal: '.' });
   }
 
   private input(i: number): HTMLInputElement | null {
-    return (this.host.nativeElement as HTMLElement).querySelectorAll('input')[i] ?? null;
+    const rows = (this.host.nativeElement as HTMLElement).querySelectorAll('.row');
+    const el = rows[i]?.querySelector('input, select');
+    return el instanceof HTMLInputElement ? el : null;
   }
 
   protected commit(i: number, src: string): void {
+    const f = this.fields()[i];
+    if (!f || isChoice(f)) return;
     const p = parseText(src);
     const r = p.ok ? evaluateValue(p.value, this.home.scope()) : p;
     if (!r.ok || r.value.kind !== 'real') {
       this.message.set(r.ok ? 'a real number is needed' : r.error.message);
       return;
     }
-    const err = this.fields()[i].set(r.value.v);
+    const err = f.set(r.value.v);
     this.message.set(err);
     if (!err) this.rocker('down');
   }
@@ -158,6 +206,7 @@ export class SetupForm implements OnInit, OnDestroy {
       return true;
     }
     if (p.id === 'enter') {
+      if (this.cycle(this.cursor(), 1)) return true;
       const el = this.input(this.cursor());
       if (el) this.commit(this.cursor(), el.value);
       return true;
@@ -179,6 +228,8 @@ export class SetupForm implements OnInit, OnDestroy {
     const n = this.fields().length;
     if (d === 'up') this.cursor.update((c) => (c + n - 1) % n);
     if (d === 'down') this.cursor.update((c) => (c + 1) % n);
+    if ((d === 'left' || d === 'right') && this.cycle(this.cursor(), d === 'right' ? 1 : -1))
+      return true;
     const el = this.input(this.cursor());
     el?.focus();
     el?.select();

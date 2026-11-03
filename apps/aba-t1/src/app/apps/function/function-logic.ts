@@ -29,12 +29,30 @@ export interface FunctionDef {
   on: boolean;
 }
 
+export type PlotMethod = 'adaptive' | 'segments' | 'dots';
+
+/** Plot setup options (prompt 034). */
+export interface PlotOptions {
+  grid: boolean;
+  axes: boolean;
+  labels: boolean;
+  method: PlotMethod;
+}
+
 export interface FunctionState {
   fns: FunctionDef[];
   view: Viewport;
   numStart: number;
   numStep: number;
+  plot: PlotOptions;
 }
+
+export const DEFAULT_PLOT: PlotOptions = {
+  grid: true,
+  axes: true,
+  labels: true,
+  method: 'adaptive',
+};
 
 export function initFunctionState(): FunctionState {
   return {
@@ -42,6 +60,7 @@ export function initFunctionState(): FunctionState {
     view: STANDARD_VIEW,
     numStart: 0,
     numStep: 1,
+    plot: DEFAULT_PLOT,
   };
 }
 

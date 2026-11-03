@@ -98,3 +98,14 @@ Apps-Taste (Alt+A): App-Bibliothek mit eigenen Symbolen; Wippe/Touch wählen, En
 Symb (F7), Plot (F8), Num (F9) und deren Einstellungen (⇧), ⇧Apps = Info-Notiz. Der Zustand jeder App (auch jeder
 Kopie) wird gespeichert. Erste App: **Funktion** (F1…F9, F0 mit Häkchen und Farbe, Plot mit Ziehen/Pinch/
 Doppeltippen/+−/Wippe, Tabelle mit Startwert/Schritt, Plot- und Tabellen-Einstellungen).
+
+## Funktionen-App (034)
+
+Plot: **Trace** (an/aus) folgt der gewählten Kurve (←→ ein Pixel, mit ⇧ zehn, ↑↓ wechselt die Kurve; ohne Trace
+freier Fadenkreuz-Cursor), **Zoom** (vergrößern/verkleinern, X/Y einzeln, quadratisch, Autoskalierung, dezimal,
+ganzzahlig, trigonometrisch, Standard, rückgängig), **Gehe zu** (X eingeben), **Fcn** (Nullstelle, Schnittpunkt,
+Steigung, Extremum – jeweils nächstgelegen zum Cursor im sichtbaren Bereich; Fläche mit Vorzeichen: Start am
+Cursor, zur zweiten Grenze gehen, Enter; Tangente gestrichelt), **Def.** (Definition in der Statuszeile),
+**Ansicht** bzw. View-Taste (geteilt Grafik + Tabelle, Autoskalierung, Dezimal, Ganzzahl, Trig, PNG-Export).
+Tippen setzt den Cursor, Ziehen verschiebt, Pinch und +/− zoomen, Doppeltippen vergrößert. Plot-Einstellungen:
+Bereich, Raster, Achsen, Beschriftung, Zeichenmethode (adaptiv mit Sprungerkennung, Segmente, Punkte).

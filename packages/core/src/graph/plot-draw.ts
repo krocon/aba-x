@@ -39,14 +39,15 @@ function label(x: number, step: number): string {
 export function drawAxes(
   f: PlotFrame,
   p: PlotPalette = LIGHT_PLOT,
-  opt = { grid: true, labels: true },
+  opt: { grid?: boolean; labels?: boolean; axes?: boolean } = {},
 ): void {
+  const { grid = true, labels = true, axes = true } = opt;
   const { ctx, width, height, view: v } = f;
   ctx.fillStyle = p.bg;
   ctx.fillRect(0, 0, width, height);
   const stepX = niceStep(v.xmax - v.xmin, width / 55);
   const stepY = niceStep(v.ymax - v.ymin, height / 40);
-  if (opt.grid) {
+  if (grid) {
     ctx.strokeStyle = p.grid;
     ctx.lineWidth = 1;
     ctx.beginPath();
@@ -65,15 +66,17 @@ export function drawAxes(
   // axes (at 0 if visible, else at the edge)
   const ax = Math.round(Math.min(Math.max(sy(f, 0), 0), height - 1)) + 0.5;
   const ay = Math.round(Math.min(Math.max(sx(f, 0), 0), width - 1)) + 0.5;
-  ctx.strokeStyle = p.axis;
-  ctx.lineWidth = 1;
-  ctx.beginPath();
-  ctx.moveTo(0, ax);
-  ctx.lineTo(width, ax);
-  ctx.moveTo(ay, 0);
-  ctx.lineTo(ay, height);
-  ctx.stroke();
-  if (!opt.labels) return;
+  if (axes) {
+    ctx.strokeStyle = p.axis;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(0, ax);
+    ctx.lineTo(width, ax);
+    ctx.moveTo(ay, 0);
+    ctx.lineTo(ay, height);
+    ctx.stroke();
+  }
+  if (!labels) return;
   ctx.fillStyle = p.label;
   ctx.font = `${Math.max(9, Math.round(height / 22))}px system-ui, sans-serif`;
   ctx.textBaseline = 'top';

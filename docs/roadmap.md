@@ -30,6 +30,7 @@
 | 031 | Einheiten (≈ 85, Präfixe, Temperaturen), Konstanten CODATA 2022, Basis-Ganzzahlen | ✅ 03.11.2026 |
 | 032 | Listen, Matrizen, lineare Algebra (LU, RREF, Eigenwerte), Katalog + Tabelleneditor | ✅ 03.11.2026 |
 | 033 | App-Rahmen (Bibliothek, Symb/Plot/Num/Setups/Info, Kopien), PlotCanvas in `@aba/core` | ✅ 03.11.2026 |
+| 034 | Funktionen-App: Trace, Zoom-Menü, Fcn-Analyse, Gehe zu, geteilte Ansicht, PNG, Plot-Optionen | ✅ 03.11.2026 |
 
 ## Was funktioniert
 

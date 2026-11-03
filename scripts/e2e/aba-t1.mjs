@@ -176,20 +176,26 @@ export function t1Scenarios({ axeSource }) {
       await keys('enter'); // edit F1
       await page.waitForSelector('app-function-symb math-field');
       await page.click('app-function-symb math-field');
-      await page.keyboard.type('X^2');
+      await page.keyboard.type('X^2-4');
       await page.keyboard.press('Enter');
       await page.waitForFunction(() =>
         document.querySelector('app-function-symb .def')?.textContent.includes('X'),
       );
-      await keys('plot');
-      await page.waitForSelector('app-function-plot canvas');
       await keys('num');
       await page.waitForFunction(
         () =>
           [...document.querySelectorAll('app-function-num tbody tr')][2]?.textContent.replace(
             /\s+/g,
             '',
-          ) === '24',
+          ) === '20',
+      );
+      await keys('plot');
+      await page.waitForSelector('app-function-plot canvas');
+      await page.click('app-t1-device .mb:nth-child(4)'); // Fcn
+      await page.waitForSelector('app-plot-menu li');
+      await keys('enter'); // Root
+      await page.waitForFunction(() =>
+        /X=-?2\b/.test(document.querySelector('app-function-plot .bar')?.textContent ?? ''),
       );
       await keys('home');
       await page.waitForSelector('app-home-view math-field');
