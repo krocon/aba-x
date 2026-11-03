@@ -24,6 +24,7 @@ import { type HistoryEntry, inputLatex, resultLatex, resultText, valueAsInput } 
 import { HomeStore } from './home-store';
 import { TemplatePalette, paletteMove } from './template-palette';
 import { TEMPLATES } from './templates';
+import { catalogShortcuts } from '../../core/latex/typed-names';
 
 type Overlay = 'none' | 'templates' | 'show' | 'confirmClear';
 
@@ -53,6 +54,7 @@ export class HomeView implements OnInit, OnDestroy {
   protected readonly overlay = signal<Overlay>('none');
   protected readonly templateIndex = signal(0);
   protected readonly templates = TEMPLATES;
+  protected readonly shortcuts = catalogShortcuts();
   protected readonly textbook = computed(() => this.settingsStore.settings().entry !== 'algebraic');
   protected readonly rows = computed(() => {
     const s = this.settingsStore.settings();

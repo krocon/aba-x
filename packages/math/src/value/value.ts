@@ -28,7 +28,19 @@ export interface BasedInt {
   readonly base: 2 | 8 | 10 | 16;
 }
 
-export type Value = Real | Complex | Quantity | BasedInt;
+/** A list {1, 2, 3} (prompt 032); also a vector for dot, cross and matrix products. */
+export interface ListValue {
+  readonly kind: 'list';
+  readonly items: readonly Value[];
+}
+
+/** A real matrix (prompt 032). */
+export interface MatrixValue {
+  readonly kind: 'matrix';
+  readonly rows: readonly (readonly number[])[];
+}
+
+export type Value = Real | Complex | Quantity | BasedInt | ListValue | MatrixValue;
 
 export const real = (v: number): Real => ({ kind: 'real', v });
 export const complex = (re: number, im: number): Complex => ({ kind: 'complex', re, im });
@@ -56,11 +68,22 @@ export function normalize(v: Value): Value {
 export function asComplex(v: Value): Complex {
   if (v.kind === 'complex') return v;
   if (v.kind === 'int') return complex(Number(v.v), 0);
+  if (v.kind === 'list' || v.kind === 'matrix') return complex(NaN, NaN);
   return complex(v.v, 0);
 }
 
+export const list = (items: readonly Value[]): ListValue => ({ kind: 'list', items });
+export const matrix = (rows: readonly (readonly number[])[]): MatrixValue => ({
+  kind: 'matrix',
+  rows,
+});
+
 export function isFiniteValue(v: Value): boolean {
   switch (v.kind) {
+    case 'list':
+      return v.items.every(isFiniteValue);
+    case 'matrix':
+      return v.rows.every((r) => r.every(Number.isFinite));
     case 'complex':
       return Number.isFinite(v.re) && Number.isFinite(v.im);
     case 'int':

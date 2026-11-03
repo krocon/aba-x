@@ -60,6 +60,8 @@ const SHIFT: Record<string, EditAction> = {
   d3: ins('\\pi', 'pi'),
   d6: ins('\\le', '<='),
   d9: ins('!'),
+  d8: ins('\\lbrace #0\\rbrace', '{'),
+  d5: ins('\\left[#0\\right]', '['),
   div: ins('#@^{-1}', '^-1'),
   add: ins('\\mathrm{Ans}', 'Ans'),
   bksp: { kind: 'command', command: 'deleteForward' },

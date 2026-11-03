@@ -12,6 +12,7 @@ import { integrateAdaptive } from '../numeric/quadrature';
 import { brent } from '../numeric/roots';
 import { type MathResult, fail, ok } from '../result';
 import type { CasValue, Solutions, SystemSolution } from './engine';
+import * as LA from '../linalg/linalg';
 import * as Z from './integer';
 import { NerdamerEngine, accept, run } from './nerdamer-engine';
 import { fromNerdamer, splitList, toNerdamer } from './nerdamer-syntax';
@@ -41,6 +42,9 @@ export const CAS_COMMANDS = [
   'divisors',
   'iquo',
   'irem',
+  'det',
+  'inv',
+  'trn',
 ] as const;
 
 export type CasCommand = (typeof CAS_COMMANDS)[number];
@@ -244,6 +248,10 @@ function command(name: CasCommand, args: readonly Expr[]): MathResult<CasOutput>
       const r = Z.divisors(n.value);
       return r.ok ? ok({ kind: 'list', items: r.value.map((x) => exact(num(x))) }) : r;
     }
+    case 'det':
+    case 'inv':
+    case 'trn':
+      return matrixCommand(name, a);
     case 'iquo':
     case 'irem': {
       const x = intArg(a, name);
@@ -480,5 +488,73 @@ function nsolve(eq: Expr, vArg?: Expr, g1?: Expr, g2?: Expr): MathResult<CasOutp
   return ok({
     kind: 'value',
     value: { expr: num(r.value.root), approximate: true, verified: true },
+  });
+}
+
+/** Exact det/inverse/transpose of a matrix with symbols (Nerdamer), checked at sample points. */
+function matrixCommand(name: 'det' | 'inv' | 'trn', a: Expr): MathResult<CasOutput> {
+  if (a.type !== 'matrix') return fail('domain', `${name} needs a matrix`);
+  const n = a.rows.length;
+  if (name === 'trn') {
+    const t: Expr = { type: 'matrix', rows: a.rows[0].map((_, j) => a.rows.map((r) => r[j])) };
+    return ok({ kind: 'value', value: exact(t) });
+  }
+  if (a.rows.some((r) => r.length !== n)) return fail('domain', `${name} needs a square matrix`);
+  const src = `matrix(${a.rows.map((r) => `[${r.map(toNerdamer).join(', ')}]`).join(', ')})`;
+  const t = run(() => NERD(name === 'det' ? `determinant(${src})` : `invert(${src})`).text());
+  if (!t.ok) return t;
+  // sample the free symbols and compare with numerical linear algebra
+  const names = [...new Set(a.rows.flat().flatMap((x) => [...freeSymbols(x)]))].filter(
+    (s) => !['pi', 'e', 'i', 'inf'].includes(s),
+  );
+  const samples = [0.37, 1.21, -0.83, 2.4];
+  const numeric = (e: Expr, vars: Map<string, number>) => {
+    const r = evaluateNumeric(e, { variables: vars });
+    return r.ok ? r.value : NaN;
+  };
+  if (name === 'det') {
+    const d = fromNerdamer(t.value);
+    if (!d.ok) return d;
+    let agreed = 0;
+    for (let k = 0; k < samples.length; k++) {
+      const vars = new Map(names.map((s, j) => [s, samples[(k + j) % samples.length] + j * 0.013]));
+      const m = a.rows.map((r) => r.map((x) => numeric(x, vars)));
+      const ref = LA.det(m);
+      const got = numeric(d.value.expr, vars);
+      if (!ref.ok || !Number.isFinite(got) || m.flat().some((x) => !Number.isFinite(x))) continue;
+      if (!close(ref.value, got, 1e-9))
+        return fail('unsupported', 'the CAS determinant failed the check');
+      agreed++;
+    }
+    return ok({ kind: 'value', value: { ...d.value, verified: agreed > 0 } });
+  }
+  // inverse: "matrix([..], [..])"
+  const inner = /^matrix\((.*)\)$/s.exec(t.value.trim());
+  if (!inner) return fail('unsupported', `cannot read the CAS result "${t.value}"`);
+  const rows: Expr[][] = [];
+  for (const row of splitList(`[${inner[1]}]`)) {
+    const cells: Expr[] = [];
+    for (const c of splitList(row)) {
+      const p = fromNerdamer(c);
+      if (!p.ok) return p;
+      cells.push(p.value.expr);
+    }
+    rows.push(cells);
+  }
+  let agreed = 0;
+  for (let k = 0; k < samples.length; k++) {
+    const vars = new Map(names.map((s, j) => [s, samples[(k + j) % samples.length] + j * 0.013]));
+    const m = a.rows.map((r) => r.map((x) => numeric(x, vars)));
+    const inv = rows.map((r) => r.map((x) => numeric(x, vars)));
+    if ([...m.flat(), ...inv.flat()].some((x) => !Number.isFinite(x))) continue;
+    const prod = LA.multiply(m, inv);
+    if (!prod.ok) return prod;
+    const okI = prod.value.every((r, i) => r.every((x, j) => close(x, i === j ? 1 : 0, 1e-8)));
+    if (!okI) return fail('unsupported', 'the CAS inverse failed the check');
+    agreed++;
+  }
+  return ok({
+    kind: 'value',
+    value: { expr: { type: 'matrix', rows }, approximate: false, verified: agreed > 0 },
   });
 }

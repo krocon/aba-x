@@ -46,9 +46,8 @@
 .in,
 .out {
   max-width: 100%;
-  overflow-x: auto;
-  overflow-y: hidden;
-  scrollbar-width: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .in {
   align-self: flex-start;

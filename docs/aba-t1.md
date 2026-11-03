@@ -83,3 +83,10 @@ Abdeckung: [`mathematics/cas-aba-t1.md`](mathematics/cas-aba-t1.md). Markierunge
 ⇧Vorlage (Units): Einheiten nach 17 Kategorien und Konstanten (CODATA 2022) – Einfügen als `\mathrm{\_km}` bzw.
 Wert × Einheit. ⇧− (Base): Literale `#…h/b/o/d` und Bit-Funktionen. Einstellungen: Ganzzahl-Basis, Wortbreite,
 Vorzeichen. Details: [`mathematics/units.md`](mathematics/units.md).
+
+## Listen und Matrizen (032)
+
+⇧7 Listenkatalog (L0–L9), ⇧4 Matrixkatalog (M0–M9): Enter öffnet den Tabelleneditor (Wippe bewegt, Eingabe +
+Enter speichert und rückt weiter, über das Ende hinaus wächst die Tabelle; Menü: Bearb., +Zeile, −Zeile, +Spalte,
+−Spalte, OK). ⇧8 `{ }`, ⇧5 `[ ]`. Getippte Katalogwörter (`sumlist(`, `det(`) und Namen `L1`, `M1` werden erkannt;
+dafür ersetzen Start- und CAS-Ansicht MathLives eigene Kürzel. Details: [`mathematics/linalg.md`](mathematics/linalg.md).

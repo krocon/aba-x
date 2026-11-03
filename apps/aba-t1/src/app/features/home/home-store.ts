@@ -116,6 +116,14 @@ export class HomeStore {
     this.save();
   }
 
+  /** Deletes a variable (list/matrix catalogue). */
+  remove(name: string): void {
+    const vars = new Map(this.variables());
+    vars.delete(name);
+    this.variables.set(vars);
+    this.save();
+  }
+
   /** On: abandons a running evaluation. */
   cancel(): void {
     if (!this.busy()) return;

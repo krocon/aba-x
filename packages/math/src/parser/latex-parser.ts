@@ -277,7 +277,11 @@ class LatexLexer {
     if (n === 'sum' || n === 'prod') return this.series(r, i, to, push);
     if (n === 'lim') return this.limit(r, i, to, push);
     if (n === 'begin') return this.matrix(r, i, to, push);
-    if (n === '{' || n === 'lbrace') this.err('unsupported', 'sets are not supported', r);
+    if (n === '{' || n === 'lbrace' || n === '}' || n === 'rbrace') {
+      // \lbrace 1,2 \rbrace: a list (prompt 032)
+      push({ k: 'op', v: n === '{' || n === 'lbrace' ? '[' : ']', s: r.s, e: r.e });
+      return i + 1;
+    }
     if (n === '#') return this.based(r, i, to, push);
     if (
       n === 'mathrm' ||
@@ -452,6 +456,13 @@ class LatexLexer {
       if (x.name === 'left') depth++;
       if (x.name === 'right' && --depth === 0) {
         const close = this.delimiter(j + 1);
+        if (open === '{' && close === '{') {
+          // \left\{1,2\right\} is a list (prompt 032), read like [1, 2]
+          push({ k: 'op', v: '[', s: r.s, e: r.e });
+          for (const t of this.tokens(i + 2, j).slice(0, -1)) push(t);
+          push({ k: 'op', v: ']', s: x.s, e: this.raw[j + 1].e });
+          return j + 2;
+        }
         if ((open === '[' && close === ']') || (open === '(' && close === ')')) {
           // hand the brackets to the Pratt parser: \left[1,2\right] is a list, \left(a,b\right)
           // an argument list after a function
@@ -476,7 +487,7 @@ class LatexLexer {
     if (d?.t === 'char' && (d.c === ')' || d.c === ']')) return d.c;
     if (d?.t === 'cmd' && (d.name === 'vert' || d.name === 'lvert' || d.name === 'rvert'))
       return '|';
-    if (d?.t === 'cmd' && (d.name === '{' || d.name === '}' || d.name === 'lbrace')) return '{';
+    if (d?.t === 'cmd' && ['{', '}', 'lbrace', 'rbrace'].includes(d.name)) return '{';
     return this.err('syntax', 'unknown delimiter', d);
   }
 

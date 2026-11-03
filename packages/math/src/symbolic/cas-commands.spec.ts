@@ -81,6 +81,14 @@ describe('CAS commands', () => {
     expect(cas('ifactor(2.5)')).toMatch(/^domain/);
   });
 
+  it('matrices: exact det, inverse and transpose', () => {
+    expect(at(cas('det([[a, b], [c, d]])'), { a: 1, b: 2, c: 3, d: 4 })).toBeCloseTo(-2);
+    const inv = cas('inv([[1, 2], [3, 4]])');
+    expect(typeof inv !== 'string' && inv.kind === 'value' && inv.value.expr.type).toBe('matrix');
+    expect(text(cas('trn([[1, 2], [3, 4]])'))).toBe('[[1, 3], [2, 4]]');
+    expect(cas('det([[1, 2, 3]])')).toMatch(/^domain/);
+  });
+
   it('variables and user functions are inlined', () => {
     const scope: CasScope = {
       variables: new Map<string, Expr>([['a', expr('3')]]),

@@ -125,6 +125,46 @@ export function t1Scenarios({ axeSource }) {
       await page.keyboard.press('Enter');
       await lastResult(page, '#100h');
     },
+    async listsAndMatrices(page) {
+      const keys = async (...ks) => {
+        for (const k of ks) await page.click(`.key[data-key="${k}"]`);
+      };
+      const rocker = async (d) => {
+        await page.dispatchEvent(`.rk.${d}`, 'pointerdown');
+        await page.dispatchEvent(`.rk.${d}`, 'pointerup');
+      };
+      const ok = () => page.click('app-t1-device .mb:nth-child(6)');
+      // L0 = {1, 2, 3} in the list editor
+      await keys('shift', 'd7');
+      await page.waitForSelector('app-data-catalog');
+      await keys('d0', 'enter');
+      await page.waitForSelector('app-grid-editor');
+      await keys('d1', 'enter', 'd2', 'enter', 'd3', 'enter');
+      await ok();
+      await ok();
+      await page.waitForSelector('app-home-view math-field');
+      await page.click('app-home-view math-field');
+      await page.keyboard.type('sumlist(L0)');
+      await page.keyboard.press('Enter');
+      await lastResult(page, '6');
+      // M1 = [[1, 2], [3, 4]] in the matrix editor
+      await keys('shift', 'd4');
+      await page.waitForSelector('app-data-catalog');
+      await keys('d1', 'enter');
+      await page.waitForSelector('app-grid-editor');
+      await keys('d1', 'enter', 'd2', 'enter');
+      await rocker('down');
+      await rocker('left');
+      await rocker('left');
+      await keys('d3', 'enter', 'd4', 'enter');
+      await ok();
+      await ok();
+      await page.waitForSelector('app-home-view math-field');
+      await page.click('app-home-view math-field');
+      await page.keyboard.type('det(M1)');
+      await page.keyboard.press('Enter');
+      await lastResult(page, '-2');
+    },
     async keypad(page) {
       const r = await page.$$eval('app-t1-device .key', (keys) => ({
         count: keys.length,

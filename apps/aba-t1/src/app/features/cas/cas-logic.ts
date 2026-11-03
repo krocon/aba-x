@@ -16,31 +16,21 @@ import { evaluateValue } from '@aba/math/value/evaluate-value';
 import { type DisplayOptions, formatValue, valueLatex } from '@aba/math/value/format';
 import type { Value } from '@aba/math/value/value';
 import { STO_LATEX } from '../home/home-logic';
+import { markCommands, markSlots } from '../../core/latex/typed-names';
+
+export { markCommands };
 
 export type CasStatement =
   | { kind: 'expr'; expr: Expr }
   | { kind: 'assign'; name: string; expr: Expr }
   | { kind: 'define'; name: string; params: string[]; body: Expr };
 
-/**
- * Command words typed letter by letter (`solve(` in MathLive is s·o·l·v·e) become
- * `\operatorname{solve}` when a parenthesis follows – names longer than one letter only.
- */
-export function markCommands(src: string, names: Iterable<string>): string {
-  // MathLive writes an inline shortcut \operatorname{solve} back as \operatorname{\mathrm{solve}}
-  src = src.replace(/\\operatorname\{\\mathrm\{([^{}]*)\}\}/g, '\\operatorname{$1}');
-  const long = [...names].filter((n) => n.length > 1).sort((a, b) => b.length - a.length);
-  if (!long.length) return src;
-  const re = new RegExp(`(?<![\\\\a-zA-Z{])(${long.join('|')})(?=\\s*(?:\\(|\\\\left\\())`, 'g');
-  return src.replace(re, '\\operatorname{$1}');
-}
-
 export function parseCasInput(
   src: string,
   userFunctions: ReadonlySet<string>,
 ): MathResult<CasStatement> {
   const functions = new Set<string>([...CAS_COMMANDS, ...userFunctions]);
-  src = markCommands(src, functions);
+  src = markSlots(markCommands(src, functions));
   const at = src.lastIndexOf(STO_LATEX);
   if (at >= 0) {
     // value ▶ name

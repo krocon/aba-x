@@ -92,6 +92,8 @@ export class MathField implements OnInit, OnDestroy {
   readonly keyHook = input<(e: KeyboardEvent) => boolean>(() => false);
   /** Typed words that become LaTeX (`factor` → `\operatorname{factor}`), on top of MathLive's. */
   readonly shortcuts = input<Record<string, string>>({});
+  /** replace MathLive's own inline shortcuts (`sum` would otherwise win over `sumlist`) */
+  readonly replaceShortcuts = input(false);
   readonly changed = output<string>();
   readonly ready = output<void>();
   readonly state = signal<'loading' | 'ready' | 'failed'>('loading');
@@ -114,7 +116,8 @@ export class MathField implements OnInit, OnDestroy {
       this.host().nativeElement.appendChild(field);
       // options of MathLive can only be set once the field is mounted
       const extra = this.shortcuts();
-      if (Object.keys(extra).length) {
+      if (this.replaceShortcuts()) field.inlineShortcuts = { ...extra };
+      else if (Object.keys(extra).length) {
         field.inlineShortcuts = { ...(field.inlineShortcuts ?? {}), ...extra };
       }
       this.field = field;

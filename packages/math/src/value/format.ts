@@ -121,6 +121,9 @@ export function formatValue(v: Value, o: DisplayOptions): string {
   if (v.kind === 'real') return realText(v.v, o.format);
   if (v.kind === 'unit') return `${realText(v.v, o.format)} ${unitText(v.u)}`;
   if (v.kind === 'int') return intText(v);
+  if (v.kind === 'list') return `{${v.items.map((x) => formatValue(x, o)).join(', ')}}`;
+  if (v.kind === 'matrix')
+    return `[${v.rows.map((r) => `[${r.map((x) => realText(x, o.format)).join(', ')}]`).join(', ')}]`;
   if (o.complexForm === 'polar') {
     const r = C.abs(v);
     return `${realText(r, o.format)}∠${realText(angleOf(v.re, v.im, o.angle), o.format)}`;
@@ -137,6 +140,13 @@ export function valueLatex(v: Value, o: DisplayOptions): string {
   if (v.kind === 'real') return realLatex(v.v, o.format);
   if (v.kind === 'unit') return `${realLatex(v.v, o.format)}\\,${unitText(v.u, true)}`;
   if (v.kind === 'int') return `\\#\\mathrm{${intText(v).slice(1)}}`;
+  if (v.kind === 'list') {
+    return `\\left\\lbrace ${v.items.map((x) => valueLatex(x, o)).join(',\\,')}\\right\\rbrace`;
+  }
+  if (v.kind === 'matrix') {
+    const body = v.rows.map((r) => r.map((x) => realLatex(x, o.format)).join('&')).join('\\\\');
+    return `\\begin{pmatrix}${body}\\end{pmatrix}`;
+  }
   if (o.complexForm === 'polar') {
     const r = C.abs(v);
     const t = angleOf(v.re, v.im, o.angle);
@@ -162,6 +172,10 @@ export function valueInput(v: Value): string {
       return intText(v);
     case 'unit':
       return `${n(v.v)}*${unitInput(v.u)}`;
+    case 'list':
+      return `{${v.items.map(valueInput).join(', ')}}`;
+    case 'matrix':
+      return `[${v.rows.map((r) => `[${r.map(n).join(', ')}]`).join(', ')}]`;
     case 'complex': {
       const im = `${n(Math.abs(v.im))}*i`;
       if (v.re === 0) return v.im < 0 ? `-${im}` : im;

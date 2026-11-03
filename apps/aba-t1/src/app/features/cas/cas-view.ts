@@ -19,6 +19,7 @@ import { I18n } from '../../core/i18n/i18n';
 import type { MenuButton } from '../device/t1-device';
 import { editFor } from '../home/home-keys';
 import { STO_LATEX } from '../home/home-logic';
+import { catalogShortcuts } from '../../core/latex/typed-names';
 import { TemplatePalette, paletteMove } from '../home/template-palette';
 import { TEMPLATES } from '../home/templates';
 import { CasStore } from './cas-store';
@@ -27,9 +28,7 @@ import { CasStore } from './cas-store';
  * Typed command names become one name (`\operatorname{ifactor}`) – otherwise MathLive's own shortcuts
  * turn parts of them into symbols (`or` → ∨ in “ifactor”).
  */
-const SHORTCUTS: Record<string, string> = Object.fromEntries(
-  CAS_COMMANDS.map((c) => [c, `\\operatorname{${c}}`]),
-);
+const SHORTCUTS: Record<string, string> = catalogShortcuts(CAS_COMMANDS);
 
 type Overlay = 'none' | 'templates' | 'confirmClear';
 
@@ -81,6 +80,7 @@ type Overlay = 'none' | 'templates' | 'confirmClear';
           [ariaLabel]="i18n.t('home.input')"
           [keyHook]="keyHook"
           [shortcuts]="shortcuts"
+          [replaceShortcuts]="true"
         />
       </div>
       @if (overlay() === 'templates') {
@@ -129,9 +129,8 @@ type Overlay = 'none' | 'templates' | 'confirmClear';
     .in,
     .out {
       max-width: 100%;
-      overflow-x: auto;
-      overflow-y: hidden;
-      scrollbar-width: none;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .out {
       align-self: flex-end;

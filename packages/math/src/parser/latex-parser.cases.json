@@ -68,7 +68,6 @@
     ["\\sqrt", "syntax"],
     ["\\sum_{k}^{n}k", "syntax"],
     ["1&2", "syntax"],
-    ["\\{1,2\\}", "unsupported"],
     ["x_", "syntax"],
     ["\\cdot10^{-3}", "syntax"]
   ]

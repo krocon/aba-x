@@ -92,9 +92,8 @@ import { RpnStore } from './rpn-store';
     .val {
       flex: 1;
       text-align: right;
-      overflow-x: auto;
-      overflow-y: hidden;
-      scrollbar-width: none;
+      overflow: hidden;
+      text-overflow: ellipsis;
       font-weight: 600;
     }
     .entry {

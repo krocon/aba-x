@@ -63,6 +63,7 @@ packages/math/src/           @aba/math – framework-frei (ESLint-Sperre), eigen
   value/                     Value (real/komplex …), evaluateValue (ABA-T1-Startansicht, delegiert Reelles), format
   rpn/                       RPN-Stack auf Values (ABA-T1)
   units/, integer/           Einheiten (_m, convert …) + Konstanten (CODATA 2022); Basis-Ganzzahlen #FFh (BigInt)
+  linalg/                    reelle lineare Algebra (LU, RREF, Inverse, Jacobi, Hessenberg-QR-Eigenwerte)
   worker/                    Protokoll + Host (CAS und `evaluate` im Web Worker)
 packages/core/               @aba/core – app-unabhängige Angular-Bausteine (nie aus apps/ importieren)
   src/platform|storage|files Fassaden (Web + Tauri); APP_IDENTITY, STORAGE_DB_NAME liefert die App
@@ -108,6 +109,9 @@ docs/                        architecture, roadmap, technical-evaluation, decisi
 - App-Crates brauchen `tauri-plugin-dialog` als direkte Abhängigkeit (sonst kennt `tauri-build` die Capabilities nicht).
 - Jedes Feature in **Desktop-App und Web-Build** prüfen (Master-Prompt §6.5).
 - MathLive: nur `latex` weiterverarbeiten (ASCII-Math ist verlustbehaftet); Fonts aus dem Bundle, kein CDN.
+  ABA-T1: getippte Wörter liefert MathLive als Einzelbuchstaben bzw. ersetzt sie durch eigene Kürzel (`sum` → Σ) –
+  Start/CAS ersetzen die Kürzelliste (`catalogShortcuts`, `replaceShortcuts`) und erkennen Namen mit
+  `core/latex/typed-names.ts`; MathLive schreibt `\operatorname{x}` als `\operatorname{\mathrm{x}}` (Parser normalisiert).
 - Nerdamer (ab 009): nur über den Adapter, Funktionen per Positivliste (`ln` ist dort unbekannt → falsches `0`).
 - Tauri-CSP: `dangerousDisableAssetCspModification: ["style-src"]` nicht entfernen, sonst fehlen alle
   Komponenten-Styles in der App.

@@ -14,6 +14,7 @@ import { type DisplayOptions, formatValue, valueInput, valueLatex } from '@aba/m
 import { toLatex } from '@aba/math/serializer';
 import type { Value } from '@aba/math/value/value';
 import type { T1Settings } from '../settings/settings-logic';
+import { catalogNames, markCommands, markSlots } from '../../core/latex/typed-names';
 
 export type InputKind = 'latex' | 'text';
 
@@ -40,6 +41,7 @@ export function parseHomeInput(
   functionNames: ReadonlySet<string> = new Set(),
 ): MathResult<HomeStatement> {
   const opts = { functions: functionNames };
+  if (kind === 'latex') src = markSlots(markCommands(src, [...catalogNames(), ...functionNames]));
   const sto = kind === 'latex' ? STO_LATEX : STO_TEXT;
   const at = src.lastIndexOf(sto);
   if (at >= 0) {

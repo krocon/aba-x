@@ -20,6 +20,9 @@ const SINGLE: Record<string, string> = {
   ')': ')',
   '[': '[',
   ']': ']',
+  // lists {1, 2, 3} (prompt 032) read like [1, 2, 3]
+  '{': '[',
+  '}': ']',
   ',': ',',
   '=': '=',
   '<': '<',

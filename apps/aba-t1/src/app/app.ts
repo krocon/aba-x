@@ -13,6 +13,8 @@ import { T1Device } from './features/device/t1-device';
 import { ShortcutsDialog } from './features/help/shortcuts-dialog';
 import { CasStore } from './features/cas/cas-store';
 import { CasView } from './features/cas/cas-view';
+import { DataCatalog } from './features/data/catalog-view';
+import { GridEditor } from './features/data/grid-editor';
 import { HomeStore } from './features/home/home-store';
 import { HomeView } from './features/home/home-view';
 import { RpnStore } from './features/rpn/rpn-store';
@@ -30,7 +32,17 @@ import { PopupView } from './features/toolbox/popup-view';
 @Component({
   selector: 'app-root',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [T1Device, ShortcutsDialog, HomeView, RpnView, SettingsView, CasView, PopupView],
+  imports: [
+    T1Device,
+    ShortcutsDialog,
+    HomeView,
+    RpnView,
+    SettingsView,
+    CasView,
+    PopupView,
+    DataCatalog,
+    GridEditor,
+  ],
   template: `
     <main>
       <h1 class="visually-hidden">ABA-T1</h1>
@@ -56,6 +68,15 @@ import { PopupView } from './features/toolbox/popup-view';
           }
           @case ('casSettings') {
             <app-settings-view kind="cas" />
+          }
+          @case ('lists') {
+            <app-data-catalog kind="list" />
+          }
+          @case ('matrices') {
+            <app-data-catalog kind="matrix" />
+          }
+          @case ('editor') {
+            <app-grid-editor />
           }
           @default {
             @if (rpnEntry()) {
@@ -128,6 +149,8 @@ export class App implements OnInit {
     this.device.onGlobal('vars', open('vars'));
     this.device.onGlobal('vars.shift', open('chars'));
     this.device.onGlobal('template.shift', open('units'));
+    this.device.onGlobal('d7.shift', () => this.nav.go('lists'));
+    this.device.onGlobal('d4.shift', () => this.nav.go('matrices'));
     this.device.onGlobal('sub.shift', open('base'));
     this.device.onGlobal('help', () =>
       this.popup.open('help', this.device.insertTarget(), {

@@ -8,6 +8,7 @@
 import type { Expr } from '../ast/nodes';
 import { type AngleMode, type UserFunction, evaluateNumeric } from '../numeric/evaluate';
 import { type MathErrorCode, type MathResult, fail, ok } from '../result';
+import { binaryC, callC } from './collections';
 import { C } from './complex';
 import {
   DEFAULT_INTEGER,
@@ -98,7 +99,9 @@ class ValueEvaluator {
       case 'neg': {
         const a = this.eval(e.arg, local);
         if (a.kind === 'unit') return { ...a, v: -a.v };
-        if (a.kind === 'int') return this.binary('-', real(0), a);
+        if (a.kind === 'int' || a.kind === 'list' || a.kind === 'matrix') {
+          return this.binary('*', real(-1), a);
+        }
         return a.kind === 'real' ? real(-a.v) : C.neg(a);
       }
       case 'post': {
@@ -106,6 +109,19 @@ class ValueEvaluator {
         if (a.kind === 'unit' && e.op === '%') return { ...a, v: a.v / 100 };
         if (a.kind === 'unit') return err('domain', 'factorial needs a non-negative integer');
         if (a.kind === 'int') a = real(intReal(a, this.ints));
+        if (a.kind === 'list') {
+          const op = e.op;
+          return {
+            kind: 'list',
+            items: a.items.map((x) =>
+              this.eval(
+                { type: 'post', op, arg: { type: 'sym', name: '$x' } },
+                new Map([['$x', x]]),
+              ),
+            ),
+          };
+        }
+        if (a.kind === 'matrix') return err('domain', `${e.op} is not defined for matrices`);
         if (a.kind !== 'real') {
           if (e.op === '%') return complex(a.re / 100, a.im / 100);
           return err('domain', 'factorial needs a non-negative integer');
@@ -124,10 +140,45 @@ class ValueEvaluator {
       case 'limit':
         // numeric calculus on real variables only (the bound variable stays real)
         return this.real(e, this.realVariables(local));
-      case 'matrix':
       case 'list':
-        return err('unsupported', 'lists and matrices follow in a later version');
+        return { kind: 'list', items: e.items.map((x) => this.eval(x, local)) };
+      case 'matrix': {
+        const rows = e.rows.map((r) =>
+          r.map((x) => {
+            const v = this.eval(x, local);
+            return v.kind === 'real'
+              ? v.v
+              : err('unsupported', 'matrix entries must be real numbers');
+          }),
+        );
+        return { kind: 'matrix', rows };
+      }
     }
+  }
+
+  /** makelist(expr, var, a, b[, step]): the list of expr for var = a, a+step, …, b. */
+  private makelist(args: readonly Expr[], local: ReadonlyMap<string, Value>): Value {
+    const [body, v, a, b, st] = args;
+    if (!body || v?.type !== 'sym' || !a || !b)
+      return err('syntax', 'makelist(expr, var, a, b[, step])');
+    const num = (x: Expr) => {
+      const r = this.eval(x, local);
+      return r.kind === 'real' ? r.v : err('domain', 'makelist needs real bounds');
+    };
+    const from = num(a);
+    const to = num(b);
+    const step = st ? num(st) : 1;
+    if (step === 0 || (to - from) / step < 0)
+      return err('domain', 'makelist: the step does not reach the end');
+    const n = Math.floor((to - from) / step + 1e-9) + 1;
+    if (n > 100000) return err('not-evaluable', 'makelist: more than 100000 items');
+    const items: Value[] = [];
+    for (let k = 0; k < n; k++) {
+      const inner = new Map(local);
+      inner.set(v.name, real(from + k * step));
+      items.push(this.eval(body, inner));
+    }
+    return { kind: 'list', items };
   }
 
   private symbol(name: string, local: ReadonlyMap<string, Value>): Value {
@@ -184,6 +235,8 @@ class ValueEvaluator {
   }
 
   private binary(op: string, a: Value, b: Value): Value {
+    const c = binaryC(op, a, b, (o, x, y) => this.binary(o, x, y));
+    if (c) return this.unwrap(c);
     const q = binaryQ(op, a, b, this.ints);
     if (q) return this.unwrap(q);
     if (a.kind === 'int') a = real(intReal(a, this.ints));
@@ -210,6 +263,16 @@ class ValueEvaluator {
   }
 
   private relation(op: string, a: Value, b: Value): Value {
+    if (a.kind === 'list' || b.kind === 'list') {
+      // element-wise tests on lists
+      const r = binaryC('+', a, b, (_, x, y) => this.relation(op, x, y));
+      if (r) return this.unwrap(r);
+    }
+    if (a.kind === 'matrix' || b.kind === 'matrix') {
+      if (op !== '=' && op !== '!=') return err('domain', 'matrices cannot be ordered');
+      const eq = JSON.stringify(a) === JSON.stringify(b);
+      return real(eq === (op === '=') ? 1 : 0);
+    }
     const q = compareQ(op, a, b, this.ints);
     if (q) return real(this.unwrap(q) ? 1 : 0);
     const close = (p: number, q: number) =>
@@ -243,7 +306,31 @@ class ValueEvaluator {
         this.depth--;
       }
     }
+    if (name === 'makelist') return this.makelist(argExprs, local);
     let args = argExprs.map((a) => this.eval(a, local));
+    const coll = callC(name, args, (o, x, y) => this.binary(o, x, y));
+    if (coll) return this.unwrap(coll);
+    // other functions act element-wise on lists (sin({0, π/2}) = {0, 1})
+    const at = args.findIndex((a) => a.kind === 'list');
+    if (at >= 0) {
+      const l = args[at] as { items: readonly Value[] };
+      return {
+        kind: 'list',
+        items: l.items.map((item) => {
+          const inner = new Map(local);
+          const params = args.map((_, k) => `$a${k}`);
+          args.forEach((v, k) => inner.set(params[k], k === at ? item : v));
+          return this.call(
+            name,
+            params.map((p) => ({ type: 'sym', name: p })),
+            inner,
+          );
+        }),
+      };
+    }
+    if (args.some((a) => a.kind === 'matrix')) {
+      return err('domain', `${name} is not defined for matrices`);
+    }
     const special = callQ(name, args, this.ints);
     if (special) return this.unwrap(special);
     if (args.some((a) => a.kind === 'unit' || a.kind === 'int')) {

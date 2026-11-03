@@ -39,7 +39,12 @@
 
   <div class="entry" [class.inactive]="home.selected() !== null">
     @if (textbook()) {
-      <app-math-field [ariaLabel]="i18n.t('home.input')" [keyHook]="keyHook" />
+      <app-math-field
+        [ariaLabel]="i18n.t('home.input')"
+        [keyHook]="keyHook"
+        [shortcuts]="shortcuts"
+        [replaceShortcuts]="true"
+      />
     } @else {
       <input
         #text
