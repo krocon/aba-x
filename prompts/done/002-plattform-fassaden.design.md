@@ -3,6 +3,7 @@
 - Status: umgesetzt · Datum: 02.11.2026 · Freigabe: entfällt (Auftrag „selbständig“)
 
 ## Entscheidungen
+
 - E1 `FilesApi` (saveText, saveBytes, openText): Desktop = `tauri-plugin-dialog` (Pfad vom Nutzer) + eigene Commands
   `files_write_text|bytes`, `files_read_text` (absoluter Dateipfad, atomar schreiben, 16 MiB Lesegrenze, nur UTF-8);
   Web = Download-Link bzw. `<input type=file>`. Fake für Specs.

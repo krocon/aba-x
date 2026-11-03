@@ -27,7 +27,7 @@ Das **App-Konzept** des Vorbilds als Rahmen, in den 034–042 nur noch ihre Inha
 ## 3. Umsetzung
 
 1. **Vertrag `T1App`** (Schnittstelle): `id`, `title`, `icon`, `views: { symb, plot, num, symbSetup, plotSetup,
-   numSetup, extra[] }`, `state` (serialisierbar, Schema-Version), `variables`, `reset()`, `help`.
+numSetup, extra[] }`, `state` (serialisierbar, Schema-Version), `variables`, `reset()`, `help`.
 2. **App-Registry** (eingebaute Apps; Kopien als Instanzen mit eigenem Namen und Zustand).
 3. **Bibliothek** als Ansicht; **aktuelle App** global (Titelzeile zeigt App/Ansicht).
 4. **Gemeinsame Bausteine:** Plot-Fläche (Viewport, Achsen, Raster, Zoom/Pan per Geste und Taste, Tracing-Cursor)

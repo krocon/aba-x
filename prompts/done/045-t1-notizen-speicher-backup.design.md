@@ -10,5 +10,5 @@
 ## Fortschritt
 
 - [x] Logik (Notizen, Backup, Menümodell) mit 8 Specs · [x] Notizen, Speicher, Backup-Dienst, Menü-Dienst,
-  HTML-Menü, About · [x] E2E (Notiz → Export → Löschen → Import → Notiz wieder da)
+      HTML-Menü, About · [x] E2E (Notiz → Export → Löschen → Import → Notiz wieder da)
 - Offen bis 048: natives Menü in der Desktop-App ansehen.

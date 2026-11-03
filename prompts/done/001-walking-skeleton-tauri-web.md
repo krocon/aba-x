@@ -4,9 +4,11 @@
 > Nachtrag am selben Tag: Geräte-Look und Hardware-Tastatur nach Vorgabe Marc (ADR 0006).
 
 ## Ziel
+
 Eine leere, aber echte App, die auf dem Desktop und im Browser startet, mit allen Werkzeugen von Files and Folders.
 
 ## Ergebnis
+
 - Angular 22 (zoneless) im Root; `src-tauri/` mit Tauri 2.12: `storage_load/save/remove` (atomare JSON-Dokumente,
   kaputte Dateien als `.bad` beiseite, validierte Schlüssel), `get_app_info`. Minimal-Capability, CSP.
 - Fassaden `PlatformApi`, `StorageApi` (Tauri | Web/IndexedDB), Fakes in `src/testing/`; Auswahl nur in `app.config.ts`.
@@ -17,6 +19,7 @@ Eine leere, aber echte App, die auf dem Desktop und im Browser startet, mit alle
   Shift-Funktionen und Alpha-Buchstaben; Hardware-Tastatur (Tippen, Enter, Esc, F1–F6, Aufleuchten der Taste).
 
 ## Geprüft
+
 - `pnpm check` grün (36 Frontend-Specs, 8 Rust-Tests, Skript-Tests, beide Builds, clippy, notices).
 - Web-Build in Chromium (Desktop- und 375-px-Breite, hell/dunkel): Eingabe, Tastenfeld, Stack, F-Tasten, Offline.
 - macOS-App (`ABA-X1.app`, Debug): Gerät, Softkey F1, Tastenklick → MathLive-Zeile, Accessibility-Namen,
@@ -25,6 +28,7 @@ Eine leere, aber echte App, die auf dem Desktop und im Browser startet, mit alle
   nicht tippen – im Browser geprüft, in der App manuell bestätigen).
 
 ## Funde
+
 - Tauri ergänzt `style-src` um Nonces → Angular-Styles fehlten → `dangerousDisableAssetCspModification`.
 - MathLives ASCII-Math ist verlustbehaftet → LaTeX parsen (ADR 0003).
 - Hohe Formeln vergrößerten das Display und verschoben das Tastenfeld → feste Displayhöhe.

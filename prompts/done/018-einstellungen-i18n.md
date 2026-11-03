@@ -38,8 +38,6 @@ SETUP-Menü/Dialog: Winkelmodus, exakt/numerisch, Genauigkeit, Zahlenformat, The
 
 ## 6. Ausdrücklich nicht Teil dieses Prompts
 
-
-
 ## 7. Doku
 
 - `docs/roadmap.md` (Status, „Was funktioniert“), `prompts/README.md` (Status), README bei sichtbaren Änderungen

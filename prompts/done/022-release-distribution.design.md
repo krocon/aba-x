@@ -3,6 +3,7 @@
 - Status: vorbereitet · Datum: 02.11.2026 · Lizenz MIT bestätigt (Marc)
 
 ## Entscheidungen
+
 - E1 `.github/workflows/release.yml` (aus FnF): Tag `v*` oder manuell → Matrix macOS universal / Windows / Linux mit
   `tauri-action`, **Entwurf** auf GitHub, Signierung nur mit Secrets; Web-Build als Artefakt.
 - E2 `scripts/release-notes.mjs` (aus FnF, mit Tests), `pnpm release:notes`.

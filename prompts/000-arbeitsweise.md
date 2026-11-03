@@ -23,15 +23,15 @@
 
 ## 2. Phasen
 
-| Phase | Ergebnis | Haltepunkt |
-|---|---|---|
-| 1 | Design-Dokument `prompts/NNN-<slug>.design.md` | 🛑 Freigabe abwarten |
-| 2 | Mathematik-Kern (`packages/math`): Specs zuerst (rot), dann Implementierung (grün) | Commit |
-| 3 | Rust (nur wenn nötig): Specs zuerst, dann Implementierung | Commit |
-| 4 | Frontend: Specs zuerst, dann Implementierung | Commit |
-| 5 | Ende-zu-Ende in der **Desktop-App und im Web-Build** | |
-| 6 | Doku | Commit |
-| 7 | Abschlussprüfung + Bericht | |
+| Phase | Ergebnis                                                                           | Haltepunkt           |
+| ----- | ---------------------------------------------------------------------------------- | -------------------- |
+| 1     | Design-Dokument `prompts/NNN-<slug>.design.md`                                     | 🛑 Freigabe abwarten |
+| 2     | Mathematik-Kern (`packages/math`): Specs zuerst (rot), dann Implementierung (grün) | Commit               |
+| 3     | Rust (nur wenn nötig): Specs zuerst, dann Implementierung                          | Commit               |
+| 4     | Frontend: Specs zuerst, dann Implementierung                                       | Commit               |
+| 5     | Ende-zu-Ende in der **Desktop-App und im Web-Build**                               |                      |
+| 6     | Doku                                                                               | Commit               |
+| 7     | Abschlussprüfung + Bericht                                                         |                      |
 
 Kleine Features dürfen Phasen zusammenlegen (in Phase 1 entscheiden und im Design-Dokument festhalten). Reine
 UI-Features lassen Phase 2/3 aus, reine Kern-Features Phase 3.

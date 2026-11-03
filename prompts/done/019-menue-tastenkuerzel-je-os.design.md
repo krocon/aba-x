@@ -3,6 +3,7 @@
 - Status: umgesetzt · Datum: 02.11.2026 · Freigabe: entfällt (Auftrag „selbständig“)
 
 ## Entscheidungen
+
 - E1 Menüeinträge kommen aus dem Aktionskatalog (Design 007); native Beschleuniger aus der Keymap
   (`CmdOrCtrl`, `Alt`, `Shift`), nur wo eindeutig (keine Beschleuniger für F1–F6 – die gehören dem WebView).
 - E2 macOS: App-Menü mit Über/Einstellungen/Ausblenden/Beenden, Bearbeiten mit Systemeinträgen, Vollbild.

@@ -30,6 +30,7 @@ Konventionen, danach die Konventionen von FnF. Überschreibe keine vorhandene Ar
 sinnvolle technische Entscheidungen und dokumentiere sie.
 
 **Wichtig:**
+
 - Verwende Angular 22 und modernes TypeScript – zoneless, Signals, Standalone Components, `OnPush`.
 - Verwende Tauri 2 für die Desktop-App; die Webseite ist derselbe Angular-Build ohne Tauri.
 - Verwende keine unnötigen Drittanbieter-Abhängigkeiten.
@@ -63,17 +64,17 @@ klassischen Rechnern orientieren, soll aber keine geschützten Designs, Logos od
 
 ### 2.1 Zwei Auslieferungsformen, ein Produkt
 
-| | Desktop-App (Tauri 2) | Webseite |
-|---|---|---|
-| Plattformen | macOS (universal: Apple Silicon + Intel), Windows 10/11 (x64, optional arm64), Linux (x64) | aktuelle Chromium-, Firefox- und Safari-Versionen |
-| WebView/Engine | WKWebView (macOS), WebView2 (Windows), WebKitGTK (Linux) | Browser des Nutzers |
-| Pakete | `.app`/`.dmg`, `.msi`/NSIS-`.exe`, `.deb`/`.rpm`/`.AppImage` | statische Dateien (`dist/…/browser`), z. B. GitHub Pages oder `krocon.de/products/aba-x` |
-| Offline | immer | nach dem ersten Laden über einen Service Worker (PWA, installierbar) |
-| Persistenz | JSON-Dateien im App-Datenordner, geschrieben von Rust (atomar, Schemaversion) | IndexedDB |
-| Export/Import | native Dateidialoge | Download / Datei-Upload |
-| Menü | natives Menü (macOS-Menüleiste; Windows/Linux nativ oder HTML, wie in FnF entscheiden) | HTML-Menü bzw. Toolbar |
-| Tastenkürzel | je OS (`Cmd` auf macOS, `Ctrl` sonst) | wie Desktop, ohne Kürzel, die der Browser selbst belegt |
-| Fenster | Größe/Position wird gemerkt, Mindestgröße | responsiv bis Smartphone-Breite |
+|                | Desktop-App (Tauri 2)                                                                      | Webseite                                                                                 |
+| -------------- | ------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------- |
+| Plattformen    | macOS (universal: Apple Silicon + Intel), Windows 10/11 (x64, optional arm64), Linux (x64) | aktuelle Chromium-, Firefox- und Safari-Versionen                                        |
+| WebView/Engine | WKWebView (macOS), WebView2 (Windows), WebKitGTK (Linux)                                   | Browser des Nutzers                                                                      |
+| Pakete         | `.app`/`.dmg`, `.msi`/NSIS-`.exe`, `.deb`/`.rpm`/`.AppImage`                               | statische Dateien (`dist/…/browser`), z. B. GitHub Pages oder `krocon.de/products/aba-x` |
+| Offline        | immer                                                                                      | nach dem ersten Laden über einen Service Worker (PWA, installierbar)                     |
+| Persistenz     | JSON-Dateien im App-Datenordner, geschrieben von Rust (atomar, Schemaversion)              | IndexedDB                                                                                |
+| Export/Import  | native Dateidialoge                                                                        | Download / Datei-Upload                                                                  |
+| Menü           | natives Menü (macOS-Menüleiste; Windows/Linux nativ oder HTML, wie in FnF entscheiden)     | HTML-Menü bzw. Toolbar                                                                   |
+| Tastenkürzel   | je OS (`Cmd` auf macOS, `Ctrl` sonst)                                                      | wie Desktop, ohne Kürzel, die der Browser selbst belegt                                  |
+| Fenster        | Größe/Position wird gemerkt, Mindestgröße                                                  | responsiv bis Smartphone-Breite                                                          |
 
 Alles andere – Rechner, CAS, Plotter, Verlauf, Einstellungen, Barrierefreiheit – ist auf beiden identisch.
 
@@ -133,6 +134,7 @@ Beispiele:
 Der Benutzer soll nicht gezwungen sein, LaTeX direkt einzugeben.
 
 Prüfe **MathLive** als interaktives mathematisches Eingabefeld. Untersuche insbesondere:
+
 - Tastatur- und Mausbedienung
 - Eingabe von Brüchen, Wurzeln und Integralen
 - LaTeX-Export
@@ -183,6 +185,7 @@ Prüfe die aktuelle API, TypeScript-Kompatibilität, Lizenz, Paketstruktur (ESM/
 Worker) und tatsächliche Funktionsabdeckung von Nerdamer anhand der offiziellen Dokumentation und des Quellcodes.
 
 Erstelle eine Capability-Matrix. Kennzeichne klar:
+
 - vollständig unterstützt
 - teilweise unterstützt
 - nicht unterstützt
@@ -210,6 +213,7 @@ Mindestens:
 - Behandlung von Definitionslücken und numerischen Problemen
 
 Numerische Verfahren müssen Grenzfälle berücksichtigen:
+
 - Division durch null
 - nicht definierte Funktionswerte
 - Singularitäten
@@ -223,6 +227,7 @@ Numerische Verfahren müssen Grenzfälle berücksichtigen:
 Unterscheide klar:
 
 **Symbolische Integration**
+
 - Unbestimmte Integrale
 - Bestimmte Integrale, soweit die CAS-Engine diese unterstützt
 - Ausgabe einer Stammfunktion
@@ -230,6 +235,7 @@ Unterscheide klar:
 - Rückmeldung bei nicht lösbaren Integralen
 
 **Numerische Integration**
+
 - Trapezregel
 - Simpson-Regel
 - Gauß-Legendre
@@ -240,6 +246,7 @@ Unterscheide klar:
 - möglichst Anzeige einer Fehlerabschätzung
 
 **Graphische Darstellung**
+
 - Fläche zwischen Funktion und x-Achse markieren
 - Integrationsgrenzen visualisieren
 - optional positive und negative Flächen unterscheiden
@@ -383,6 +390,7 @@ Die konkreten Interfaces müssen sinnvoll typisiert und erweiterbar sein. Der AS
 (`structuredClone`) und damit ohne Umwandlung über die Worker-Grenze übertragbar sein.
 
 Anforderungen:
+
 - Keine Abhängigkeit von Angular oder Tauri.
 - Keine direkte Abhängigkeit von MathLive.
 - CAS-Engines über Adapter anbinden.
@@ -409,6 +417,7 @@ Die tatsächlichen Interfaces dürfen angepasst werden. Sie sollen die Fähigkei
 als sie tatsächlich sind.
 
 Definiere zusätzlich:
+
 - `NumericEngine`
 - `ExpressionParser`
 - `ExpressionSerializer`
@@ -423,6 +432,7 @@ Nutze Web Workers für rechenintensive Operationen, wenn dies einen messbaren Vo
 Browser und in allen drei Tauri-WebViews gleich; in Phase 0 auf WebKitGTK verifizieren.
 
 Insbesondere:
+
 - symbolische Berechnungen
 - numerische Integration
 - Sampling komplexer Graphen
@@ -434,6 +444,7 @@ Worker-Komplexität bei trivialen Berechnungen.
 ### 4.5 Angular 22
 
 Wie FnF:
+
 - zoneless, Standalone Components, `OnPush`
 - Signals für UI-Zustand; Stores als Services, Globales in Root-Services
 - Dependency Injection, Plattformunterschiede nur über injizierte Fassaden (`PlatformApi`, `StorageApi`, `FilesApi`,
@@ -516,6 +527,7 @@ Menümodell.
 ### 5.2 Rechner-Tastatur
 
 Virtuelle Tasten für:
+
 - Ziffern
 - Grundrechenarten
 - Klammern
@@ -598,6 +610,7 @@ Möglichkeit normalisierte mathematische Ausdrücke oder prüfe Ergebnisse durch
 ### 6.3 Property-based Tests
 
 Wo sinnvoll:
+
 - Ableitung und numerische Differenz vergleichen
 - Stammfunktion ableiten und mit Ausgangsfunktion vergleichen
 - numerische Integrationsverfahren gegen analytische Referenzwerte testen
@@ -606,6 +619,7 @@ Wo sinnvoll:
 ### 6.4 Fehlerbehandlung
 
 Fehler sollen verständlich und konkret angezeigt werden:
+
 - Syntaxfehler
 - unbekannte Variable
 - ungültige Funktion
@@ -627,20 +641,20 @@ Fehler sollen verständlich und konkret angezeigt werden:
 
 ### 6.6 Befehle (Zielzustand, Namen wie in FnF)
 
-| Zweck | Befehl |
-|---|---|
-| Install | `pnpm install` |
-| Web-Dev-Server | `pnpm start` |
-| Desktop-Dev | `pnpm tauri dev` |
-| Tests / Watch | `pnpm test`, `pnpm test:watch` |
-| Lint / Format | `pnpm lint`, `pnpm format`, `pnpm format:check` |
-| Build Desktop-Frontend / Web | `pnpm build`, `pnpm build:web` |
-| E2E Web | `pnpm e2e` |
-| Rust | `pnpm rust:fmt`, `pnpm rust:lint`, `pnpm rust:test` |
-| Pakete | `pnpm tauri:build:mac`, `pnpm tauri:build:windows`, `pnpm tauri:build:linux` |
-| Version | `pnpm version:check`, `pnpm version:set X.Y.Z` |
-| Lizenzen | `pnpm notices`, `pnpm notices:check`, `pnpm licenses:report` |
-| Alles prüfen | `pnpm check` (alles oben außer Paketen und E2E, plus `notices:check`) |
+| Zweck                        | Befehl                                                                       |
+| ---------------------------- | ---------------------------------------------------------------------------- |
+| Install                      | `pnpm install`                                                               |
+| Web-Dev-Server               | `pnpm start`                                                                 |
+| Desktop-Dev                  | `pnpm tauri dev`                                                             |
+| Tests / Watch                | `pnpm test`, `pnpm test:watch`                                               |
+| Lint / Format                | `pnpm lint`, `pnpm format`, `pnpm format:check`                              |
+| Build Desktop-Frontend / Web | `pnpm build`, `pnpm build:web`                                               |
+| E2E Web                      | `pnpm e2e`                                                                   |
+| Rust                         | `pnpm rust:fmt`, `pnpm rust:lint`, `pnpm rust:test`                          |
+| Pakete                       | `pnpm tauri:build:mac`, `pnpm tauri:build:windows`, `pnpm tauri:build:linux` |
+| Version                      | `pnpm version:check`, `pnpm version:set X.Y.Z`                               |
+| Lizenzen                     | `pnpm notices`, `pnpm notices:check`, `pnpm licenses:report`                 |
+| Alles prüfen                 | `pnpm check` (alles oben außer Paketen und E2E, plus `notices:check`)        |
 
 ---
 
@@ -863,12 +877,13 @@ Untertitel:
 **Scientific & Symbolic Calculator**
 
 Mögliche spätere Produktvarianten:
+
 - ABA-X1 – Scientific Calculator
 - ABA-X1 CAS – Computer Algebra System
 - ABA-X1 Graph – Graphing Calculator
 
 Der Name ist ein Arbeitsname, bis Domain-, Repository- und Markenverfügbarkeit geprüft wurden. Prüfe auch, ob die
-Langform „Advanced *Browser* Algebra“ für eine installierbare Desktop-App noch passt, und mache ggf. Vorschläge –
+Langform „Advanced _Browser_ Algebra“ für eine installierbare Desktop-App noch passt, und mache ggf. Vorschläge –
 entscheiden tut Marc.
 
 Entwickle ein schlichtes, eigenständiges Logo und eine visuelle Identität, aus denen sich App-Icons (`.icns`, `.ico`,
@@ -882,6 +897,7 @@ anderen geschützten Markenauftritten.
 Nicht versuchen, direkt den vollständigen Funktionsumfang eines HP Prime nachzubauen.
 
 Zunächst nicht erforderlich:
+
 - vollständige Programmiersprache im Rechner
 - umfangreiche Statistikpakete
 - dynamische Geometrie

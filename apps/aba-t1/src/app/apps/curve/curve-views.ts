@@ -40,6 +40,7 @@ import {
   type CurveKind,
   type CurveState,
   KINDS,
+  LOGIC_NAMES,
   curveTable,
   curves,
   fieldLabels,
@@ -64,6 +65,7 @@ const TITLES: Record<CurveKind, { symb: TextKey; plot: TextKey; num: TextKey }> 
   polar: { symb: 'curve.polarSymb', plot: 'curve.polarPlot', num: 'curve.polarNum' },
   sequence: { symb: 'curve.seqSymb', plot: 'curve.seqPlot', num: 'curve.seqNum' },
   graph3d: { symb: 'curve.surfSymb', plot: 'surface.plot', num: 'surface.num' },
+  relation: { symb: 'rel.symb', plot: 'rel.plot', num: 'rel.num' },
 };
 
 /** Symbolic view (prompt 035): ten rows with one to three fields; ←→ choose the field. */
@@ -219,11 +221,13 @@ export class CurveSymb implements OnInit, OnDestroy {
     'U8',
     'U9',
     'U0',
+    ...LOGIC_NAMES,
   ]);
   protected readonly titles = computed(() => TITLES[this.app.kind()]);
   protected readonly row = signal(0);
   protected readonly field = signal(0);
   protected readonly editing = signal(false);
+  private logic = -1;
   protected readonly rows = computed(() => {
     const kind = this.app.kind();
     const s = this.app.state();
@@ -262,7 +266,7 @@ export class CurveSymb implements OnInit, OnDestroy {
         if (!this.editing()) this.edit();
         queueMicrotask(() => this.fieldEl()?.insert(latex));
       },
-      help: 'curve',
+      help: this.app.kind() === 'relation' ? 'relation' : 'curve',
     });
   }
 
@@ -273,6 +277,8 @@ export class CurveSymb implements OnInit, OnDestroy {
   private menu(): MenuButton[] {
     const b = (label: string): MenuButton => ({ label });
     const v = KINDS[this.app.kind()].variable.label;
+    if (this.editing() && this.app.kind() === 'relation')
+      return [b('X'), b('Y'), b('≤'), b('≥'), b(this.i18n.t('rel.logic')), b('OK')];
     if (this.editing()) return [b(''), b(''), b(v), b(''), b(this.i18n.t('home.no')), b('OK')];
     return [
       b(this.i18n.t('data.edit')),
@@ -285,6 +291,17 @@ export class CurveSymb implements OnInit, OnDestroy {
   }
 
   private menuPress(i: number): void {
+    if (this.editing() && this.app.kind() === 'relation') {
+      const el = this.fieldEl();
+      if (i < 4) el?.insert(['X', 'Y', '\\le', '\\ge'][i]);
+      if (i === 4) {
+        // cycles through the connectives: and → or → not → xor
+        const k = (this.logic = (this.logic + 1) % LOGIC_NAMES.length);
+        el?.insert(`\\operatorname{${LOGIC_NAMES[k]}}\\left(#0\\right)`);
+      }
+      if (i === 5) this.store();
+      return;
+    }
     if (this.editing()) {
       if (i === 2) this.fieldEl()?.insert(KINDS[this.app.kind()].variable.latex);
       if (i === 4) this.editing.set(false);
@@ -921,15 +938,11 @@ export class CurvePlotSetup {
       { value: 'on', label: t('app.on') },
       { value: 'off', label: t('app.off') },
     ];
-    const items: SetupItem[] = [
-      view('xmin'),
-      view('xmax'),
-      view('ymin'),
-      view('ymax'),
-      range('tmin', `${v} min`),
-      range('tmax', `${v} max`),
-    ];
-    if (kind !== 'sequence') items.push(range('tstep', `${v} step`));
+    const items: SetupItem[] = [view('xmin'), view('xmax'), view('ymin'), view('ymax')];
+    if (kind !== 'relation') items.push(range('tmin', `${v} min`), range('tmax', `${v} max`));
+    if (kind === 'relation') {
+      // no parameter range – a relation is plotted on the pixel grid of the view
+    } else if (kind !== 'sequence') items.push(range('tstep', `${v} step`));
     else {
       items.push({
         label: t('curve.seqMode'),

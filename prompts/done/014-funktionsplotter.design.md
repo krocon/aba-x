@@ -3,6 +3,7 @@
 - Status: umgesetzt · Datum: 02.11.2026 · Freigabe: entfällt (Auftrag „selbständig“)
 
 ## Entscheidungen
+
 - E1 **Canvas** im LCD-Stil (Tinte auf Grün) an der Stelle des Stacks, Eingabezeile bleibt; Funktionen werden über
   die Strichart unterschieden (LCD ist einfarbig), die gewählte Funktion ist dicker. Gleiche Zeichenroutine für den
   PNG-Export (weißer Hintergrund); SVG aus denselben Polylinien.

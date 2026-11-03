@@ -3,6 +3,7 @@
 - Status: umgesetzt · Datum: 02.11.2026 · Freigabe: entfällt (Auftrag „selbständig“)
 
 ## Entscheidungen
+
 - E1 Menüs wie am Rechner: Hauptmenü = Moduswahl (STD CAS GRAPH VARS HIST SETUP); im CAS-Modus zeigt das Softmenü
   die CAS-Funktionen `SIMP EXPA FACT SOLVE CALC▸ MODE▸`, `MODE▸` führt zurück zur Moduswahl.
 - E2 Operationen wirken auf die Eingabezeile oder – bei leerer Zeile – auf Ebene 1 (Ergebnis ersetzt sie).

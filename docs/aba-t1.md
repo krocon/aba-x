@@ -20,17 +20,17 @@ Ziffern, `+ - * / ^ ( ) , .`, Leertaste, Enter, Backspace (Entf = Del), Esc (⇧
 mit ⇧ = Wippe mit Shift) und Buchstaben (= Alpha-Zeichen) wirken wie die Gerätetasten, solange kein Eingabefeld den
 Fokus hat. Dazu (`Mod` = ⌘ auf macOS, sonst Strg; gleich auf allen Systemen):
 
-| Kürzel | Taste | Kürzel | Taste |
-|---|---|---|---|
-| F1–F6 | Menütasten 1–6 | F7 / ⇧F7 | Symb / Symb-Setup |
-| F8 / ⇧F8 | Plot / Plot-Setup | F9 / ⇧F9 | Num / Num-Setup |
-| F10 / ⇧F10 | Help / User | Alt+A / Alt+⇧A | Apps / Info |
-| Alt+H / Alt+⇧H | Home / Settings | Alt+K / Alt+⇧K | CAS / CAS-Settings |
-| Alt+M | Menu | Alt+W | View |
-| Alt+T / Alt+⇧T | Toolbox / Mem | Alt+V / Alt+⇧V | Vars / Chars |
-| Alt+P / Alt+⇧P | Vorlagen / Units | Alt+X / Alt+⇧X | x,t,θ,n / Define |
-| Mod+⇧C / Mod+⇧V | Copy / Paste | Alt+S / Alt+L | Shift / Alpha |
-| Alt+O / Alt+⇧O | On / Off | Mod+/ | Tastaturübersicht |
+| Kürzel          | Taste             | Kürzel         | Taste              |
+| --------------- | ----------------- | -------------- | ------------------ |
+| F1–F6           | Menütasten 1–6    | F7 / ⇧F7       | Symb / Symb-Setup  |
+| F8 / ⇧F8        | Plot / Plot-Setup | F9 / ⇧F9       | Num / Num-Setup    |
+| F10 / ⇧F10      | Help / User       | Alt+A / Alt+⇧A | Apps / Info        |
+| Alt+H / Alt+⇧H  | Home / Settings   | Alt+K / Alt+⇧K | CAS / CAS-Settings |
+| Alt+M           | Menu              | Alt+W          | View               |
+| Alt+T / Alt+⇧T  | Toolbox / Mem     | Alt+V / Alt+⇧V | Vars / Chars       |
+| Alt+P / Alt+⇧P  | Vorlagen / Units  | Alt+X / Alt+⇧X | x,t,θ,n / Define   |
+| Mod+⇧C / Mod+⇧V | Copy / Paste      | Alt+S / Alt+L  | Shift / Alpha      |
+| Alt+O / Alt+⇧O  | On / Off          | Mod+/          | Tastaturübersicht  |
 
 Alt-Kombinationen werden über `event.code` erkannt (macOS-Sonderzeichen mit ⌥ stören nicht). Strg+H/⌘H, ⌘K usw.
 sind bewusst nicht belegt (Browser/OS).
@@ -144,3 +144,11 @@ der Titelzeile.
 FZ1(X,Y) … in Symb; Plot als schattierte Fläche mit Höhenfarben (Canvas 2D, Maler-Algorithmus – kein WebGL nötig, in
 allen WebViews gleich), Ziehen/Wippe dreht, Pinch/+/− zoomt, Box an/aus, Ansicht zurücksetzen; ⇧Plot: X-, Y-, Z-Bereich
 und Gitter (5–80). Undefinierte Stellen und Werte außerhalb des Z-Bereichs bleiben Lücken. Num: Werte auf einem 5×5-Raster.
+
+## Erweiterte Grafiken (036)
+
+V1 … V0 sind Relationen in X und Y: Gleichungen (`X²+Y²=9`), Ungleichungen (`Y>sin(X)`) und Verknüpfungen
+`and(…)`, `or(…)`, `not(…)`, `xor(…)`. Beim Bearbeiten fügt das Menü X, Y, ≤, ≥ und die Verknüpfungen ein. Plot rechnet mit
+Intervallarithmetik: gefärbt ist nur, wo die Relation sicher gilt; grau, wo es sich nicht entscheiden lässt; gestrichelte
+Ränder gehören nicht dazu. ←→ verfolgt einen Rand, ↑↓ wechselt die Relation, Galerie lädt Beispiele. Num listet je X die
+Rand-Y-Werte im Y-Bereich (numerisch). Bricht die Verfeinerung am Zeitbudget ab, sagt die Statuszeile das.

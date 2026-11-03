@@ -3,6 +3,7 @@
 - Status: umgesetzt · Datum: 02.11.2026 · Freigabe: entfällt (Marc: „selbständig alle Prompts abarbeiten“)
 
 ## Entscheidungen
+
 - **E1 AST:** 13 Knotentypen (`src/math/ast/nodes.ts`), Zahlen als Text wie geschrieben (exakt weiterverarbeitbar),
   keine Spezialknoten für Bruch/Wurzel – `/` und `call('sqrt'|'root')` genügen; Definitionen sind `rel '='` und
   werden erst bei der Auswertung erkannt (008).
@@ -15,6 +16,7 @@
 - Tastenfeld: Mengenklammern und `\angle` entfernt (nicht unterstützt), Σ/Π/lim mit vorbelegtem Index (`k=1`, `x\to`).
 
 ## Fortschritt
+
 - [x] AST, Builder, `freeSymbols`, `substitute`
 - [x] Text- und LaTeX-Parser, Fehlerspannen, Kataloge (≈ 130 Fälle), Round-Trips, Tastenfeld-Vorlagen
 - [x] `docs/mathematics/syntax.md`

@@ -12,6 +12,6 @@
 ## Fortschritt
 
 - [x] Modell + Hilfe + 3 Specs (Hilfe vollständig, Beispiele/Vorlagen parsen, Katalog) · [x] Overlay, Tasten
-  Toolbox/Vars/⇧Vars/Help, Einfügen in Start/RPN/CAS · [x] E2E (Toolbox → gcd, Hilfe, Vars)
+      Toolbox/Vars/⇧Vars/Help, Einfügen in Start/RPN/CAS · [x] E2E (Toolbox → gcd, Hilfe, Vars)
 - Fehlend gegenüber dem Vorbild: Menü-Einträge für Listen/Matrizen (032), Wahrscheinlichkeitsverteilungen (038),
   App-Funktionen (033 ff.), Einheiten (031), Substituieren/Zähler/Nenner im CAS.

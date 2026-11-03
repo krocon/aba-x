@@ -7,11 +7,12 @@ import { type Param2, polar } from '@aba/math/graph/parametric';
 import { type SequenceDef, SequenceSystem, cobwebMap } from '@aba/math/graph/sequence';
 import type { Viewport } from '@aba/math/graph/viewport';
 import { type AngleMode, compile, evaluateNumeric } from '@aba/math/numeric/evaluate';
+import { LOGIC_FUNCTIONS, compileRelation } from '@aba/math/interval/eval';
 import { parseLatex } from '@aba/math/parser/latex-parser';
 import { catalogNames, markCommands, markSlots } from '../../core/latex/typed-names';
 import { FN_COLORS, type PlotOptions, DEFAULT_PLOT } from '../function/function-logic';
 
-export type CurveKind = 'parametric' | 'polar' | 'sequence' | 'graph3d';
+export type CurveKind = 'parametric' | 'polar' | 'sequence' | 'graph3d' | 'relation';
 
 const DIGITS = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
 
@@ -45,6 +46,12 @@ export const KINDS: Record<CurveKind, KindConfig> = {
     variable: { latex: 'X', name: 'X', label: 'X' },
     fields: (d) => [`FZ${d}(X,Y)`],
     name: (d) => `FZ${d}`,
+  },
+  // advanced graphing (prompt 036): relations in X and Y
+  relation: {
+    variable: { latex: 'X', name: 'X', label: 'X' },
+    fields: (d) => [`V${d}`],
+    name: (d) => `V${d}`,
   },
 };
 
@@ -109,6 +116,16 @@ export function initCurveState(kind: CurveKind): CurveState {
         tstep: 1,
         numStep: 1,
       };
+    case 'relation':
+      return {
+        ...base,
+        view: { xmin: -10, xmax: 10, ymin: -6.5, ymax: 6.5 },
+        tmin: 0,
+        tmax: 1,
+        tstep: 1,
+        numStart: -5,
+        numStep: 1,
+      };
     case 'graph3d':
       return {
         ...base,
@@ -128,6 +145,49 @@ export function initCurveState(kind: CurveKind): CurveState {
 export const curveNames = (kind: CurveKind) => DIGITS.map((d) => KINDS[kind].name(d));
 export const fieldLabels = (kind: CurveKind, row: number) => KINDS[kind].fields(DIGITS[row]);
 export const rowColor = (row: number) => FN_COLORS[row];
+
+/** Logical connectives typed as words in a relation (`and(X<1, Y>0)`). */
+export const LOGIC_NAMES = [...LOGIC_FUNCTIONS];
+
+/**
+ * A relation of the advanced graphing app (prompt 036): parsed with the connectives as functions
+ * and checked by compiling it (it must contain at least one relation). Null when empty.
+ */
+export function parseRelation(src: string): Expr | string | null {
+  if (!src.trim()) return null;
+  const p = parseLatex(markSlots(markCommands(src, [...catalogNames(), ...LOGIC_NAMES])), {
+    functions: LOGIC_FUNCTIONS,
+  });
+  if (!p.ok) return p.error.message;
+  const c = compileRelation(p.value);
+  return c.ok ? p.value : c.error.message;
+}
+
+export interface Relation {
+  row: number;
+  name: string;
+  color: string;
+  expr: Expr;
+}
+
+/** The enabled, valid relations. */
+export function relations(rows: readonly CurveRow[]): Relation[] {
+  const out: Relation[] = [];
+  rows.forEach((r, i) => {
+    if (!r.on) return;
+    const e = parseRelation(r.fields[0]);
+    if (e && typeof e !== 'string')
+      out.push({ row: i, name: `V${DIGITS[i]}`, color: rowColor(i), expr: e });
+  });
+  return out;
+}
+
+/** Home variables without X and Y (those are the plot variables of a relation). */
+export function relationScope(scope: CurveScope): CurveScope {
+  const variables = new Map(scope.variables);
+  for (const k of ['X', 'Y', 'x', 'y']) variables.delete(k);
+  return { angle: scope.angle, variables };
+}
 
 function parse(src: string, seqNames: Set<string>): Expr | string | null {
   if (!src.trim()) return null;
@@ -158,6 +218,12 @@ export interface Curve {
 
 /** Errors per row and field (null = fine or empty). */
 export function rowErrors(kind: CurveKind, rows: readonly CurveRow[]): (string | null)[][] {
+  if (kind === 'relation') {
+    return rows.map((r) => {
+      const p = parseRelation(r.fields[0]);
+      return [typeof p === 'string' ? p : null];
+    });
+  }
   const names = new Set(DIGITS.map((d) => `U${d}`));
   return rows.map((r) =>
     r.fields.map((f, k) => {

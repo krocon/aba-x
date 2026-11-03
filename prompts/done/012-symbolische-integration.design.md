@@ -3,6 +3,7 @@
 - Status: umgesetzt · Datum: 02.11.2026 · Freigabe: entfällt (Auftrag „selbständig“)
 
 ## Entscheidungen
+
 - E1 `CALC▸ INTEG` liefert F(x) + C (C als Symbol, Hinweis „C: integration constant“); keine elementare
   Stammfunktion → verständliche Meldung, bestimmte Integrale bleiben numerisch möglich.
 - E2 Bestimmte Integrale über die Vorlage ∫ab (⇧◀7 oder CALC▸ ∫ab): exakt nur, wenn die numerische Quadratur

@@ -7,14 +7,14 @@
 
 ## Bausteine
 
-| Baustein | Ort | Inhalt |
-|---|---|---|
-| `chords.ts` | `@aba/core/actions` | Chord, Keymap<A>, matches/resolve/formatChord/accelerator (aus ABA-X1 verschoben) |
-| `ActionDispatcher<A>` | `@aba/core/actions` | Capture-Listener, Handler je Aktion; ABA-X1 `KeyboardDispatcher` erbt |
-| `GestureRecognizer` | `@aba/core/actions` | Tap, Doppeltipp, langes Drücken, Ziehen, Wischen, Pinch (rein) |
-| `shift-alpha.ts` | ABA-T1 | Automat Shift/Alpha/Lock/Kleinbuchstaben, Annunciators |
-| `keymap.ts`, `T1Keyboard` | ABA-T1 | Chords (Capture) + einfache Tasten → Gerätetasten (Bubble, nicht in Eingabefeldern) |
-| `DeviceStore` | ABA-T1 | Kontext-Stack der Ansichten, App-Aktionen als Rückfall, An/Aus, Leuchten |
+| Baustein                  | Ort                 | Inhalt                                                                              |
+| ------------------------- | ------------------- | ----------------------------------------------------------------------------------- |
+| `chords.ts`               | `@aba/core/actions` | Chord, Keymap<A>, matches/resolve/formatChord/accelerator (aus ABA-X1 verschoben)   |
+| `ActionDispatcher<A>`     | `@aba/core/actions` | Capture-Listener, Handler je Aktion; ABA-X1 `KeyboardDispatcher` erbt               |
+| `GestureRecognizer`       | `@aba/core/actions` | Tap, Doppeltipp, langes Drücken, Ziehen, Wischen, Pinch (rein)                      |
+| `shift-alpha.ts`          | ABA-T1              | Automat Shift/Alpha/Lock/Kleinbuchstaben, Annunciators                              |
+| `keymap.ts`, `T1Keyboard` | ABA-T1              | Chords (Capture) + einfache Tasten → Gerätetasten (Bubble, nicht in Eingabefeldern) |
+| `DeviceStore`             | ABA-T1              | Kontext-Stack der Ansichten, App-Aktionen als Rückfall, An/Aus, Leuchten            |
 
 ## Verträge
 

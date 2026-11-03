@@ -3,6 +3,7 @@
 - Status: umgesetzt · Datum: 02.11.2026 · Freigabe: entfällt (Auftrag „selbständig“)
 
 ## Entscheidungen
+
 - E1 Einstellungen: Winkel (RAD/DEG), Ergebnis exakt/dezimal, gültige Stellen (6–15), Zeitlimit (1–60 s), Farbschema
   der Seite (System/hell/dunkel), Sprache. Dokument `settings` (Schema 1), `sanitize` mit Grenzen, neuere Schemata
   nur lesen. SETUP-Softkey, Menü und ⌘/Strg+, öffnen den Dialog; jede Änderung gilt sofort.

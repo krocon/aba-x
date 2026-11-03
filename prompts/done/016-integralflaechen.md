@@ -37,8 +37,6 @@ Fläche zwischen Funktion und x-Achse (bzw. zwei Funktionen) zwischen wählbaren
 
 ## 6. Ausdrücklich nicht Teil dieses Prompts
 
-
-
 ## 7. Doku
 
 - `docs/roadmap.md` (Status, „Was funktioniert“), `prompts/README.md` (Status), README bei sichtbaren Änderungen

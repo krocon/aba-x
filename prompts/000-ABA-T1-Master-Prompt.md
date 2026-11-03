@@ -23,6 +23,7 @@ Textbuch/Algebraisch/RPN, kontextabhängige Touch-Menüleiste, App-Bibliothek mi
 kann, soll sich sofort zurechtfinden: gleiche Tastengruppen, gleiche Shift-Logik, gleiche Ansichtswechsel.
 
 **Nein (Marken- und Urheberrecht, Master-Prompt §5.3/§10, ADR 0006/0007):**
+
 - kein „HP“, kein „Prime“, kein HP-Logo, keine Produktfotos, keine nachgezeichneten App-Icons oder Gehäusegrafiken;
   Fremdmarken nur als Vergleich in der Doku („orientiert sich am Bedienkonzept des HP Prime“).
 - eigene Formgebung, Farben, Schrift und Icons – das Gerät darf als „Touch-Grafikrechner“ erkennbar sein, aber nicht
@@ -61,32 +62,32 @@ beim Vorbild auf bzw. neben den Tasten (Lage gleich, Gestaltung eigen). Die Hard
 
 ## 3. Funktionsumfang und Zuordnung zu den Prompts
 
-| Bereich (Vorbild: Handbuchkapitel) | Prompt | Umfang |
-|---|---|---|
-| Produktname, Logo, App-Gerüst, gemeinsame Rust-Crate | 025 | Pflicht |
-| Gerät, Tastenfeld, Shift/Alpha, Wippe, Touch-Display, Menütasten (Kap. 2) | 026 | Pflicht |
-| Startansicht, Textbuch/Algebraisch, Verlauf, Ans, Vorlagen, Variablen A–Z, Einstellungen (Kap. 2, 24) | 027 | Pflicht |
-| RPN-Eingabemodus in der Startansicht (Kap. 3) | 028 | Pflicht |
-| CAS-Ansicht, CAS-Einstellungen, CAS-Menü (Kap. 4, 23) | 029 | Pflicht |
-| Toolbox (Math, CAS, App, Nutzer, Katalog), Zeichen, Hilfe (Kap. 2, 23) | 030 | Pflicht |
-| Einheiten, Konstanten, Ganzzahl-Basen (Kap. 25, 30) | 031 | Pflicht |
-| Listen und Matrizen (Katalog, Editor, Funktionen) (Kap. 26, 27) | 032 | Pflicht |
-| App-Rahmen: Bibliothek, Symb/Plot/Num + Setup, Info, Speichern/Zurücksetzen (Kap. 6) | 033 | Pflicht |
-| Funktionen-App inkl. FKT-Analyse (Kap. 7) | 034 | Pflicht |
-| Parametrisch-, Polar-, Folge-App (Kap. 17–19) | 035 | Pflicht |
-| Erweiterte Grafiken (Relationen, Ungleichungen) (Kap. 8) | 036 | Soll |
-| Statistik 1 Var / 2 Var inkl. Regression (Kap. 12, 13) | 037 | Pflicht |
-| Inferenz, Verteilungen (Kap. 14, Math-Menü Wahrscheinlichkeit) | 038 | Soll |
-| Lösen-, Linearlöser-, Finanzen-, Dreiecklöser-App (Kap. 15, 16, 20, 21) | 039 | Pflicht |
-| Explorer-Apps (linear, quadratisch, trigonometrisch) (Kap. 22) | 040 | Kann |
-| Spreadsheet (Kap. 11) | 041 | Soll |
-| Geometrie (dynamische Geometrie) (Kap. 10) | 042 | Soll |
-| Programmiersprache (an HP PPL angelehnt): Kern (Kap. 29) | 043 | Pflicht |
-| Programmkatalog, Editor, Debugger, eigene Apps, Nutzer-Tastenbelegung (Kap. 29) | 044 | Pflicht |
-| Notizen, Info, Speicherverwaltung, Backup/Export/Import (Kap. 28) | 045 | Pflicht |
-| 3D-Grafiken (neuere Firmware) | 046 | Kann |
-| Python-App (MicroPython/WASM, neuere Firmware) | 047 | Kann |
-| Produktreife: Barrierefreiheit, i18n, PWA, Release, README, Screenshots, Werbeseite | 048 | Pflicht |
+| Bereich (Vorbild: Handbuchkapitel)                                                                    | Prompt | Umfang  |
+| ----------------------------------------------------------------------------------------------------- | ------ | ------- |
+| Produktname, Logo, App-Gerüst, gemeinsame Rust-Crate                                                  | 025    | Pflicht |
+| Gerät, Tastenfeld, Shift/Alpha, Wippe, Touch-Display, Menütasten (Kap. 2)                             | 026    | Pflicht |
+| Startansicht, Textbuch/Algebraisch, Verlauf, Ans, Vorlagen, Variablen A–Z, Einstellungen (Kap. 2, 24) | 027    | Pflicht |
+| RPN-Eingabemodus in der Startansicht (Kap. 3)                                                         | 028    | Pflicht |
+| CAS-Ansicht, CAS-Einstellungen, CAS-Menü (Kap. 4, 23)                                                 | 029    | Pflicht |
+| Toolbox (Math, CAS, App, Nutzer, Katalog), Zeichen, Hilfe (Kap. 2, 23)                                | 030    | Pflicht |
+| Einheiten, Konstanten, Ganzzahl-Basen (Kap. 25, 30)                                                   | 031    | Pflicht |
+| Listen und Matrizen (Katalog, Editor, Funktionen) (Kap. 26, 27)                                       | 032    | Pflicht |
+| App-Rahmen: Bibliothek, Symb/Plot/Num + Setup, Info, Speichern/Zurücksetzen (Kap. 6)                  | 033    | Pflicht |
+| Funktionen-App inkl. FKT-Analyse (Kap. 7)                                                             | 034    | Pflicht |
+| Parametrisch-, Polar-, Folge-App (Kap. 17–19)                                                         | 035    | Pflicht |
+| Erweiterte Grafiken (Relationen, Ungleichungen) (Kap. 8)                                              | 036    | Soll    |
+| Statistik 1 Var / 2 Var inkl. Regression (Kap. 12, 13)                                                | 037    | Pflicht |
+| Inferenz, Verteilungen (Kap. 14, Math-Menü Wahrscheinlichkeit)                                        | 038    | Soll    |
+| Lösen-, Linearlöser-, Finanzen-, Dreiecklöser-App (Kap. 15, 16, 20, 21)                               | 039    | Pflicht |
+| Explorer-Apps (linear, quadratisch, trigonometrisch) (Kap. 22)                                        | 040    | Kann    |
+| Spreadsheet (Kap. 11)                                                                                 | 041    | Soll    |
+| Geometrie (dynamische Geometrie) (Kap. 10)                                                            | 042    | Soll    |
+| Programmiersprache (an HP PPL angelehnt): Kern (Kap. 29)                                              | 043    | Pflicht |
+| Programmkatalog, Editor, Debugger, eigene Apps, Nutzer-Tastenbelegung (Kap. 29)                       | 044    | Pflicht |
+| Notizen, Info, Speicherverwaltung, Backup/Export/Import (Kap. 28)                                     | 045    | Pflicht |
+| 3D-Grafiken (neuere Firmware)                                                                         | 046    | Kann    |
+| Python-App (MicroPython/WASM, neuere Firmware)                                                        | 047    | Kann    |
+| Produktreife: Barrierefreiheit, i18n, PWA, Release, README, Screenshots, Werbeseite                   | 048    | Pflicht |
 
 **Nicht-Ziele:** Prüfungsmodus (Kap. 5 – in einer frei installierbaren App ohne Hardware-LED nicht sicher
 durchsetzbar; höchstens später als „Übungsmodus“ ohne Sicherheitsversprechen), DataStreamer/Sensoren, drahtlose

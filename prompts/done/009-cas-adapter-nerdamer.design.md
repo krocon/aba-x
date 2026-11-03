@@ -3,6 +3,7 @@
 - Status: umgesetzt · Datum: 02.11.2026 · Freigabe: entfällt (Auftrag „selbständig“)
 
 ## Entscheidungen
+
 - E1 `SymbolicEngine` (`src/math/symbolic/engine.ts`) mit `CasValue { expr, approximate, verified }`.
 - E2 Brücke `nerdamer-syntax.ts`: Positivliste hin (ln→log, log→log10, root→nthroot, nCr/nPr umgeschrieben),
   Rückweg mit Abbildung (`cbrt`, `fact`, `_n` → Parameter), unausgewertete Operatoren → `not-solvable`,
@@ -14,4 +15,5 @@
 - Hinweis CSP: Nerdamer nutzt `new Function` nur in `buildFunction` (von uns nicht verwendet).
 
 ## Fortschritt
+
 - [x] Adapter, Prüfungen, Regressionen aus der Bewertung, `docs/mathematics/cas-capabilities.md`

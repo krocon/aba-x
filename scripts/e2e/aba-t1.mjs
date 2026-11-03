@@ -321,6 +321,31 @@ export function t1Scenarios({ axeSource }) {
       await keys('home');
       await page.waitForSelector('app-home-view math-field');
     },
+    async relation(page) {
+      const keys = async (...ks) => {
+        for (const k of ks) await page.click(`.key[data-key="${k}"]`);
+      };
+      await keys('apps');
+      await page.click('app-library .tile:has-text("Advanced Graphing")');
+      await keys('enter');
+      await page.waitForSelector('app-curve-symb');
+      await keys('enter');
+      await page.click('app-curve-symb math-field');
+      await page.keyboard.type('X*X+Y*Y<9');
+      await page.keyboard.press('Enter');
+      await keys('plot');
+      await page.waitForSelector('app-relation-plot canvas');
+      await keys('num');
+      // X = 0 (sixth row from −5): the boundary of the disc at Y = ±3
+      await page.waitForFunction(
+        () =>
+          [...([...document.querySelectorAll('app-relation-num tbody tr')][5]?.children ?? [])]
+            .map((c) => c.textContent.trim())
+            .join('|') === '0|-3; 3',
+      );
+      await keys('home');
+      await page.waitForSelector('app-home-view math-field');
+    },
     async keypad(page) {
       const r = await page.$$eval('app-t1-device .key', (keys) => ({
         count: keys.length,

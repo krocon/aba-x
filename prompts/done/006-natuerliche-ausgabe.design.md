@@ -3,6 +3,7 @@
 - Status: umgesetzt · Datum: 02.11.2026 · Freigabe: entfällt (Auftrag „selbständig“)
 
 ## Entscheidungen
+
 - E1 Stack-Browsing wie am Rechner: ▲ (Taste oder ↑) auf leerer Zeile wählt Ebene 1, ▲/▼ bewegen, ENTER holt in die
   Zeile, DEL/⌫ löscht die Ebene, ON/Esc beendet; das Fenster scrollt mit, wenn die Auswahl über Ebene 4 liegt.
 - E2 Feste Ebenen (4) – das Display bleibt gleich groß; lange Ergebnisse scrollen waagerecht, hohe schieben obere
@@ -13,6 +14,7 @@
 - Lehrbuchform der CAS-Ergebnisse kam schon mit 005 (`prettify`).
 
 ## Nachtrag 02.11.2026 (Wunsch Marc)
+
 - E5 Jede Ebene zeigt Eingabe (klein, links, nur wenn sie sich vom Ergebnis unterscheidet), exaktes Ergebnis und
   Dezimalwert – auch für Ergebnisse aus dem CAS-Menü (vorher fehlte dort „≈ …“).
 - E6 Bearbeiten: Klick auf eine Ebene oder ↑ + ENTER legt ihre Eingabe in die Zeile; ENTER ersetzt die Ebene an

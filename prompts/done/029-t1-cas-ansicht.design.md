@@ -13,4 +13,4 @@ Lücken-Tabelle: `docs/mathematics/cas-aba-t1.md`.
 ## Fortschritt
 
 - [x] Kern: `integer.ts` (6 Specs-Gruppen), `cas-commands.ts` (6 Gruppen), Worker-Op · [x] App: Logik, Store,
-  Ansicht, CAS-Einstellungen, Kopie/Einfügen zwischen Ansichten · [x] E2E solve und ifactor (Chromium, WebKit)
+      Ansicht, CAS-Einstellungen, Kopie/Einfügen zwischen Ansichten · [x] E2E solve und ifactor (Chromium, WebKit)

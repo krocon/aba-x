@@ -6,14 +6,14 @@
 
 ## Bestand → Bedarf
 
-| Baustein | wofür | Ergebnis |
-|---|---|---|
-| `scripts/apps.mjs` | Registry | Eintrag `aba-t1` |
-| Rust `apps/aba-x1/src-tauri/src/*` | Desktop-Hülle | vollständig generisch → `crates/shell` (git mv) |
-| `packages/core` Fassaden, `APP_IDENTITY`, `STORAGE_DB_NAME` | Plattform | passt unverändert |
-| `scripts/e2e/run.mjs` | E2E | Szenarien je App (`scripts/e2e/aba-t1.mjs`), `--build` baut die App |
-| `scripts/notices.mjs` | Lizenzen | Pfad-Crates zählen als eigene |
-| CI/Release | | Rust-Matrix je Crate, Frontend-Build je App, Release-Auswahl `aba-t1` |
+| Baustein                                                    | wofür         | Ergebnis                                                              |
+| ----------------------------------------------------------- | ------------- | --------------------------------------------------------------------- |
+| `scripts/apps.mjs`                                          | Registry      | Eintrag `aba-t1`                                                      |
+| Rust `apps/aba-x1/src-tauri/src/*`                          | Desktop-Hülle | vollständig generisch → `crates/shell` (git mv)                       |
+| `packages/core` Fassaden, `APP_IDENTITY`, `STORAGE_DB_NAME` | Plattform     | passt unverändert                                                     |
+| `scripts/e2e/run.mjs`                                       | E2E           | Szenarien je App (`scripts/e2e/aba-t1.mjs`), `--build` baut die App   |
+| `scripts/notices.mjs`                                       | Lizenzen      | Pfad-Crates zählen als eigene                                         |
+| CI/Release                                                  |               | Rust-Matrix je Crate, Frontend-Build je App, Release-Auswahl `aba-t1` |
 
 ## Entscheidungen
 

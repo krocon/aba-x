@@ -3,6 +3,7 @@
 - Status: umgesetzt · Datum: 02.11.2026 · Freigabe: entfällt (Auftrag „selbständig“)
 
 ## Entscheidungen
+
 - E1 ANLYZ▸ `ROOT EXTR ISECT TANG ∫AREA` im sichtbaren x-Bereich, Ergebnis als Marken im Plot und Text in der
   Meldungszeile; BACK entfernt die Marken.
 - E2 Numerisch mit Brent (Nullstellen, Vorzeichenwechsel von f′, f − g), Pole werden verworfen (1/x hat keine

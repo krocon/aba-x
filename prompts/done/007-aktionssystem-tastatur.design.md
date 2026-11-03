@@ -3,6 +3,7 @@
 - Status: umgesetzt · Datum: 02.11.2026 · Freigabe: entfällt (Auftrag „selbständig“)
 
 ## Entscheidungen
+
 - E1 `core/actions/keymap.ts` (rein): Aktions-Ids, Akkorde mit `Mod` (⌘/Strg), Buchstaben über `event.code`
   (layout-unabhängig, ⌥R auf dem Mac liefert sonst „®“), Anzeige je OS.
 - E2 `KeyboardDispatcher`: ein Listener in der Capture-Phase vor dem Mathefeld, verbraucht nur Akkorde aus der Keymap;

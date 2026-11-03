@@ -628,6 +628,10 @@ export const VIEW_HELP: Record<string, TopicHelp> = {
     en: '3D graphing: FZ1(X,Y) … in Symb (x,t,θ,n inserts X; type Y with alpha). Plot: drag or the rocker rotates, pinch and +/− zoom, Box shows the frame; ⇧Plot sets the X, Y, Z ranges and the grid. Undefined points leave gaps.',
     de: '3D-Grafik: FZ1(X,Y) … in Symb (x,t,θ,n fügt X ein, Y mit Alpha). Plot: Ziehen oder Wippe dreht, Pinch und +/− zoomen, Box zeigt den Rahmen; ⇧Plot setzt X-, Y-, Z-Bereich und Gitter. Undefinierte Stellen bleiben Lücken.',
   },
+  relation: {
+    en: 'Advanced graphing: V1 … V0 are relations in X and Y – equations (X²+Y²=4), inequalities (Y>sin(X)) and their combinations and(…), or(…), not(…), xor(…). While editing, the menu inserts X, Y, ≤, ≥ and the connectives; < > = come from the keyboard. Plot shades where a relation surely holds, grey where it cannot be decided; dashed edges do not belong to the region. ←→ trace along an edge, ↑↓ switch relation, Gallery loads examples. Num lists the boundary Y values for each X.',
+    de: 'Erweiterte Grafiken: V1 … V0 sind Relationen in X und Y – Gleichungen (X²+Y²=4), Ungleichungen (Y>sin(X)) und ihre Verknüpfungen and(…), or(…), not(…), xor(…). Beim Bearbeiten fügt das Menü X, Y, ≤, ≥ und die Verknüpfungen ein; < > = kommen von der Tastatur. Plot färbt, wo eine Relation sicher gilt, grau, wo es sich nicht entscheiden lässt; gestrichelte Ränder gehören nicht dazu. ←→ verfolgt einen Rand, ↑↓ wechselt die Relation, Galerie lädt Beispiele. Num listet die Rand-Y-Werte je X.',
+  },
   toolbox: {
     en: 'Toolbox: the menu buttons choose Math, CAS, App, User or Catalogue. ↑↓ choose, → or Enter opens, ← goes back, Help explains the selected command. In the catalogue a letter jumps.',
     de: 'Toolbox: Die Menütasten wählen Math, CAS, App, Nutzer oder Katalog. ↑↓ wählt, → oder Enter öffnet, ← geht zurück, Help erklärt den gewählten Befehl. Im Katalog springt ein Buchstabe.',

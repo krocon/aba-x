@@ -3,6 +3,7 @@
 - Status: umgesetzt · Datum: 02.11.2026 · Freigabe: entfällt (Auftrag „selbständig“)
 
 ## Entscheidungen
+
 - E1 `parseLatexStatement`: `a = …` (Zuweisung, Wert wird sofort ausgerechnet) und `f(x, y) = …` (Definition,
   symbolisch, rekursive Aufrufe erlaubt – Tiefe begrenzt). Im CAS-Modus bleibt `x = 5` eine Gleichung (010).
 - E2 Namen: Buchstabe + Buchstaben/Ziffern/_, nicht `pi e i inf Ans` und keine eingebauten Funktionen; Groß-/

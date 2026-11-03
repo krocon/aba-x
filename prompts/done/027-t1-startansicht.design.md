@@ -10,14 +10,14 @@
 
 ## Bausteine
 
-| Baustein | Ort |
-|---|---|
-| `Value`, `C` (komplex), `evaluateValue`, `format` | `packages/math/src/value/` (+ 20 Specs), Worker-Op `evaluate` |
-| Katalog `re`, `im`, `conj`, `arg` | `functions.ts` (CAS-Adapter kennt sie nicht → ehrlich abgelehnt) |
-| `MathField` | `@aba/core/shared/math-field` |
-| `HomeStore`, `home-logic`, `home-keys`, `templates`, `HomeView` | `apps/aba-t1/src/app/features/home/` |
-| `SettingsStore`, `settings-logic`, `SettingsView` | `apps/aba-t1/src/app/features/settings/` |
-| `NavStore` (Bildschirme), `I18n`/Texte | `apps/aba-t1/src/app/core/` |
+| Baustein                                                        | Ort                                                              |
+| --------------------------------------------------------------- | ---------------------------------------------------------------- |
+| `Value`, `C` (komplex), `evaluateValue`, `format`               | `packages/math/src/value/` (+ 20 Specs), Worker-Op `evaluate`    |
+| Katalog `re`, `im`, `conj`, `arg`                               | `functions.ts` (CAS-Adapter kennt sie nicht → ehrlich abgelehnt) |
+| `MathField`                                                     | `@aba/core/shared/math-field`                                    |
+| `HomeStore`, `home-logic`, `home-keys`, `templates`, `HomeView` | `apps/aba-t1/src/app/features/home/`                             |
+| `SettingsStore`, `settings-logic`, `SettingsView`               | `apps/aba-t1/src/app/features/settings/`                         |
+| `NavStore` (Bildschirme), `I18n`/Texte                          | `apps/aba-t1/src/app/core/`                                      |
 
 ## Fehlerfälle
 
