@@ -13,20 +13,29 @@ import {
 
 const dep = (pkg, kinds) => ({ pkg, dep_kinds: kinds.map((kind) => ({ kind })) });
 
-test('only normal dependencies reachable from our crate ship', () => {
+test('only normal dependencies reachable from our crates ship, our path crates do not', () => {
   const meta = {
     workspace_members: ['app'],
-    packages: ['app', 'a', 'b', 'build', 'dev', 'via-build'].map((id) => ({
+    packages: ['app', 'shell', 'a', 'b', 'build', 'dev', 'via-build'].map((id) => ({
       id,
       name: id,
       version: '1.0.0',
       license: 'MIT',
       authors: [],
       manifest_path: `/reg/${id}/Cargo.toml`,
+      // our own crates come from a path (crates/shell): no source
+      source:
+        id === 'app' || id === 'shell'
+          ? null
+          : 'registry+https://github.com/rust-lang/crates.io-index',
     })),
     resolve: {
       nodes: [
-        { id: 'app', deps: [dep('a', [null]), dep('build', ['build']), dep('dev', ['dev'])] },
+        {
+          id: 'app',
+          deps: [dep('shell', [null]), dep('build', ['build']), dep('dev', ['dev'])],
+        },
+        { id: 'shell', deps: [dep('a', [null])] },
         { id: 'a', deps: [dep('b', [null, 'build'])] },
         { id: 'build', deps: [dep('via-build', [null])] },
         { id: 'b', deps: [] },

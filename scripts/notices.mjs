@@ -34,7 +34,11 @@ const ASSETS = [];
 export function shippedCrates(meta) {
   const nodes = new Map(meta.resolve.nodes.map((n) => [n.id, n]));
   const pkgs = new Map(meta.packages.map((p) => [p.id, p]));
-  const own = new Set(meta.workspace_members);
+  // our own crates: the workspace members and local path crates (`crates/shell`, source null)
+  const own = new Set([
+    ...meta.workspace_members,
+    ...meta.packages.filter((p) => p.source == null).map((p) => p.id),
+  ]);
   const seen = new Set();
   const todo = [...own];
   while (todo.length > 0) {

@@ -16,12 +16,8 @@ crate-type = ["staticlib", "cdylib", "rlib"]
 tauri-build = { version = "2.7.4", features = [] }
 
 [dependencies]
-serde = { version = "1.0", features = ["derive"] }
-serde_json = "1.0"
+# storage, export files, native menu, about, dialogs, window state: shared with every app (prompt 025)
+aba-shell = { path = "../../../crates/shell" }
 tauri = { version = "2.12.5", features = [] }
-# design 002: native save/open dialogs; window size/position remembered between starts
+# direct dependency so tauri-build knows its permissions (capabilities: dialog:allow-save/open)
 tauri-plugin-dialog = "2.8"
-tauri-plugin-window-state = "2.5"
-
-[dev-dependencies]
-tempfile = "3"
