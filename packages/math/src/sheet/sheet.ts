@@ -13,7 +13,7 @@
 import type { AngleMode } from '../numeric/evaluate';
 import type { MathResult } from '../result';
 import { type NumberFormat, STANDARD_FORMAT, formatValue } from '../value/format';
-import { real } from '../value/value';
+import { type Value, real } from '../value/value';
 import { type CsvSeparator, parseCsv, writeCsv } from './csv';
 import {
   type CellValue,
@@ -138,6 +138,7 @@ export class Sheet {
   private readonly names = new Map<string, Ref | null>();
   private readonly graph = new DependencyGraph();
   private usedArea: { rows: number; cols: number } | null = { rows: 0, cols: 0 };
+  private externals: ReadonlyMap<string, Value> = new Map();
   readonly options: SheetOptions;
 
   constructor(options: SheetOptions = {}) {
@@ -290,6 +291,7 @@ export class Sheet {
       cell: (row, col) => this.values.get(cellKey(row, col)) ?? EMPTY,
       name: (n) => this.names.get(n),
       used: () => this.used(),
+      variable: (n) => this.externals.get(n),
       angle: this.options.angle,
       complexResults: this.options.complexResults,
     };
@@ -332,6 +334,19 @@ export class Sheet {
     this.usedArea = null;
     for (const k of this.cells.keys()) this.bind(k);
     return this.recalc(this.cells.keys());
+  }
+
+  /**
+   * Variables of other views (the home variables) that formulas read by name; sheet names take
+   * precedence. Recalculates the formulas that read an identifier which is no sheet name.
+   */
+  setVariables(vars: ReadonlyMap<string, Value>): ReadonlySet<string> {
+    this.externals = vars;
+    const users: string[] = [];
+    for (const [k, c] of this.compiled) {
+      if (c.ok && c.value.names.some((n) => !this.names.has(n))) users.push(k);
+    }
+    return this.recalc(users);
   }
 
   // ---- names ---------------------------------------------------------------------------------

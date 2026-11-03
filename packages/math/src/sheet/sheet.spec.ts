@@ -191,6 +191,18 @@ describe('names', () => {
       ],
     });
   });
+
+  it('home variables are read by name; sheet names win; only their readers recalculate', () => {
+    const s = sheet({ A1: '2', B1: '=A1*rate', C1: '=A1+1', D1: '=rate' });
+    expect(v(s, 'B1')).toBe('#NAME?');
+    const changed = s.setVariables(new Map([['rate', { kind: 'real', v: 3 } as const]]));
+    expect(v(s, 'B1')).toBe(6);
+    expect([...changed].sort()).toEqual(['B1', 'D1']);
+    s.defineName('rate', 'A1');
+    expect(v(s, 'D1')).toBe(2);
+    s.removeName('rate');
+    expect(v(s, 'D1')).toBe(3);
+  });
 });
 
 describe('copy, paste, fill', () => {

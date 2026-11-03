@@ -69,6 +69,8 @@ export interface EvalContext {
   name(name: string): Ref | null | undefined;
   /** size of the used area (rows, cols): the bounds of whole-column/row ranges */
   used(): { readonly rows: number; readonly cols: number };
+  /** variables of other views (home) for identifiers that are no sheet name */
+  variable?(name: string): Value | undefined;
   readonly angle?: AngleMode;
   readonly complexResults?: boolean;
 }
@@ -163,6 +165,10 @@ class FormulaEvaluator {
     for (const s of symbols(lifted)) {
       const ref = this.refOf(s);
       if (ref !== undefined) variables.set(s, this.refValue(ref));
+      else if (this.f.names.includes(s)) {
+        const x = this.ctx.variable?.(s);
+        if (x) variables.set(s, x);
+      }
     }
     const r = evaluateValue(lifted, {
       variables,

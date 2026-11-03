@@ -152,3 +152,15 @@ V1 … V0 sind Relationen in X und Y: Gleichungen (`X²+Y²=9`), Ungleichungen (
 Intervallarithmetik: gefärbt ist nur, wo die Relation sicher gilt; grau, wo es sich nicht entscheiden lässt; gestrichelte
 Ränder gehören nicht dazu. ←→ verfolgt einen Rand, ↑↓ wechselt die Relation, Galerie lädt Beispiele. Num listet je X die
 Rand-Y-Werte im Y-Bereich (numerisch). Bricht die Verfeinerung am Zeitbudget ab, sagt die Statuszeile das.
+
+## Tabellenkalkulation (041)
+
+Raster A…ZZ × 9999 in der Num-Ansicht der App „Tabellenkalkulation“. Wippe bewegt, ⇧ + Wippe, „Auswahl“ oder Ziehen
+markiert einen Bereich, ein Spaltenkopf die ganze Spalte, Doppeltippen bearbeitet. Zeile + Enter speichert Zahl, Text
+oder Formel (`=A1+B1`, `=SUM(A1:A9)`, `=$A$1*2`, `=AVERAGE(B:B)`, `=IF(A1>0, 1, 0)`, `=A1:A9^2` als Liste) und rückt
+weiter; Variablen der Startansicht gehen in Formeln über ihren Namen. Fehler sind Zellwerte (`#DIV/0!`, `#CYCLE!`,
+`#REF!`, `#VALUE!`, `#NAME?`), die Statuszeile nennt den Grund. Menü: Bearb., Format (Zahlformat, Ausrichtung, fett,
+kursiv, Farbe, Breite), Name (benennt die Auswahl; der Name ist danach auch eine Variable der Startansicht), Gehe zu,
+Auswahl, Mehr (Kopieren/Einfügen alles/Werte/Formeln/Formate – auch ⇧View/⇧Menu –, Füllen, Sortieren, Zeilen/Spalten
+einfügen/löschen, Spalten → L1, L2 …, CSV importieren/exportieren). ⇧Num: Spaltenbreite und CSV-Format. Neuberechnung
+nur der abhängigen Zellen. Nicht enthalten: CAS-Zellen, Bezüge `Spreadsheet.A1` aus anderen Apps (Design 041).
