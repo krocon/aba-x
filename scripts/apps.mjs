@@ -41,9 +41,10 @@ export function appFromArgs(argv, env = {}, apps = APPS) {
   let name = null;
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
-    if (a === '--app') name = argv[++i];
-    else if (a.startsWith('--app=')) name = a.slice('--app='.length);
-    else rest.push(a);
+    if (a === '--app' || a.startsWith('--app=')) {
+      name = a === '--app' ? argv[++i] : a.slice('--app='.length);
+      if (!name || name.startsWith('-')) throw new Error('--app needs an app name');
+    } else rest.push(a);
   }
   name ??= env.APP || DEFAULT_APP;
   appConfig(name, apps); // throws for an unknown app

@@ -52,6 +52,8 @@ module.exports = defineConfig([
                 '@aba/core/*',
                 '**/apps/**',
                 '**/packages/core/**',
+                '**/core/src/**',
+                '**/core/testing/**',
                 '**/src/app/**',
               ],
               message: 'packages/math must not depend on core or an app.',
@@ -74,8 +76,34 @@ module.exports = defineConfig([
               message: 'packages/core must not depend on an app.',
             },
             {
-              group: ['**/packages/math/**', '../../math/**'],
+              group: ['**/packages/math/**', '**/math/src/**'],
               message: 'Import the math core as @aba/math/….',
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    // Production code of core never uses its own fakes.
+    files: ['packages/core/src/**/*.ts'],
+    ignores: ['**/*.spec.ts'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['**/apps/**', '**/src/app/**'],
+              message: 'packages/core must not depend on an app.',
+            },
+            {
+              group: ['**/packages/math/**', '**/math/src/**'],
+              message: 'Import the math core as @aba/math/….',
+            },
+            {
+              group: ['@aba/core/testing', '**/testing/**'],
+              message: 'Test fakes belong in specs only.',
             },
           ],
         },
@@ -92,9 +120,11 @@ module.exports = defineConfig([
         {
           patterns: [
             {
-              group: ['**/packages/**'],
+              group: ['**/packages/**', '**/math/src/**', '**/core/src/**', '**/core/testing/**'],
               message: 'Import packages as @aba/math/… or @aba/core/….',
             },
+            // relative paths within an app never pass through `src/app/` – such a path reaches another app
+            { group: ['**/src/app/**'], message: 'An app must not import another app.' },
             { group: ['@aba/core/testing'], message: 'Test fakes belong in specs only.' },
           ],
         },

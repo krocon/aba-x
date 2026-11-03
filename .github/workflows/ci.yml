@@ -1,6 +1,7 @@
 # CI after the model of Files and Folders: frontend checks once for all packages and apps, Rust on
 # all three desktop platforms for every app (the #[cfg(target_os)] code is otherwise never compiled
-# on Windows/macOS/Linux). Apps: scripts/apps.mjs – a new app gets a `matrix.app` entry.
+# on Windows/macOS/Linux). Apps: scripts/apps.mjs – a new app gets a `matrix.app` entry and its
+# own frontend steps (`pnpm --filter <app> build`, `build:web`, `test`).
 name: CI
 
 on:
@@ -22,7 +23,8 @@ env:
 
 jobs:
   frontend:
-    name: Frontend (format, lint, test, desktop + web build of every app)
+    # root scripts build and test ABA-X1 (+ all packages); a second app adds its own build/test steps here
+    name: Frontend (format, lint, packages + ABA-X1 test, desktop + web build)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5

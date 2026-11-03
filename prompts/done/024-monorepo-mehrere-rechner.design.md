@@ -310,3 +310,10 @@ nicht baubar; der jeweils folgende Commit macht wieder grün.
   dieser Branch erzeugen pixelgleiche Bilder (AE 0). Nicht neu eingecheckt (keine Verhaltensänderung in 024).
 - **Nebenbefund 3:** Das native Desktop-Menü bleibt englisch, auch bei Sprache Deutsch (`TauriMenuApi` übersetzt
   nicht) – unverändert seit v0.1.x, nicht Teil von 024.
+
+## Review (separater Agent, 03.11.2026)
+
+Keine Befunde zu Persistenz, Build-Konfiguration und Workflows. Behoben: ESLint-Grenzen waren mit relativen Pfaden
+anderer Tiefe umgehbar (math → `../../core/src/…`, core → `../../../math/src/…`, Fakes in Core-Produktivcode,
+App → andere App) – jetzt gesperrt und mit Proben geprüft; `--app` ohne Namen fiel still auf ABA-X1 zurück – jetzt
+Fehler; CI-Jobname behauptete „every app“. Bewusst belassen: Umgebungsvariable `APP=` (so im Auftrag vorgesehen).

@@ -46,6 +46,8 @@ test('app selection: --app wins over APP, then the default', () => {
 
 test('an unknown app is an error that names the known ones', () => {
   assert.throws(() => appFromArgs(['--app', 'nope'], {}), /unknown app "nope" – known: aba-x1/);
+  assert.throws(() => appFromArgs(['check', '--app'], {}), /--app needs an app name/);
+  assert.throws(() => appFromArgs(['--app=', 'check'], {}), /--app needs an app name/);
 });
 
 test('paths per app', () => {
