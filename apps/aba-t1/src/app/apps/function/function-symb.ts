@@ -29,13 +29,12 @@ import { FN_COLORS, FN_NAMES, type FunctionState, definitions } from './function
   imports: [MathField, MathStatic],
   template: `
     <div class="symb">
-      <ul class="defs" role="listbox" [attr.aria-label]="i18n.t('app.functions')">
+      <ul class="defs" [attr.aria-label]="i18n.t('app.functions')">
         @for (r of rows(); track r.name; let i = $index) {
           <li
-            role="option"
             tabindex="-1"
             [class.cur]="cursor() === i"
-            [attr.aria-selected]="cursor() === i"
+            [attr.aria-current]="cursor() === i ? 'true' : null"
             (click)="cursor() === i ? edit() : cursor.set(i)"
             (keydown.enter)="edit()"
           >

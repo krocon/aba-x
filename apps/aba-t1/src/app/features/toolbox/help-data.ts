@@ -616,6 +616,10 @@ export const VIEW_HELP: Record<string, TopicHelp> = {
     en: 'Function app: Symb lists F1…F0 (Enter edits, ✓ plots); Plot traces the curve (←→, ↑↓ switch curve), Zoom, Fcn (root, intersection, slope, extremum, signed area, tangent), Go To, Defn, Views (split screen, PNG); Num tables values (+/− change the step). ⇧Plot/⇧Num: setups.',
     de: 'Funktionen-App: Symb listet F1…F0 (Enter bearbeitet, ✓ zeichnet); Plot verfolgt die Kurve (←→, ↑↓ wechselt), Zoom, Fcn (Nullstelle, Schnittpunkt, Steigung, Extremum, Fläche, Tangente), Gehe zu, Def., Ansicht (geteilt, PNG); Num zeigt Werte (+/− ändern den Schritt). ⇧Plot/⇧Num: Einstellungen.',
   },
+  curve: {
+    en: 'Parametric (X/Y in T), polar (R in θ) and sequence (U in N with start terms U(1), U(2)) apps: Symb rows with ←→ for the fields, Plot traces over the parameter (←→, ↑↓ switch curve), Zoom, Go To, Defn, PNG; sequences as stairs or cobweb (⇧Plot). Num tables values.',
+    de: 'Parametrisch (X/Y in T), Polar (R in θ) und Folge (U in N mit Startgliedern U(1), U(2)): Symb-Zeilen mit ←→ für die Felder, Plot verfolgt über den Parameter (←→, ↑↓ wechselt), Zoom, Gehe zu, Def., PNG; Folgen als Treppe oder Spinnennetz (⇧Plot). Num zeigt Werte.',
+  },
   toolbox: {
     en: 'Toolbox: the menu buttons choose Math, CAS, App, User or Catalogue. ↑↓ choose, → or Enter opens, ← goes back, Help explains the selected command. In the catalogue a letter jumps.',
     de: 'Toolbox: Die Menütasten wählen Math, CAS, App, Nutzer oder Katalog. ↑↓ wählt, → oder Enter öffnet, ← geht zurück, Help erklärt den gewählten Befehl. Im Katalog springt ein Buchstabe.',

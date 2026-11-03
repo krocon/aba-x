@@ -109,3 +109,12 @@ Cursor, zur zweiten Grenze gehen, Enter; Tangente gestrichelt), **Def.** (Defini
 **Ansicht** bzw. View-Taste (geteilt Grafik + Tabelle, Autoskalierung, Dezimal, Ganzzahl, Trig, PNG-Export).
 Tippen setzt den Cursor, Ziehen verschiebt, Pinch und +/− zoomen, Doppeltippen vergrößert. Plot-Einstellungen:
 Bereich, Raster, Achsen, Beschriftung, Zeichenmethode (adaptiv mit Sprungerkennung, Segmente, Punkte).
+
+## Parametrisch, Polar, Folge (035)
+
+Drei Apps mit gemeinsamen Ansichten: **Parametrisch** X1(T)/Y1(T) … (T-Bereich und -Schritt im Plot-Setup),
+**Polar** R1(θ) … (θ im eingestellten Winkelmaß), **Folge** U1(N) … mit Startgliedern U1(1), U1(2) – explizit oder
+rekursiv bis zur Ordnung 2, auch über andere Folgen; Selbstbezug wird gemeldet. Symb: ←→ wählt das Feld, x,t,θ,n
+fügt die Variable ein. Plot: Trace über den Parameter (←→ ein Schritt, mit ⇧ zehn, ↑↓ wechselt die Kurve), Zoom,
+Gehe zu, Def., PNG; Folgen als Treppe oder Spinnennetz (für U(N) = g(U(N−1))). Num: Tabelle über T, θ oder N.
+Hinweis: ein Tippen im Display klickt jetzt das getroffene Element; nur Ziehen und Pinch fangen den Zeiger.

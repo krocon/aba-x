@@ -84,7 +84,6 @@ export class T1Device implements OnDestroy {
     const r = el.getBoundingClientRect();
     const x = e.clientX - r.left;
     const y = e.clientY - r.top;
-    if (kind === 'down') el.setPointerCapture?.(e.pointerId);
     const gs =
       kind === 'down'
         ? this.recognizer.down(e.pointerId, x, y, e.timeStamp)
@@ -93,6 +92,10 @@ export class T1Device implements OnDestroy {
           : kind === 'up'
             ? this.recognizer.up(e.pointerId, x, y, e.timeStamp)
             : this.recognizer.cancel(e.pointerId);
+    // capture the pointer only once it drags or pinches – a tap must still click what it hit
+    if (gs.some((g) => (g.kind === 'drag' || g.kind === 'pinch') && g.phase === 'start')) {
+      el.setPointerCapture?.(e.pointerId);
+    }
     for (const g of gs) this.gesture.emit({ g, width: r.width, height: r.height });
   }
 

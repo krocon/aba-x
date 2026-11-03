@@ -64,7 +64,7 @@ Empfohlene Reihenfolge: 025 → 026 → 027 → 028 → 029 → 030 → 031 → 
 | 032 | [t1-listen-matrizen](done/032-t1-listen-matrizen.md) | Listen, Matrizen, Editoren, lineare Algebra | 027, 030 | L | Pflicht | ✅ 03.11.2026 |
 | 033 | [t1-app-rahmen-bibliothek](done/033-t1-app-rahmen-bibliothek.md) | App-Bibliothek, Symb/Plot/Num + Setup, App-Vertrag | 026, 027 | M | Pflicht | ✅ 03.11.2026 |
 | 034 | [t1-funktionen-app](done/034-t1-funktionen-app.md) | Funktionen-App mit FKT-Analyse, Zoom, Trace, Tabelle | 033 | L | Pflicht | ✅ 03.11.2026 |
-| 035 | [t1-parametrisch-polar-folge](035-t1-parametrisch-polar-folge.md) | Parametrisch-, Polar-, Folge-App | 034 | M | Pflicht | offen |
+| 035 | [t1-parametrisch-polar-folge](done/035-t1-parametrisch-polar-folge.md) | Parametrisch-, Polar-, Folge-App | 034 | M | Pflicht | ✅ 03.11.2026 |
 | 036 | [t1-erweiterte-grafiken](036-t1-erweiterte-grafiken.md) | Relationen/Ungleichungen, Intervallarithmetik | 034 | L | Soll | offen |
 | 037 | [t1-statistik-1var-2var](037-t1-statistik-1var-2var.md) | Statistik 1 Var/2 Var, Diagramme, Regression | 032, 033 | L | Pflicht | offen |
 | 038 | [t1-inferenz-verteilungen](038-t1-inferenz-verteilungen.md) | Verteilungen, Hypothesentests, Konfidenzintervalle | 037 | M | Soll | offen |

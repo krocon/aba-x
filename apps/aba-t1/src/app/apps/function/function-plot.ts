@@ -91,7 +91,7 @@ type MenuKind = 'zoom' | 'fcn' | 'view';
           <thead>
             <tr>
               <th>X</th>
-              <th [style.color]="traced()?.color">{{ traced()?.name ?? '' }}</th>
+              <th [style.border-bottom-color]="traced()?.color">{{ traced()?.name ?? '' }}</th>
             </tr>
           </thead>
           <tbody>

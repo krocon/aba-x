@@ -200,6 +200,37 @@ export function t1Scenarios({ axeSource }) {
       await keys('home');
       await page.waitForSelector('app-home-view math-field');
     },
+    async curveApps(page) {
+      const keys = async (...ks) => {
+        for (const k of ks) await page.click(`.key[data-key="${k}"]`);
+      };
+      await keys('apps');
+      const tile = 'app-library .tile:has-text("Parametric")';
+      await page.click(tile);
+      await keys('enter');
+      await page.waitForSelector('app-curve-symb');
+      await keys('enter');
+      await page.click('app-curve-symb math-field');
+      await page.keyboard.type('T^2');
+      await page.keyboard.press('Enter'); // X1, moves to Y1
+      await keys('enter');
+      await page.waitForSelector('app-curve-symb math-field');
+      await page.click('app-curve-symb math-field');
+      await page.keyboard.type('T+1');
+      await page.keyboard.press('Enter');
+      await keys('num');
+      // T = 0.3 (row 4): X = 0.09, Y = 1.3
+      await page.waitForFunction(
+        () =>
+          [...([...document.querySelectorAll('app-curve-num tbody tr')][3]?.children ?? [])]
+            .map((c) => c.textContent.trim())
+            .join('|') === '0.3|0.09|1.3',
+      );
+      await keys('plot');
+      await page.waitForSelector('app-curve-plot canvas');
+      await keys('home');
+      await page.waitForSelector('app-home-view math-field');
+    },
     async keypad(page) {
       const r = await page.$$eval('app-t1-device .key', (keys) => ({
         count: keys.length,
@@ -293,6 +324,12 @@ export function t1Scenarios({ axeSource }) {
       rows: [...document.querySelectorAll('.history li')].map((li) =>
         li.textContent.trim().slice(0, 60),
       ),
+      cells: [...document.querySelectorAll('tbody tr')]
+        .slice(0, 4)
+        .map((r) => [...r.children].map((c) => c.textContent.trim()).join('|')),
+      fields: [...document.querySelectorAll('app-curve-symb .field')]
+        .slice(0, 2)
+        .map((f) => f.textContent.trim()),
       menu: [...document.querySelectorAll('app-t1-device .mb')]
         .map((b) => b.textContent.trim())
         .join('|'),

@@ -23,6 +23,7 @@ const ROWS = 9;
  */
 @Component({
   selector: 'app-function-num',
+  host: { tabindex: '0', role: 'region', '[attr.aria-label]': 'title()' },
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <table class="num">
@@ -30,7 +31,7 @@ const ROWS = 9;
         <tr>
           <th scope="col">X</th>
           @for (f of fns(); track f.name) {
-            <th scope="col" [style.color]="f.color">{{ f.name }}</th>
+            <th scope="col" [style.border-bottom-color]="f.color">{{ f.name }}</th>
           }
         </tr>
       </thead>
@@ -69,6 +70,7 @@ const ROWS = 9;
       background: #e8eeea;
       position: sticky;
       top: 0;
+      border-bottom: 3px solid transparent;
     }
     tbody th {
       background: #f1f5f2;
@@ -81,6 +83,7 @@ export class FunctionNum implements OnInit, OnDestroy {
   private readonly device = inject(DeviceStore);
   private readonly settings = inject(SettingsStore);
   private readonly scope = injectAppScope();
+  protected readonly title = () => this.i18n.t('app.functionNum');
   private readonly state = computed(() => this.apps.current().state as FunctionState);
   protected readonly fns = computed(() => plottables(this.state().fns, this.scope()));
   protected readonly rows = computed(() => {
