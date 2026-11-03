@@ -1,10 +1,10 @@
 {
-  "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
+  "$schema": "../../../node_modules/@tauri-apps/cli/config.schema.json",
   "productName": "ABA-X1",
   "version": "../package.json",
   "identifier": "io.github.krocon.abax",
   "build": {
-    "frontendDist": "../dist/desktop/browser",
+    "frontendDist": "../../../dist/aba-x1/desktop/browser",
     "devUrl": "http://localhost:1420",
     "beforeDevCommand": "pnpm start",
     "beforeBuildCommand": "pnpm build"
@@ -34,7 +34,7 @@
   "bundle": {
     "active": true,
     "license": "MIT",
-    "licenseFile": "../LICENSE",
+    "licenseFile": "../../../LICENSE",
     "resources": {
       "../THIRD-PARTY-NOTICES.txt": "THIRD-PARTY-NOTICES.txt"
     },

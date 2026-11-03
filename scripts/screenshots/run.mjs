@@ -84,7 +84,7 @@ const examples = [
 ];
 
 /** Product page (site/): wide full-size shots and the device. Viewport per scene. */
-const SITE = join(fileURLToPath(new URL('.', import.meta.url)), '../../site/img');
+const SITE = join(fileURLToPath(new URL('.', import.meta.url)), '../../apps/aba-x1/site/img');
 
 async function fullSize(page) {
   // the floating web menu button is not part of the calculator picture

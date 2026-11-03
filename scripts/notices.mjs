@@ -14,7 +14,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
-const OUT = join(ROOT, 'THIRD-PARTY-NOTICES.txt');
+const OUT = join(ROOT, 'apps/aba-x1/THIRD-PARTY-NOTICES.txt');
 
 /** File names that hold a licence or a notice the licence asks to keep (NOTICE of Apache-2.0). */
 const LICENCE_FILE = /^(licen[cs]e|copying|notice|unlicense|copyright)([-._].*)?$/i;
@@ -218,7 +218,7 @@ function cargoComponents() {
       '--format-version',
       '1',
       '--manifest-path',
-      join(ROOT, 'src-tauri/Cargo.toml'),
+      join(ROOT, 'apps/aba-x1/src-tauri/Cargo.toml'),
       '--locked',
     ],
     { encoding: 'utf8', maxBuffer: 256 * 1024 * 1024 },

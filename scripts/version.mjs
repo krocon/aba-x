@@ -69,10 +69,10 @@ export function checkVersions({ pkg, tauriConf, cargoToml, cargoLock }) {
 
 function paths(root) {
   return {
-    pkg: join(root, 'package.json'),
-    tauriConf: join(root, 'src-tauri', 'tauri.conf.json'),
-    cargoToml: join(root, 'src-tauri', 'Cargo.toml'),
-    cargoLock: join(root, 'src-tauri', 'Cargo.lock'),
+    pkg: join(root, 'apps/aba-x1', 'package.json'),
+    tauriConf: join(root, 'apps/aba-x1', 'src-tauri', 'tauri.conf.json'),
+    cargoToml: join(root, 'apps/aba-x1', 'src-tauri', 'Cargo.toml'),
+    cargoLock: join(root, 'apps/aba-x1', 'src-tauri', 'Cargo.lock'),
   };
 }
 

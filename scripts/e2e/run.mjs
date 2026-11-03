@@ -12,7 +12,7 @@ import { extname, join, normalize } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { chromium, firefox, webkit } from 'playwright';
 
-const ROOT = join(fileURLToPath(new URL('.', import.meta.url)), '../../dist/web/browser');
+const ROOT = join(fileURLToPath(new URL('.', import.meta.url)), '../../dist/aba-x1/web/browser');
 const TYPES = {
   '.html': 'text/html',
   '.js': 'text/javascript',

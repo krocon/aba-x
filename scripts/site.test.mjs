@@ -6,7 +6,7 @@ import { join } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
 
-const SITE = join(fileURLToPath(new URL('.', import.meta.url)), '../site');
+const SITE = join(fileURLToPath(new URL('.', import.meta.url)), '../apps/aba-x1/site');
 const html = readFileSync(join(SITE, 'index.html'), 'utf8');
 
 /** Width and height of a PNG from its IHDR chunk. */

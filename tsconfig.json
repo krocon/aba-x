@@ -32,10 +32,10 @@
   "files": [],
   "references": [
     {
-      "path": "./tsconfig.app.json"
+      "path": "./apps/aba-x1/tsconfig.app.json"
     },
     {
-      "path": "./tsconfig.spec.json"
+      "path": "./apps/aba-x1/tsconfig.spec.json"
     }
   ]
 }
