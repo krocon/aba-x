@@ -12,8 +12,16 @@ export type FontSize = 'small' | 'medium' | 'large';
 
 export type CasMode = 'exact' | 'approx';
 
+export interface IntegerSetting {
+  bits: number;
+  signed: boolean;
+  base: 2 | 8 | 10 | 16;
+}
+
 export interface T1Settings {
   angle: AngleMode;
+  /** based integers: word size, sign, default base (prompt 031) */
+  integer: IntegerSetting;
   /** CAS view: exact results, or decimal approximations of them (prompt 029) */
   casMode: CasMode;
   format: NumberFormat;
@@ -28,6 +36,7 @@ export const SETTINGS_VERSION = 1;
 export function defaultSettings(lang: Language): T1Settings {
   return {
     angle: 'rad',
+    integer: { bits: 32, signed: false, base: 16 },
     casMode: 'exact',
     format: { mode: 'standard', digits: 4, decimal: '.' },
     complex: 'off',
@@ -46,7 +55,13 @@ export function readSettings(doc: unknown, lang: Language): T1Settings {
   if (!doc || typeof doc !== 'object') return d;
   const s = doc as Partial<T1Settings> & { format?: Partial<NumberFormat> };
   const digits = Number(s.format?.digits);
+  const ib = Number(s.integer?.bits);
   return {
+    integer: {
+      bits: Number.isInteger(ib) && ib >= 1 && ib <= 64 ? ib : d.integer.bits,
+      signed: s.integer?.signed === true,
+      base: ([2, 8, 10, 16] as const).find((b) => b === Number(s.integer?.base)) ?? d.integer.base,
+    },
     angle: pick(s.angle, ['rad', 'deg'] as const, d.angle),
     casMode: pick(s.casMode, ['exact', 'approx'] as const, d.casMode),
     format: {
@@ -72,7 +87,10 @@ export interface SettingRow {
     | 'entry'
     | 'language'
     | 'fontSize'
-    | 'casMode';
+    | 'casMode'
+    | 'intBase'
+    | 'intBits'
+    | 'intSigned';
   options: readonly string[];
 }
 
@@ -82,6 +100,9 @@ export const SETTING_ROWS: readonly SettingRow[] = [
   { id: 'digits', options: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11'] },
   { id: 'decimal', options: ['.', ','] },
   { id: 'complex', options: ['off', 'rect', 'polar'] },
+  { id: 'intBase', options: ['2', '8', '10', '16'] },
+  { id: 'intBits', options: ['8', '16', '32', '64'] },
+  { id: 'intSigned', options: ['unsigned', 'signed'] },
   { id: 'entry', options: ['textbook', 'algebraic', 'rpn'] },
   { id: 'language', options: ['en', 'de'] },
   { id: 'fontSize', options: ['small', 'medium', 'large'] },
@@ -114,6 +135,12 @@ export function valueOf(s: T1Settings, id: SettingRow['id']): string {
       return s.fontSize;
     case 'casMode':
       return s.casMode;
+    case 'intBase':
+      return String(s.integer.base);
+    case 'intBits':
+      return String(s.integer.bits);
+    case 'intSigned':
+      return s.integer.signed ? 'signed' : 'unsigned';
   }
 }
 
@@ -121,7 +148,12 @@ export function valueOf(s: T1Settings, id: SettingRow['id']): string {
 export function withValue(s: T1Settings, id: SettingRow['id'], v: string): T1Settings {
   const next: Record<string, unknown> = { ...s, format: { ...s.format } };
   const f = next['format'] as Record<string, unknown>;
-  if (id === 'mode') f['mode'] = v;
+  const ints = { ...s.integer } as Record<string, unknown>;
+  next['integer'] = ints;
+  if (id === 'intBase') ints['base'] = Number(v);
+  else if (id === 'intBits') ints['bits'] = Number(v);
+  else if (id === 'intSigned') ints['signed'] = v === 'signed';
+  else if (id === 'mode') f['mode'] = v;
   else if (id === 'digits') f['digits'] = Number(v);
   else if (id === 'decimal') f['decimal'] = v;
   else next[id] = v;

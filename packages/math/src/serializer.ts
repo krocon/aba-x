@@ -102,6 +102,7 @@ const REL: Record<string, string> = {
 };
 
 function latexSymbol(name: string): string {
+  if (name.startsWith('_')) return `\\mathrm{\\_${name.slice(1)}}`;
   if (name === 'pi') return '\\pi ';
   if (name === 'inf') return '\\infty ';
   if (GREEK.has(name)) return `\\${name} `;
@@ -111,6 +112,7 @@ function latexSymbol(name: string): string {
 }
 
 function latexNumber(v: string): string {
+  if (v.startsWith('#')) return `\\#\\mathrm{${v.slice(1)}}`;
   const m = /^(.*)[eE]([+-]?\d+)$/.exec(v);
   return m ? `${m[1]}\\cdot10^{${Number(m[2])}}` : v;
 }

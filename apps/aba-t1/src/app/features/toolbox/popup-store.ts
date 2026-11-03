@@ -1,7 +1,7 @@
 import { Injectable, signal } from '@angular/core';
 import type { ViewContext } from '../../core/device/device-store';
 
-export type PopupMode = 'toolbox' | 'vars' | 'chars' | 'help';
+export type PopupMode = 'toolbox' | 'vars' | 'chars' | 'help' | 'units' | 'base';
 
 export type HelpTopic = { kind: 'command'; name: string } | { kind: 'view'; id: string };
 

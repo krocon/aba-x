@@ -10,6 +10,17 @@ import { type AngleMode, type UserFunction, evaluateNumeric } from '../numeric/e
 import { type MathErrorCode, type MathResult, fail, ok } from '../result';
 import { C } from './complex';
 import {
+  DEFAULT_INTEGER,
+  type IntegerSettings,
+  binaryQ,
+  callQ,
+  compareQ,
+  intLiteral,
+  intReal,
+  plain,
+  unitSymbol,
+} from './quantities';
+import {
   type Complex,
   type Value,
   asComplex,
@@ -25,6 +36,8 @@ export interface ValueScope {
   readonly complexResults?: boolean;
   readonly variables?: ReadonlyMap<string, Value>;
   readonly functions?: ReadonlyMap<string, UserFunction>;
+  /** word size, sign and default base of based integers (prompt 031) */
+  readonly integer?: IntegerSettings;
 }
 
 class ValueError extends Error {
@@ -63,20 +76,36 @@ const EQ_TOL = 1e-12;
 class ValueEvaluator {
   private depth = 0;
 
-  constructor(private readonly scope: ValueScope) {}
+  private readonly ints: IntegerSettings;
+
+  constructor(private readonly scope: ValueScope) {
+    this.ints = scope.integer ?? DEFAULT_INTEGER;
+  }
+
+  private unwrap<T>(r: MathResult<T>): T {
+    if (!r.ok) throw new ValueError(r.error.code, r.error.message);
+    return r.value;
+  }
 
   eval(e: Expr, local: ReadonlyMap<string, Value>): Value {
     switch (e.type) {
       case 'num':
-        return real(Number(e.value));
+        return e.value.startsWith('#')
+          ? this.unwrap(intLiteral(e.value, this.ints))
+          : real(Number(e.value));
       case 'sym':
         return this.symbol(e.name, local);
       case 'neg': {
         const a = this.eval(e.arg, local);
+        if (a.kind === 'unit') return { ...a, v: -a.v };
+        if (a.kind === 'int') return this.binary('-', real(0), a);
         return a.kind === 'real' ? real(-a.v) : C.neg(a);
       }
       case 'post': {
-        const a = this.eval(e.arg, local);
+        let a = this.eval(e.arg, local);
+        if (a.kind === 'unit' && e.op === '%') return { ...a, v: a.v / 100 };
+        if (a.kind === 'unit') return err('domain', 'factorial needs a non-negative integer');
+        if (a.kind === 'int') a = real(intReal(a, this.ints));
         if (a.kind !== 'real') {
           if (e.op === '%') return complex(a.re / 100, a.im / 100);
           return err('domain', 'factorial needs a non-negative integer');
@@ -114,6 +143,7 @@ class ValueEvaluator {
       case 'i':
         return complex(0, 1);
       default:
+        if (name.startsWith('_')) return this.unwrap(unitSymbol(name));
         return err('unknown-symbol', `unknown variable ${name}`);
     }
   }
@@ -154,6 +184,10 @@ class ValueEvaluator {
   }
 
   private binary(op: string, a: Value, b: Value): Value {
+    const q = binaryQ(op, a, b, this.ints);
+    if (q) return this.unwrap(q);
+    if (a.kind === 'int') a = real(intReal(a, this.ints));
+    if (b.kind === 'int') b = real(intReal(b, this.ints));
     if (a.kind === 'real' && b.kind === 'real') {
       const e: Expr = { type: 'bin', op: op as '+', left: num(a.v), right: num(b.v) };
       if (op !== '^') return this.real(e);
@@ -176,6 +210,8 @@ class ValueEvaluator {
   }
 
   private relation(op: string, a: Value, b: Value): Value {
+    const q = compareQ(op, a, b, this.ints);
+    if (q) return real(this.unwrap(q) ? 1 : 0);
     const close = (p: number, q: number) =>
       p === q || Math.abs(p - q) <= EQ_TOL * Math.max(Math.abs(p), Math.abs(q));
     if (op === '=' || op === '!=') {
@@ -192,7 +228,7 @@ class ValueEvaluator {
     return real(r ? 1 : 0);
   }
 
-  private call(name: string, argExprs: readonly Expr[], local: ReadonlyMap<string, Value>): Value {
+  call(name: string, argExprs: readonly Expr[], local: ReadonlyMap<string, Value>): Value {
     const user = this.scope.functions?.get(name);
     if (user) {
       if (user.params.length !== argExprs.length) {
@@ -207,7 +243,29 @@ class ValueEvaluator {
         this.depth--;
       }
     }
-    const args = argExprs.map((a) => this.eval(a, local));
+    let args = argExprs.map((a) => this.eval(a, local));
+    const special = callQ(name, args, this.ints);
+    if (special) return this.unwrap(special);
+    if (args.some((a) => a.kind === 'unit' || a.kind === 'int')) {
+      // √ of a quantity keeps its units (√(4_m^2) = 2_m); |x| too
+      const [a0] = args;
+      if (a0?.kind === 'unit' && (name === 'sqrt' || name === 'abs')) {
+        return name === 'abs' ? { ...a0, v: Math.abs(a0.v) } : this.binary('^', a0, real(0.5));
+      }
+      const plains = args.map((a) => this.unwrap(plain(a, this.ints)));
+      args = plains.map((p) => p.value);
+      if (
+        plains.some((p) => p.radians) &&
+        ['sin', 'cos', 'tan', 'cot', 'sec', 'csc'].includes(name)
+      ) {
+        // an angle with a unit (30_deg) is converted to radians, whatever the angle mode
+        return new ValueEvaluator({ ...this.scope, angle: 'rad' }).call(
+          name,
+          args.map((v) => num((v as { v: number }).v)),
+          local,
+        );
+      }
+    }
     const complexFns = ['re', 'im', 'conj', 'arg', 'abs'];
     if (args.every((a) => a.kind === 'real') && !complexFns.includes(name)) {
       const e: Expr = { type: 'call', name, args: args.map((a) => num((a as { v: number }).v)) };

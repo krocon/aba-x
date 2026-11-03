@@ -5,6 +5,7 @@
  */
 import type { AngleMode } from '../numeric/evaluate';
 import { C } from './complex';
+import { unitInput, unitText } from '../units/units';
 import type { Value } from './value';
 
 export type FormatMode = 'standard' | 'fixed' | 'sci' | 'eng';
@@ -112,9 +113,14 @@ function angleOf(re: number, im: number, angle: AngleMode | undefined): number {
   return angle === 'deg' ? (t * 180) / Math.PI : t;
 }
 
-/** Plain text: `3+4*i`, `5∠53.1301023542`, `−2.5E−7`. */
+const intText = (v: { v: string; base: 2 | 8 | 10 | 16 }) =>
+  `#${BigInt(v.v).toString(v.base).toUpperCase()}${{ 2: 'b', 8: 'o', 10: 'd', 16: 'h' }[v.base]}`;
+
+/** Plain text: `3+4*i`, `5∠53.1301023542`, `−2.5E−7`, `27.7777777778 m/s`, `#FFh`. */
 export function formatValue(v: Value, o: DisplayOptions): string {
   if (v.kind === 'real') return realText(v.v, o.format);
+  if (v.kind === 'unit') return `${realText(v.v, o.format)} ${unitText(v.u)}`;
+  if (v.kind === 'int') return intText(v);
   if (o.complexForm === 'polar') {
     const r = C.abs(v);
     return `${realText(r, o.format)}∠${realText(angleOf(v.re, v.im, o.angle), o.format)}`;
@@ -129,6 +135,8 @@ export function formatValue(v: Value, o: DisplayOptions): string {
 /** LaTeX for the display: `3+4i`, `5\angle 53.13`, `1.5\times10^{-7}`. */
 export function valueLatex(v: Value, o: DisplayOptions): string {
   if (v.kind === 'real') return realLatex(v.v, o.format);
+  if (v.kind === 'unit') return `${realLatex(v.v, o.format)}\\,${unitText(v.u, true)}`;
+  if (v.kind === 'int') return `\\#\\mathrm{${intText(v).slice(1)}}`;
   if (o.complexForm === 'polar') {
     const r = C.abs(v);
     const t = angleOf(v.re, v.im, o.angle);
@@ -138,4 +146,26 @@ export function valueLatex(v: Value, o: DisplayOptions): string {
   const im = imAbs === '1' ? 'i' : `${imAbs}\\,i`;
   if (v.re === 0) return v.im < 0 ? `-${im}` : im;
   return `${realLatex(v.re, o.format)}${v.im < 0 ? '-' : '+'}${im}`;
+}
+
+/**
+ * A value as text input that reads back to the same value (full precision): `1.5*10^(20)`,
+ * `27.7777777778*_m/_s`, `#FFh`, `3-4*i`.
+ */
+export function valueInput(v: Value): string {
+  const full: NumberFormat = { mode: 'standard', digits: 0, decimal: '.' };
+  const n = (x: number) => realText(x, full).replace(/E(-?\d+)/, '*10^($1)');
+  switch (v.kind) {
+    case 'real':
+      return n(v.v);
+    case 'int':
+      return intText(v);
+    case 'unit':
+      return `${n(v.v)}*${unitInput(v.u)}`;
+    case 'complex': {
+      const im = `${n(Math.abs(v.im))}*i`;
+      if (v.re === 0) return v.im < 0 ? `-${im}` : im;
+      return `${n(v.re)}${v.im < 0 ? '-' : '+'}${im}`;
+    }
+  }
 }

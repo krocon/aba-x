@@ -30,8 +30,10 @@ import {
   type ToolCategory,
   type ToolEntry,
   type ToolboxTab,
+  baseEntries,
   catalog,
   jumpTo,
+  unitCategories,
   userEntries,
 } from './toolbox-model';
 
@@ -219,6 +221,7 @@ export class PopupView implements OnInit, OnDestroy {
   protected readonly category = signal<ToolCategory | null>(null);
   protected readonly cursor = signal(0);
   protected readonly chars = CHARS;
+  private readonly unitCats = unitCategories();
   private pop: (() => void) | null = null;
 
   private readonly de = computed(() => this.i18n.lang() === 'de');
@@ -228,6 +231,10 @@ export class PopupView implements OnInit, OnDestroy {
     if (this.popup.mode() === 'vars') return this.varRows();
     const cat = this.category();
     if (cat) return cat.entries.map((e) => this.entryRow(e));
+    if (this.popup.mode() === 'units') {
+      return this.unitCats.map((c) => ({ label: de ? c.de : c.en, category: c }));
+    }
+    if (this.popup.mode() === 'base') return baseEntries().map((e) => this.entryRow(e));
     switch (this.tab()) {
       case 'math':
       case 'cas':
@@ -261,6 +268,10 @@ export class PopupView implements OnInit, OnDestroy {
         return this.de() ? 'Zeichen' : 'Characters';
       case 'help':
         return this.de() ? 'Hilfe' : 'Help';
+      case 'units':
+        return this.de() ? 'Einheiten' : 'Units';
+      case 'base':
+        return 'Base';
       default:
         return 'Toolbox';
     }
@@ -417,7 +428,8 @@ export class PopupView implements OnInit, OnDestroy {
   private back(): void {
     const c = this.category();
     if (!c) return;
-    const list = this.tab() === 'cas' ? CAS_TAB : MATH_TAB;
+    const list =
+      this.popup.mode() === 'units' ? this.unitCats : this.tab() === 'cas' ? CAS_TAB : MATH_TAB;
     this.category.set(null);
     this.cursor.set(Math.max(0, list.indexOf(c)));
   }

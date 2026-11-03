@@ -130,7 +130,7 @@ export class SettingsView implements OnInit, OnDestroy {
   }
 
   protected optionLabel(id: SettingRow['id'], o: string): string {
-    if (id === 'digits') return o;
+    if (id === 'digits' || id === 'intBits') return o;
     return this.i18n.t(`opt.${o}` as TextKey);
   }
 

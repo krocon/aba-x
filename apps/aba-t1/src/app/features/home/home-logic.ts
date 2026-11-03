@@ -10,7 +10,8 @@ import { isFreeName, parseLatexStatement, parseTextStatement } from '@aba/math/p
 import { parseText } from '@aba/math/parser/text-parser';
 import { type MathResult, fail, ok } from '@aba/math/result';
 import type { ValueScope } from '@aba/math/value/evaluate-value';
-import { type DisplayOptions, formatValue, valueLatex } from '@aba/math/value/format';
+import { type DisplayOptions, formatValue, valueInput, valueLatex } from '@aba/math/value/format';
+import { toLatex } from '@aba/math/serializer';
 import type { Value } from '@aba/math/value/value';
 import type { T1Settings } from '../settings/settings-logic';
 
@@ -72,6 +73,7 @@ export function scopeOf(
     complexResults: settings.complex !== 'off',
     variables,
     functions,
+    integer: settings.integer,
   };
 }
 
@@ -108,18 +110,13 @@ export function inputLatex(e: HistoryEntry): string | null {
   return e.kind === 'latex' ? e.input : null;
 }
 
-/** A value as editable input (Copy of a result into the entry line). */
+/** A value as editable input (Copy of a result into the entry line), full precision. */
 export function valueAsInput(v: Value, kind: InputKind, s: T1Settings): string {
-  const full = {
-    ...displayOptions(s),
-    format: { mode: 'standard' as const, digits: 0, decimal: '.' as const },
-  };
-  const text = formatValue(v, full).replace(
-    /E(-?\d+)/,
-    kind === 'latex' ? '\\times10^{$1}' : '*10^($1)',
-  );
-  if (kind === 'text') return text.replace('∠', '∠');
-  return text.replace(/\*i/g, 'i').replace('∠', '\\angle ');
+  void s;
+  const text = valueInput(v);
+  if (kind === 'text') return text;
+  const p = parseText(text);
+  return p.ok ? toLatex(p.value) : text;
 }
 
 export const MAX_HISTORY = 200;

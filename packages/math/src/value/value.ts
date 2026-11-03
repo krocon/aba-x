@@ -14,10 +14,31 @@ export interface Complex {
   readonly im: number;
 }
 
-export type Value = Real | Complex;
+/** A number with units (prompt 031): `27.8 m/s` = { v: 27.8, u: { m: 1, s: -1 } }. */
+export interface Quantity {
+  readonly kind: 'unit';
+  readonly v: number;
+  readonly u: Readonly<Record<string, number>>;
+}
+
+/** A based integer (prompt 031), masked to the word size, stored as decimal digits. */
+export interface BasedInt {
+  readonly kind: 'int';
+  readonly v: string;
+  readonly base: 2 | 8 | 10 | 16;
+}
+
+export type Value = Real | Complex | Quantity | BasedInt;
 
 export const real = (v: number): Real => ({ kind: 'real', v });
 export const complex = (re: number, im: number): Complex => ({ kind: 'complex', re, im });
+export const quantity = (v: number, u: Readonly<Record<string, number>>): Value =>
+  Object.keys(u).length ? { kind: 'unit', v, u } : real(v);
+export const based = (v: bigint, base: BasedInt['base']): BasedInt => ({
+  kind: 'int',
+  v: v.toString(),
+  base,
+});
 
 /**
  * Rounding noise of the complex functions (e^{iπ} = −1 + 1.2·10⁻¹⁶ i) is removed: a part smaller
@@ -31,10 +52,20 @@ export function normalize(v: Value): Value {
   return im === 0 ? real(re) : complex(re, im);
 }
 
+/** Real or complex as complex (callers check units and integers first). */
 export function asComplex(v: Value): Complex {
-  return v.kind === 'complex' ? v : complex(v.v, 0);
+  if (v.kind === 'complex') return v;
+  if (v.kind === 'int') return complex(Number(v.v), 0);
+  return complex(v.v, 0);
 }
 
 export function isFiniteValue(v: Value): boolean {
-  return v.kind === 'real' ? Number.isFinite(v.v) : Number.isFinite(v.re) && Number.isFinite(v.im);
+  switch (v.kind) {
+    case 'complex':
+      return Number.isFinite(v.re) && Number.isFinite(v.im);
+    case 'int':
+      return true;
+    default:
+      return Number.isFinite(v.v);
+  }
 }

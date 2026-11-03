@@ -27,6 +27,7 @@
 | 028 | RPN-Stack (PICK, ROLL, ROLLD, DROPN, ECHO, SWAP, DUP, DROP) | ✅ 03.11.2026 |
 | 029 | CAS-Ansicht: Nerdamer + eigene Verfahren (Ganzzahl, Taylor), Lücken-Tabelle | ✅ 03.11.2026 |
 | 030 | Toolbox (Math/CAS/App/Nutzer/Katalog), Vars, Zeichen, Hilfe DE/EN | ✅ 03.11.2026 |
+| 031 | Einheiten (≈ 85, Präfixe, Temperaturen), Konstanten CODATA 2022, Basis-Ganzzahlen | ✅ 03.11.2026 |
 
 ## Was funktioniert
 

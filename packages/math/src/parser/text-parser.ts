@@ -50,6 +50,20 @@ export function tokenizeText(src: string): Tok[] {
       i += num[0].length;
       continue;
     }
+    // based integers #FFh (prompt 031): one number token, read by the value evaluator
+    const based = /^#[0-9A-Za-z]+/.exec(src.slice(i));
+    if (based) {
+      toks.push({ k: 'num', v: based[0], s: i, e: i + based[0].length });
+      i += based[0].length;
+      continue;
+    }
+    // units _km, _degC (prompt 031): names that start with an underscore
+    const unit = /^_[\p{L}][\p{L}\p{N}]*/u.exec(src.slice(i));
+    if (unit) {
+      toks.push({ k: 'id', v: unit[0], s: i, e: i + unit[0].length });
+      i += unit[0].length;
+      continue;
+    }
     const id = /^[\p{L}][\p{L}\p{N}_]*/u.exec(src.slice(i));
     if (id && !NAMES[c]) {
       toks.push({ k: 'id', v: id[0], s: i, e: i + id[0].length });

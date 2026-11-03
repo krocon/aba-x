@@ -121,6 +121,11 @@ class LatexLexer {
     let s = '';
     for (let j = from; j < to; j++) {
       const r = this.raw[j];
+      // \_ in a name: units like \mathrm{\_km} (prompt 031)
+      if (r.t === 'cmd' && r.name === '_') {
+        s += '_';
+        continue;
+      }
       if (r.t !== 'char' || !/[\p{L}\p{N}]/u.test(r.c)) return null;
       s += r.c;
     }
@@ -273,6 +278,7 @@ class LatexLexer {
     if (n === 'lim') return this.limit(r, i, to, push);
     if (n === 'begin') return this.matrix(r, i, to, push);
     if (n === '{' || n === 'lbrace') this.err('unsupported', 'sets are not supported', r);
+    if (n === '#') return this.based(r, i, to, push);
     if (
       n === 'mathrm' ||
       n === 'operatorname' ||
@@ -294,6 +300,28 @@ class LatexLexer {
     const fn = lookupLatexFunction(n);
     if (fn) return this.fnToken(fn.name, r, i + 1, to, push);
     return this.err('unknown-function', `unknown command \\${n}`, r);
+  }
+
+  /** `\#FFh` or `\#\mathrm{FFh}`: a based integer (prompt 031), kept as written. */
+  private based(r: Raw, i: number, to: number, push: (t: Tok) => void): number {
+    let j = i + 1;
+    let digits = '';
+    const next = this.raw[j];
+    if (next?.t === 'cmd' && (next.name === 'mathrm' || next.name === 'operatorname')) {
+      const [a, b, after] = this.group(j + 1, to);
+      digits = this.text(a, b) ?? '';
+      j = after;
+    } else {
+      while (j < to) {
+        const x = this.raw[j];
+        if (x.t !== 'char' || !/[0-9A-Za-z]/.test(x.c)) break;
+        digits += x.c;
+        j++;
+      }
+    }
+    if (!digits) this.err('syntax', 'a based integer needs digits after #', r);
+    push({ k: 'num', v: `#${digits}`, s: r.s, e: this.raw[j - 1].e });
+    return j;
   }
 
   /** Function command with optional `^{-1}`, `^2` and (for log) `_{b}`. */
@@ -586,7 +614,12 @@ class LatexLexer {
  * (prompt 030) – the same name. Positions in error messages refer to the normalised input.
  */
 export function normalizeLatex(src: string): string {
-  return src.replace(/\\operatorname\{\\mathrm\{([^{}]*)\}\}/g, '\\operatorname{$1}');
+  return (
+    src
+      .replace(/\\operatorname\{\\mathrm\{([^{}]*)\}\}/g, '\\operatorname{$1}')
+      // a unit typed after a number (MathLive makes "5_m" a subscript): 5_{km} → 5\mathrm{\_km}
+      .replace(/(\d)_\{?([A-Za-zµΩ]+)\}?/g, '$1\\mathrm{\\_$2}')
+  );
 }
 
 export function scanLatexTokens(src: string, opts: ParseOptions = {}): Tok[] {

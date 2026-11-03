@@ -110,6 +110,21 @@ export function t1Scenarios({ axeSource }) {
       await page.click('.key[data-key="esc"]');
       await page.waitForFunction(() => !document.querySelector('app-popup'));
     },
+    async unitsAndBases(page) {
+      const keys = async (...ks) => {
+        for (const k of ks) await page.click(`.key[data-key="${k}"]`);
+      };
+      await keys('d3', 'shift', 'template'); // Units menu
+      await page.waitForSelector('app-popup li');
+      await keys('enter', 'd4'); // Length › km
+      await page.waitForFunction(() => !document.querySelector('app-popup'));
+      await keys('enter');
+      await lastResult(page, '3 km');
+      await page.click('app-home-view math-field');
+      await page.keyboard.type('#FFh+1');
+      await page.keyboard.press('Enter');
+      await lastResult(page, '#100h');
+    },
     async keypad(page) {
       const r = await page.$$eval('app-t1-device .key', (keys) => ({
         count: keys.length,

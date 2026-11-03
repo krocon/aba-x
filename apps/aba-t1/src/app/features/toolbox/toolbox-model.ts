@@ -4,6 +4,10 @@
  * Pure; the catalogue is every command once, alphabetically.
  */
 import { lookupFunction } from '@aba/math/functions';
+import { parseText } from '@aba/math/parser/text-parser';
+import { toLatex } from '@aba/math/serializer';
+import { CONSTANTS } from '@aba/math/units/constants.data';
+import { UNIT_MENU } from '@aba/math/units/units.data';
 
 export type ToolboxTab = 'math' | 'cas' | 'app' | 'user' | 'catalog';
 
@@ -85,6 +89,18 @@ export const MATH_TAB: ToolCategory[] = [
     fn('nCr'),
     fn('nPr'),
     fn('erf'),
+  ]),
+  cat(
+    'units',
+    'Units',
+    'Einheiten',
+    ['convert', 'mksa', 'ufactor', 'usimplify'].map((n) => fn(n)),
+  ),
+  cat('base', 'Integer base', 'Ganzzahl-Basis', [
+    ...['bitand', 'bitor', 'bitxor', 'bitnot', 'bitsl', 'bitsr', 'bitasr', 'bitrl', 'bitrr'].map(
+      (n) => fn(n),
+    ),
+    ...['r2b', 'b2r', 'bin', 'oct', 'dec', 'hex'].map((n) => fn(n)),
   ]),
   cat('calc', 'Calculus', 'Analysis', [
     tpl('sum', '\\sum_{#?=#?}^{#?}#0', 'sum('),
@@ -217,3 +233,64 @@ export const CHARS: readonly { latex: string; text: string; label: string }[] = 
   { latex: '"', text: '"', label: 'quote' },
   { latex: '#', text: '#', label: 'hash' },
 ];
+
+/** Units key (⇧Template): unit categories and constants (prompt 031). */
+export function unitCategories(): ToolCategory[] {
+  const names: Record<string, [string, string]> = {
+    length: ['Length', 'Länge'],
+    area: ['Area', 'Fläche'],
+    volume: ['Volume', 'Volumen'],
+    time: ['Time', 'Zeit'],
+    speed: ['Speed', 'Geschwindigkeit'],
+    mass: ['Mass', 'Masse'],
+    force: ['Force', 'Kraft'],
+    energy: ['Energy', 'Energie'],
+    power: ['Power', 'Leistung'],
+    pressure: ['Pressure', 'Druck'],
+    temperature: ['Temperature', 'Temperatur'],
+    electricity: ['Electricity', 'Elektrizität'],
+    amount: ['Amount', 'Stoffmenge'],
+    light: ['Light', 'Licht'],
+    radiation: ['Radiation', 'Strahlung'],
+    viscosity: ['Viscosity', 'Viskosität'],
+    angle: ['Angle', 'Winkel'],
+  };
+  const units = Object.entries(UNIT_MENU).map(([id, list]) =>
+    cat(
+      id,
+      names[id]?.[0] ?? id,
+      names[id]?.[1] ?? id,
+      list.map((u) => ({ name: u, latex: `\\mathrm{\\_${u}}`, text: `_${u}` })),
+    ),
+  );
+  const constNames: Record<string, [string, string]> = {
+    math: ['Constants: mathematics', 'Konstanten: Mathematik'],
+    chemistry: ['Constants: chemistry', 'Konstanten: Chemie'],
+    physics: ['Constants: physics', 'Konstanten: Physik'],
+    quantum: ['Constants: quantum', 'Konstanten: Quanten'],
+  };
+  const consts = Object.entries(constNames).map(([id, [en, de]]) =>
+    cat(
+      `const-${id}`,
+      en,
+      de,
+      CONSTANTS.filter((c) => c.category === id).map((c) => {
+        const text = c.unit ? `${c.value}*${c.unit}` : String(c.value);
+        const p = parseText(c.unit ? `(${text})` : text);
+        return { name: `${c.symbol} = ${c.value}`, latex: p.ok ? toLatex(p.value) : text, text };
+      }),
+    ),
+  );
+  return [...units, ...consts];
+}
+
+/** Base key (⇧−): literals and the integer functions (prompt 031). */
+export function baseEntries(): ToolEntry[] {
+  return [
+    { name: '#…h', latex: '\\#\\mathrm{#?h}', text: '#' },
+    { name: '#…b', latex: '\\#\\mathrm{#?b}', text: '#' },
+    { name: '#…o', latex: '\\#\\mathrm{#?o}', text: '#' },
+    { name: '#…d', latex: '\\#\\mathrm{#?d}', text: '#' },
+    ...MATH_TAB.find((c) => c.id === 'base')!.entries,
+  ];
+}

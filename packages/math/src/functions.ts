@@ -65,6 +65,27 @@ export const FUNCTIONS: readonly FunctionDef[] = [
   f('im', 1, 1, 'imaginary part', { latex: 'operatorname{im}', aliases: ['imag'] }),
   f('conj', 1, 1, 'complex conjugate', { latex: 'operatorname{conj}' }),
   f('arg', 1, 1, 'argument (angle) of a complex number', { latex: 'arg' }),
+  // units (prompt 031): values with units like 5_m; the CAS does not know them
+  f('convert', 2, 2, 'convert(value, 1_unit): value in another unit'),
+  f('mksa', 1, 1, 'value in SI base units'),
+  f('ufactor', 2, 2, 'ufactor(value, 1_unit): value in this unit times SI base units'),
+  f('usimplify', 1, 1, 'value in a named SI unit (N, J, W, …)'),
+  // based integers (prompt 031)
+  f('bitand', 2, 2, 'bitwise AND'),
+  f('bitor', 2, 2, 'bitwise OR'),
+  f('bitxor', 2, 2, 'bitwise exclusive OR'),
+  f('bitnot', 1, 1, 'bitwise NOT'),
+  f('bitsl', 1, 2, 'shift left (by n bits)'),
+  f('bitsr', 1, 2, 'shift right, logical'),
+  f('bitasr', 1, 2, 'shift right, arithmetic'),
+  f('bitrl', 1, 2, 'rotate left'),
+  f('bitrr', 1, 2, 'rotate right'),
+  f('r2b', 1, 1, 'integer → based integer'),
+  f('b2r', 1, 1, 'based integer → real number'),
+  f('bin', 1, 1, 'show in base 2'),
+  f('oct', 1, 1, 'show in base 8'),
+  f('dec', 1, 1, 'show in base 10'),
+  f('hex', 1, 1, 'show in base 16'),
 ];
 
 /** Names that build their own node type in text input: diff(f, x[, n]), integrate(f, x[, a, b]), … */

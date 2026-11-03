@@ -122,11 +122,13 @@ export class App implements OnInit {
     this.device.onGlobal('home.shift', () => this.nav.go('homeSettings'));
     this.device.onGlobal('cas', () => this.nav.go('cas'));
     this.device.onGlobal('cas.shift', () => this.nav.go('casSettings'));
-    const open = (mode: 'toolbox' | 'vars' | 'chars') => () =>
+    const open = (mode: 'toolbox' | 'vars' | 'chars' | 'units' | 'base') => () =>
       this.popup.open(mode, this.device.insertTarget());
     this.device.onGlobal('toolbox', open('toolbox'));
     this.device.onGlobal('vars', open('vars'));
     this.device.onGlobal('vars.shift', open('chars'));
+    this.device.onGlobal('template.shift', open('units'));
+    this.device.onGlobal('sub.shift', open('base'));
     this.device.onGlobal('help', () =>
       this.popup.open('help', this.device.insertTarget(), {
         kind: 'view',

@@ -77,3 +77,9 @@ Abdeckung: [`mathematics/cas-aba-t1.md`](mathematics/cas-aba-t1.md). Markierunge
   griechische Buchstaben, ≤ ≥ ≠ ∞ ° ± → ∠ % ! …
 - **Help** (F10) ohne Auswahl: Hilfe zur aktuellen Ansicht. Alle Hilfetexte sind eigene Texte (`help-data.ts`); eine
   Spec prüft, dass jeder Katalogbefehl Hilfe in beiden Sprachen und ein parsbares Beispiel hat.
+
+## Einheiten, Konstanten, Basen (031)
+
+⇧Vorlage (Units): Einheiten nach 17 Kategorien und Konstanten (CODATA 2022) – Einfügen als `\mathrm{\_km}` bzw.
+Wert × Einheit. ⇧− (Base): Literale `#…h/b/o/d` und Bit-Funktionen. Einstellungen: Ganzzahl-Basis, Wortbreite,
+Vorzeichen. Details: [`mathematics/units.md`](mathematics/units.md).

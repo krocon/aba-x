@@ -20,7 +20,7 @@ function expr(src: string) {
 const close = (v: Value | string, re: number, im = 0) => {
   expect(typeof v).not.toBe('string');
   const c = v as Value;
-  const [r, i] = c.kind === 'real' ? [c.v, 0] : [c.re, c.im];
+  const [r, i] = c.kind === 'complex' ? [c.re, c.im] : c.kind === 'real' ? [c.v, 0] : [NaN, NaN];
   expect(r).toBeCloseTo(re, 12);
   expect(i).toBeCloseTo(im, 12);
 };

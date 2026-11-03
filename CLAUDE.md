@@ -62,6 +62,7 @@ packages/math/src/           @aba/math – framework-frei (ESLint-Sperre), eigen
   graph/                     viewport, sampler (Pol-/Sprungerkennung), analysis (Nullstellen, Extrema, Fläche …)
   value/                     Value (real/komplex …), evaluateValue (ABA-T1-Startansicht, delegiert Reelles), format
   rpn/                       RPN-Stack auf Values (ABA-T1)
+  units/, integer/           Einheiten (_m, convert …) + Konstanten (CODATA 2022); Basis-Ganzzahlen #FFh (BigInt)
   worker/                    Protokoll + Host (CAS und `evaluate` im Web Worker)
 packages/core/               @aba/core – app-unabhängige Angular-Bausteine (nie aus apps/ importieren)
   src/platform|storage|files Fassaden (Web + Tauri); APP_IDENTITY, STORAGE_DB_NAME liefert die App
