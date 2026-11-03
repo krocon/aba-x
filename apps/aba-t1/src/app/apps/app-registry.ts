@@ -16,6 +16,8 @@ import { StatsNum, StatsPlot, StatsPlotSetup, StatsSymb } from './stats/stats-vi
 import { RelationNum, RelationPlot } from './relation/relation-views';
 import { SurfaceNum, SurfacePlot, SurfaceSetup } from './surface/surface-views';
 import { CurveNum, CurveNumSetup, CurvePlot, CurvePlotSetup, CurveSymb } from './curve/curve-views';
+import { initSheetState } from './spreadsheet/sheet-logic';
+import { SheetNum, SheetNumSetup } from './spreadsheet/sheet-views';
 
 export const APP_DEFS: AppDef[] = [
   {
@@ -120,5 +122,14 @@ export const APP_DEFS: AppDef[] = [
     version: 1,
     start: 'symb',
     views: { symb: CurveSymb, plot: SurfacePlot, num: SurfaceNum, plotSetup: SurfaceSetup },
+  },
+  {
+    id: 'spreadsheet',
+    title: { en: 'Spreadsheet', de: 'Tabellenkalkulation' },
+    icon: 'M3 4h18v16H3zM3 9h18M3 14h18M9 4v16M15 4v16',
+    init: initSheetState,
+    version: 1,
+    start: 'num',
+    views: { num: SheetNum, numSetup: SheetNumSetup },
   },
 ];

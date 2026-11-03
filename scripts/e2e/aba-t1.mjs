@@ -420,6 +420,68 @@ export function t1Scenarios({ axeSource }) {
       await keys('home');
       await page.waitForSelector('app-home-view math-field');
     },
+    async spreadsheet(page) {
+      const keys = async (...ks) => {
+        for (const k of ks) await page.click(`.key[data-key="${k}"]`);
+      };
+      const cell = (key) => {
+        const col = key.charCodeAt(0) - 65;
+        const row = Number(key.slice(1)) - 1;
+        return `app-sheet-num .cell[data-r="${row}"][data-c="${col}"]`;
+      };
+      const cellIs = (key, want) =>
+        page.waitForFunction(
+          ([sel, w]) => document.querySelector(sel)?.textContent.trim() === w,
+          [cell(key), want],
+          { timeout: 10000 },
+        );
+      await keys('apps');
+      await page.click('app-library .tile:has-text("Spreadsheet")');
+      await keys('enter');
+      await page.waitForSelector('app-sheet-num .line');
+      // device keys: 2 Enter 3 Enter, then a formula typed on the PC keyboard
+      await keys('d2', 'enter', 'd3', 'enter');
+      await page.click('app-sheet-num .line');
+      await page.keyboard.type('=A1+A2');
+      await page.keyboard.press('Enter');
+      await cellIs('A3', '5');
+      // B1 = A1*10, filled down to B3 (relative references move)
+      await page.click(cell('B1'));
+      await page.keyboard.type('=A1*10');
+      await page.keyboard.press('Enter');
+      await page.keyboard.press('ArrowUp');
+      await page.keyboard.press('Shift+ArrowDown');
+      await page.keyboard.press('Shift+ArrowDown');
+      await page.click('app-t1-device .mb:nth-child(6)');
+      await page.click('app-plot-menu li:has-text("Fill down")');
+      await cellIs('B3', '50');
+      // a cycle is an error value, never a hang
+      await page.click(cell('C1'));
+      await page.keyboard.type('=C2');
+      await page.keyboard.press('Enter');
+      await page.keyboard.type('=C1');
+      await page.keyboard.press('Enter');
+      await cellIs('C1', '#CYCLE!');
+      // name A3 "T" and use it in Home
+      await page.click(cell('A3'));
+      await page.keyboard.type('T');
+      await page.click('app-t1-device .mb:nth-child(3)');
+      await page.waitForFunction(() =>
+        document.querySelector('app-sheet-num .status')?.textContent.includes('T = $A$3'),
+      );
+      await page.addScriptTag({ content: axeSource });
+      const r = await page.evaluate(() =>
+        // eslint-disable-next-line no-undef
+        axe.run(document.querySelector('app-sheet-num'), { resultTypes: ['violations'] }),
+      );
+      const bad = r.violations.filter((v) => v.impact === 'serious' || v.impact === 'critical');
+      if (bad.length) throw new Error(bad.map((v) => `${v.id}: ${v.nodes[0]?.target}`).join('; '));
+      await keys('home');
+      await page.click('app-home-view math-field');
+      await page.keyboard.type('T*2');
+      await page.keyboard.press('Enter');
+      await lastResult(page, '10');
+    },
     async keypad(page) {
       const r = await page.$$eval('app-t1-device .key', (keys) => ({
         count: keys.length,
