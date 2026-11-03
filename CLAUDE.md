@@ -82,7 +82,8 @@ apps/aba-x1/                 die App ABA-X1 (package.json = Versionsquelle, ngsw
   public/, src-tauri/, site/ Icons/Manifest; Crate (nur lib.rs: `aba_shell::builder()`); Produktseite
 apps/aba-t1/                 zweiter Rechner (ADR 0008), Bedienung: docs/aba-t1.md; core/device/DeviceStore (Kontext-Stack der
                              Ansichten: ViewContext), core/nav (Bildschirme), core/actions (Shift/Alpha, Keymap,
-                             T1Keyboard), features/device|home|settings
+                             T1Keyboard), core/clipboard, features/device|home|rpn|cas|settings|toolbox (Overlay: Toolbox,
+                             Vars, Zeichen, Hilfe; Hilfetexte help-data.ts – eigene Texte, Spec: vollständig DE/EN)
 crates/shell/                gemeinsame Rust-Hülle (commands.rs, storage.rs, files.rs, app_menu.rs, about.rs, error.rs),
                              eigene Cargo.lock, kein Workspace
 scripts/                     apps.mjs (App-Registry), version, notices, release-notes, rust.mjs (+ Tests), e2e/run.mjs

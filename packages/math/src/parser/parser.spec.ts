@@ -79,3 +79,12 @@ describe('round trips', () => {
     }
   });
 });
+
+describe('MathLive name forms', () => {
+  it('reads \\operatorname{\\mathrm{…}} like \\operatorname{…}', () => {
+    const a = parseLatex('\\operatorname{\\mathrm{gcd}}\\left(12,18\\right)');
+    const b = parseLatex('\\operatorname{gcd}\\left(12,18\\right)');
+    expect(a).toEqual(b);
+    expect(a.ok).toBe(true);
+  });
+});

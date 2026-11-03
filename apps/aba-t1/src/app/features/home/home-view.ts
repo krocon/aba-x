@@ -115,6 +115,11 @@ export class HomeView implements OnInit, OnDestroy {
       menuPress: (i) => this.menuPress(i),
       rocker: (d) => this.rocker(d),
       gesture: (g) => this.gesture(g),
+      insert: (latex, text) => {
+        this.closeOverlay();
+        this.insert(latex, text);
+      },
+      help: 'home',
     });
   }
 

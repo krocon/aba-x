@@ -19,6 +19,8 @@ import { RpnStore } from './features/rpn/rpn-store';
 import { RpnView } from './features/rpn/rpn-view';
 import { SettingsStore } from './features/settings/settings-store';
 import { SettingsView } from './features/settings/settings-view';
+import { PopupStore } from './features/toolbox/popup-store';
+import { PopupView } from './features/toolbox/popup-view';
 
 /**
  * Page frame of ABA-T1: the device centred on a dark page, wired to the device store (prompt 026)
@@ -28,7 +30,7 @@ import { SettingsView } from './features/settings/settings-view';
 @Component({
   selector: 'app-root',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [T1Device, ShortcutsDialog, HomeView, RpnView, SettingsView, CasView],
+  imports: [T1Device, ShortcutsDialog, HomeView, RpnView, SettingsView, CasView, PopupView],
   template: `
     <main>
       <h1 class="visually-hidden">ABA-T1</h1>
@@ -62,6 +64,9 @@ import { SettingsView } from './features/settings/settings-view';
               <app-home-view />
             }
           }
+        }
+        @if (popup.mode()) {
+          <app-popup />
         }
       </app-t1-device>
       <p class="foot">
@@ -106,6 +111,7 @@ export class App implements OnInit {
   private readonly home = inject(HomeStore);
   private readonly rpn = inject(RpnStore);
   private readonly cas = inject(CasStore);
+  protected readonly popup = inject(PopupStore);
   protected readonly rpnEntry = computed(() => this.settings.settings().entry === 'rpn');
 
   constructor() {
@@ -116,6 +122,17 @@ export class App implements OnInit {
     this.device.onGlobal('home.shift', () => this.nav.go('homeSettings'));
     this.device.onGlobal('cas', () => this.nav.go('cas'));
     this.device.onGlobal('cas.shift', () => this.nav.go('casSettings'));
+    const open = (mode: 'toolbox' | 'vars' | 'chars') => () =>
+      this.popup.open(mode, this.device.insertTarget());
+    this.device.onGlobal('toolbox', open('toolbox'));
+    this.device.onGlobal('vars', open('vars'));
+    this.device.onGlobal('vars.shift', open('chars'));
+    this.device.onGlobal('help', () =>
+      this.popup.open('help', this.device.insertTarget(), {
+        kind: 'view',
+        id: this.device.top()?.help ?? 'home',
+      }),
+    );
   }
 
   async ngOnInit(): Promise<void> {

@@ -31,6 +31,10 @@ export interface ViewContext {
   menuPress?(index: number, shift: boolean): void;
   rocker?(dir: RockerDir, shift: boolean): boolean;
   gesture?(g: Gesture, area: Area): void;
+  /** Inserts into the entry line of the view (toolbox, vars, characters – prompt 030). */
+  insert?(latex: string, text: string): void;
+  /** Help topic of the view (Help key). */
+  help?: string;
 }
 
 /**
@@ -50,6 +54,8 @@ export class DeviceStore {
   private litTimer: ReturnType<typeof setTimeout> | undefined;
 
   readonly top = computed(() => this.stack().at(-1) ?? null);
+  /** the topmost view that has an entry line (target of the toolbox) */
+  readonly insertTarget = computed(() => [...this.stack()].reverse().find((c) => c.insert) ?? null);
   readonly title = computed(() => this.top()?.title() ?? 'ABA-T1');
   readonly menu = computed(() => this.top()?.menu() ?? []);
   readonly annunciators = computed(() => [...annunciators(this.mods()), ...this.status()]);

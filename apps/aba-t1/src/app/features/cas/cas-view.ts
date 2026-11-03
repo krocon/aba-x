@@ -217,6 +217,11 @@ export class CasView implements OnInit, OnDestroy {
       key: (p) => this.key(p),
       menuPress: (i) => this.menuPress(i),
       rocker: (d) => this.rocker(d),
+      insert: (latex) => {
+        this.overlay.set('none');
+        this.field()?.insert(latex);
+      },
+      help: 'cas',
     });
   }
 

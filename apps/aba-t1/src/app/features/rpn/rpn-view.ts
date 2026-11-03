@@ -179,6 +179,8 @@ export class RpnView implements OnInit, OnDestroy {
       key: (p) => this.key(p),
       menuPress: (i) => this.menuPress(i),
       rocker: (d) => this.rocker(d),
+      insert: (latex) => this.field()?.insert(latex),
+      help: 'rpn',
     });
   }
 

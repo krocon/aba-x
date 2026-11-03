@@ -59,7 +59,7 @@ Empfohlene Reihenfolge: 025 → 026 → 027 → 028 → 029 → 030 → 031 → 
 | 027 | [t1-startansicht](done/027-t1-startansicht.md) | Startansicht, Textbuch/Algebraisch, Verlauf, Vorlagen, Einstellungen, Komplex | 026 | L | Pflicht | ✅ 03.11.2026 |
 | 028 | [t1-rpn-modus](done/028-t1-rpn-modus.md) | RPN-Stack in der Startansicht | 027 | M | Pflicht | ✅ 03.11.2026 |
 | 029 | [t1-cas-ansicht](done/029-t1-cas-ansicht.md) | CAS-Ansicht, CAS-Einstellungen, Engine-Entscheidung (Nerdamer/Giac) | 027 | L | Pflicht | ✅ 03.11.2026 |
-| 030 | [t1-toolbox-katalog-hilfe](030-t1-toolbox-katalog-hilfe.md) | Toolbox (Math/CAS/App/Nutzer/Katalog), Vars, Zeichen, Hilfe | 027, 029 | M | Pflicht | offen |
+| 030 | [t1-toolbox-katalog-hilfe](done/030-t1-toolbox-katalog-hilfe.md) | Toolbox (Math/CAS/App/Nutzer/Katalog), Vars, Zeichen, Hilfe | 027, 029 | M | Pflicht | ✅ 03.11.2026 |
 | 031 | [t1-einheiten-konstanten-basen](031-t1-einheiten-konstanten-basen.md) | Einheiten, Konstanten (CODATA), Ganzzahl-Basen | 030 | M | Pflicht | offen |
 | 032 | [t1-listen-matrizen](032-t1-listen-matrizen.md) | Listen, Matrizen, Editoren, lineare Algebra | 027, 030 | L | Pflicht | offen |
 | 033 | [t1-app-rahmen-bibliothek](033-t1-app-rahmen-bibliothek.md) | App-Bibliothek, Symb/Plot/Num + Setup, App-Vertrag | 026, 027 | M | Pflicht | offen |

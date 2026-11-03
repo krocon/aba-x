@@ -66,3 +66,14 @@ Taste CAS (Alt+K): eigener Verlauf mit exakten Ergebnissen; ⇧CAS = CAS-Einstel
 Enter rechnet exakt, ⇧Enter bzw. „≈“ als Dezimalwert. Menü: Sto ▶, Vereinfachen (umschließt die Zeile), ≈, Kopie,
 Einfügen. ⇧View kopiert ein Ergebnis (Start- oder CAS-Ansicht), ⇧Menu fügt es in der anderen Ansicht ein. Befehle und
 Abdeckung: [`mathematics/cas-aba-t1.md`](mathematics/cas-aba-t1.md). Markierungen: ≈ Näherung, ? nicht numerisch geprüft.
+
+## Toolbox, Vars, Zeichen, Hilfe (030)
+
+- **Toolbox** (Alt+T): Menütasten Math · CAS · App · Nutzer · Katalog · Hilfe. Wippe/Pfeile wählen, → oder Enter
+  öffnet eine Kategorie, ← zurück, Enter fügt den Befehl als Vorlage in die Eingabezeile der Ansicht darunter ein;
+  Ziffern 1–9 wählen die n-te Zeile, ein Alpha-Buchstabe springt im Katalog. Help zeigt Syntax, Erklärung (DE/EN)
+  und ein Beispiel („Beispiel“ fügt es ein).
+- **Vars** (Alt+V): Variablen und Funktionen der Start- und der CAS-Ansicht mit Wert. **Zeichen** (⇧Vars):
+  griechische Buchstaben, ≤ ≥ ≠ ∞ ° ± → ∠ % ! …
+- **Help** (F10) ohne Auswahl: Hilfe zur aktuellen Ansicht. Alle Hilfetexte sind eigene Texte (`help-data.ts`); eine
+  Spec prüft, dass jeder Katalogbefehl Hilfe in beiden Sprachen und ein parsbares Beispiel hat.

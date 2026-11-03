@@ -581,12 +581,22 @@ class LatexLexer {
 }
 
 /** The token stream of a whole LaTeX input (for statement detection). Throws ParseError. */
+/**
+ * MathLive writes a name inserted as `\operatorname{gcd}` back as `\operatorname{\mathrm{gcd}}`
+ * (prompt 030) – the same name. Positions in error messages refer to the normalised input.
+ */
+export function normalizeLatex(src: string): string {
+  return src.replace(/\\operatorname\{\\mathrm\{([^{}]*)\}\}/g, '\\operatorname{$1}');
+}
+
 export function scanLatexTokens(src: string, opts: ParseOptions = {}): Tok[] {
+  src = normalizeLatex(src);
   const raw = scan(src);
   return new LatexLexer(raw, src, opts).tokens(0, raw.length);
 }
 
 export function parseLatex(src: string, opts: ParseOptions = {}): MathResult<Expr> {
+  src = normalizeLatex(src);
   try {
     const raw = scan(src);
     return ok(new LatexLexer(raw, src, opts).parse(0, raw.length));

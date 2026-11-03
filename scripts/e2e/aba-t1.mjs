@@ -89,6 +89,27 @@ export function t1Scenarios({ axeSource }) {
       await page.click('.key[data-key="home"]');
       await page.waitForSelector('app-home-view math-field', { timeout: 20000 });
     },
+    async toolbox(page) {
+      await page.click('.key[data-key="toolbox"]');
+      await page.waitForSelector('app-popup li');
+      // rocker ↓, Enter: Math › Arithmetic; Enter: gcd (first entry)
+      await page.dispatchEvent('.rk.down', 'pointerdown');
+      await page.dispatchEvent('.rk.down', 'pointerup');
+      await page.click('.key[data-key="enter"]');
+      await page.waitForSelector('app-popup li:first-child .name:text-is("gcd")');
+      await page.click('.key[data-key="enter"]');
+      await page.waitForFunction(() => !document.querySelector('app-popup'));
+      await page.keyboard.type('12,18');
+      await page.keyboard.press('Enter');
+      await lastResult(page, '6');
+      await page.click('.key[data-key="help"]');
+      await page.waitForSelector('app-popup .help');
+      await page.click('.key[data-key="esc"]');
+      await page.click('.key[data-key="vars"]');
+      await page.waitForSelector('app-popup li:has-text("Ans")');
+      await page.click('.key[data-key="esc"]');
+      await page.waitForFunction(() => !document.querySelector('app-popup'));
+    },
     async keypad(page) {
       const r = await page.$$eval('app-t1-device .key', (keys) => ({
         count: keys.length,

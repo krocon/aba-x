@@ -121,6 +121,7 @@ export class SettingsView implements OnInit, OnDestroy {
         if (i === 5) this.close();
       },
       rocker: (d) => this.rocker(d),
+      help: 'settings',
     });
   }
 
