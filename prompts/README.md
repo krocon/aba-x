@@ -3,13 +3,14 @@
 Arbeitsaufträge für die Weiterentwicklung, jeweils für **eine neue Claude-Sitzung** im Repo. Jeder Prompt führt in
 Phasen vom Design über Kern-, Rust- und Frontend-Tests bis zur Ende-zu-Ende-Prüfung in **Desktop-App und Web-Build**
 und hält nach dem Design an (Freigabe). Gemeinsame Regeln: [000-arbeitsweise.md](000-arbeitsweise.md).
-Produktvision: [000-ABA-X1-Master-Prompt.md](000-ABA-X1-Master-Prompt.md). Vorbild: Files and Folders.
+Produktvision: [000-ABA-X1-Master-Prompt.md](000-ABA-X1-Master-Prompt.md), für den zweiten Rechner
+[000-ABA-T1-Master-Prompt.md](000-ABA-T1-Master-Prompt.md). Vorbild: Files and Folders.
 
 **So startet man einen Prompt:** neue Sitzung im Repo, dann z. B.
 „Lies `prompts/000-arbeitsweise.md` und führe `prompts/003-expression-ast-parser.md` aus.“
 
-**Erledigte Prompts** liegen unter [`done/`](done/) – Stand 02.11.2026: **alle 001–023**. Neue Aufträge bekommen die
-nächste freie Nummer (024 …).
+**Erledigte Prompts** liegen unter [`done/`](done/) – Stand 02.11.2026: **alle 001–023**. 024 ist ebenfalls erledigt; offen sind
+die Prompts 025–048 für den zweiten Rechner ABA-T1. Neue Aufträge bekommen die nächste freie Nummer (049 …).
 
 ## Reihenfolge
 
@@ -42,3 +43,38 @@ Tatsächliche Reihenfolge: 001 → 003 → 013 → 009 → 004 → 005 → 006 �
 | 022 | [release-distribution](done/022-release-distribution.md) | Pakete, Release-Workflow, Signierung vorbereiten | 017, 019 | M | ✅ 02.11.2026 |
 | 023 | [readme-screenshots-werbeseite](done/023-readme-screenshots-werbeseite.md) | README, Screenshots, Werbeseite | 010, 014 | S | ✅ 02.11.2026 |
 | 024 | [monorepo-mehrere-rechner](done/024-monorepo-mehrere-rechner.md) | Monorepo: `packages/math`, `packages/core`, `apps/aba-x1`; Grundlage für weitere Rechner | 001–023 | L | ✅ 03.11.2026 |
+
+
+## Zweiter Rechner: ABA-T1 (Vorbild HP Prime G2)
+
+Arbeitsname ABA-T1 (Entscheidung in 025). Produktvision, Abgrenzung zum Vorbild (keine Marken, kein kopierter
+Look, keine Handbuchtexte) und Funktionszuordnung: [000-ABA-T1-Master-Prompt.md](000-ABA-T1-Master-Prompt.md).
+Empfohlene Reihenfolge: 025 → 026 → 027 → 028 → 029 → 030 → 031 → 032 → 033 → 034 → 035 → 037 → 039 → 043 → 044
+→ 045, dann Soll (038, 036, 041, 042), Kann (040, 046, 047), zuletzt 048.
+
+| Nr. | Prompt | Inhalt | Abhängig von | Aufwand | Umfang | Status |
+|---|---|---|---|---|---|---|
+| 025 | [t1-produkt-geruest](025-t1-produkt-geruest.md) | Name, Logo, Bundle-ID, `apps/aba-t1`, `crates/shell`, leeres Gerät | 024 | L | Pflicht | offen |
+| 026 | [t1-geraet-tastenfeld-touch](026-t1-geraet-tastenfeld-touch.md) | Tastenfeld (Shift/Alpha), Wippe, Touch-Gesten, Dispatcher nach core | 025 | L | Pflicht | offen |
+| 027 | [t1-startansicht](027-t1-startansicht.md) | Startansicht, Textbuch/Algebraisch, Verlauf, Vorlagen, Einstellungen, Komplex | 026 | L | Pflicht | offen |
+| 028 | [t1-rpn-modus](028-t1-rpn-modus.md) | RPN-Stack in der Startansicht | 027 | M | Pflicht | offen |
+| 029 | [t1-cas-ansicht](029-t1-cas-ansicht.md) | CAS-Ansicht, CAS-Einstellungen, Engine-Entscheidung (Nerdamer/Giac) | 027 | L | Pflicht | offen |
+| 030 | [t1-toolbox-katalog-hilfe](030-t1-toolbox-katalog-hilfe.md) | Toolbox (Math/CAS/App/Nutzer/Katalog), Vars, Zeichen, Hilfe | 027, 029 | M | Pflicht | offen |
+| 031 | [t1-einheiten-konstanten-basen](031-t1-einheiten-konstanten-basen.md) | Einheiten, Konstanten (CODATA), Ganzzahl-Basen | 030 | M | Pflicht | offen |
+| 032 | [t1-listen-matrizen](032-t1-listen-matrizen.md) | Listen, Matrizen, Editoren, lineare Algebra | 027, 030 | L | Pflicht | offen |
+| 033 | [t1-app-rahmen-bibliothek](033-t1-app-rahmen-bibliothek.md) | App-Bibliothek, Symb/Plot/Num + Setup, App-Vertrag | 026, 027 | M | Pflicht | offen |
+| 034 | [t1-funktionen-app](034-t1-funktionen-app.md) | Funktionen-App mit FKT-Analyse, Zoom, Trace, Tabelle | 033 | L | Pflicht | offen |
+| 035 | [t1-parametrisch-polar-folge](035-t1-parametrisch-polar-folge.md) | Parametrisch-, Polar-, Folge-App | 034 | M | Pflicht | offen |
+| 036 | [t1-erweiterte-grafiken](036-t1-erweiterte-grafiken.md) | Relationen/Ungleichungen, Intervallarithmetik | 034 | L | Soll | offen |
+| 037 | [t1-statistik-1var-2var](037-t1-statistik-1var-2var.md) | Statistik 1 Var/2 Var, Diagramme, Regression | 032, 033 | L | Pflicht | offen |
+| 038 | [t1-inferenz-verteilungen](038-t1-inferenz-verteilungen.md) | Verteilungen, Hypothesentests, Konfidenzintervalle | 037 | M | Soll | offen |
+| 039 | [t1-loeser-apps](039-t1-loeser-apps.md) | Lösen, Linearlöser, Finanzen, Dreiecklöser | 032, 033 | L | Pflicht | offen |
+| 040 | [t1-explorer-apps](040-t1-explorer-apps.md) | Linear-/Quadratisch-/Trig-Explorer mit Übungsmodus | 034 | S | Kann | offen |
+| 041 | [t1-spreadsheet](041-t1-spreadsheet.md) | Tabellenkalkulation mit Formeln, Namen, CAS-Zellen | 032, 033 | L | Soll | offen |
+| 042 | [t1-geometrie](042-t1-geometrie.md) | Dynamische Geometrie (042a/042b) | 033, 034 | XL | Soll | offen |
+| 043 | [t1-programmiersprache-kern](043-t1-programmiersprache-kern.md) | PPL-artige Sprache: `packages/ppl`, Interpreter im Worker | 027, 032 | L | Pflicht | offen |
+| 044 | [t1-programm-editor-eigene-apps](044-t1-programm-editor-eigene-apps.md) | Programmkatalog, Editor, Debugger, eigene Apps, Nutzer-Tasten | 043, 033 | M | Pflicht | offen |
+| 045 | [t1-notizen-speicher-backup](045-t1-notizen-speicher-backup.md) | Notizen, Info, Speicherverwaltung, Backup, Menü | 033 | M | Pflicht | offen |
+| 046 | [t1-3d-grafiken](046-t1-3d-grafiken.md) | 3D-Flächen (WebGL) | 034 | M | Kann | offen |
+| 047 | [t1-python-app](047-t1-python-app.md) | Python (MicroPython/WASM) | 044 | M | Kann | offen |
+| 048 | [t1-produktreife-release](048-t1-produktreife-release.md) | Barrierefreiheit, i18n, PWA, E2E, Release, README, Werbeseite | 025–045 | M | Pflicht | offen |

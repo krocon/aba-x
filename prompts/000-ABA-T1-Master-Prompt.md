@@ -122,14 +122,13 @@ erwarteter Wert) dienen, wenn die erwarteten Werte unabhängig nachgerechnet sin
 
 ## 6. Reihenfolge
 
+Empfohlen (Pflicht zuerst, dann Soll, dann Kann; Abhängigkeiten stehen im Kopf jedes Prompts):
+
 ```text
-025 → 026 → 027 → 028 ─┐
-            └→ 029 → 030 → 031 → 032 → 033 → 034 → 035 → 036
-                                         ├→ 037 → 038
-                                         ├→ 039 → 040
-                                         ├→ 041 → 042
-                                         └→ 043 → 044
-045 nach 033 · 046/047 optional · 048 zuletzt
+Pflicht: 025 → 026 → 027 → 028 → 029 → 030 → 031 → 032 → 033 → 034 → 035 → 037 → 039 → 043 → 044 → 045
+Soll:    038 · 036 · 041 · 042
+Kann:    040 · 046 · 047
+Zuletzt: 048 (Umfang von 0.1.0 dort festlegen)
 ```
 
 Index, Abhängigkeiten und Status: [`README.md`](README.md).
