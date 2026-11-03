@@ -7,7 +7,7 @@ const S = { width: 400, height: 300 };
 describe('surfaces', () => {
   it('samples a paraboloid on the grid', () => {
     const g = sampleSurface((x, y) => x * x + y * y, R, 4);
-    expect(g.z[0][0]).toBe(8 > 5 ? NaN : 8); // clipped above zmax
+    expect(g.z[0][0]).toBeNaN(); // 8 is clipped above zmax = 5
     expect(g.z[2][2]).toBe(0);
     expect(g.xs).toEqual([-2, -1, 0, 1, 2]);
   });
