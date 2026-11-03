@@ -130,3 +130,11 @@ Hinweis: ein Tippen im Display klickt jetzt das getroffene Element; nur Ziehen u
   (Bibliothek › Export, Datei › App importieren) und Notizen (Datei › Notiz importieren) als eigene Dateien.
 - **Menü**: Datei, Bearbeiten (Desktop), Ansicht, Hilfe – nativ in der Desktop-App (übersetzt), als HTML-Menü über dem
   Gerät im Web; Über ABA-T1.
+
+## Explorer (040)
+
+Linear-, Quadratik- und Trig-Explorer: Die Gleichung läuft beim Verschieben mit (Normalform, Scheitel,
+Diskriminante, Nullstellen bzw. Amplitude, Periode, Verschiebung). Menütasten oder ←→ wählen den Parameter, ↑↓ oder
++/− ändern ihn auf seinem Raster, Ziehen verschiebt den Graphen. **Üben**: Ein zufälliger Graph (gestrichelt, aus einem
+Startwert reproduzierbar) soll getroffen werden; Enter/Prüfen vergleicht die Graphen (nicht die Parameter), Punkte in
+der Titelzeile.

@@ -8,6 +8,7 @@ import { FunctionSymb } from './function/function-symb';
 import { FunctionNumSetup, FunctionPlotSetup } from './function/function-setup';
 import { initFunctionState } from './function/function-logic';
 import { initCurveState } from './curve/curve-logic';
+import { ExplorerView, initExplorer } from './explorer/explorer-view';
 import { CurveNum, CurveNumSetup, CurvePlot, CurvePlotSetup, CurveSymb } from './curve/curve-views';
 
 export const APP_DEFS: AppDef[] = [
@@ -48,5 +49,22 @@ export const APP_DEFS: AppDef[] = [
       plotSetup: CurvePlotSetup,
       numSetup: CurveNumSetup,
     },
+  })),
+  ...(['linear', 'quadratic', 'trig'] as const).map((kind): AppDef => ({
+    id: `${kind}Explorer`,
+    title: {
+      linear: { en: 'Linear Explorer', de: 'Linear-Explorer' },
+      quadratic: { en: 'Quadratic Explorer', de: 'Quadratik-Explorer' },
+      trig: { en: 'Trig Explorer', de: 'Trig-Explorer' },
+    }[kind],
+    icon: {
+      linear: 'M3 20h18M4 3v18M5 18L19 6M15 6h4v4',
+      quadratic: 'M3 20h18M4 3v18M6 5c3 14 9 14 12 0M12 15v4',
+      trig: 'M3 12h18M4 3v18M5 12c2-6 4-6 6 0s4 6 6 0 2-4 3-3',
+    }[kind],
+    init: () => initExplorer(kind),
+    version: 1,
+    start: 'plot',
+    views: { plot: ExplorerView },
   })),
 ];

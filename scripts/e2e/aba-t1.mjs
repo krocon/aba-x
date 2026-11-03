@@ -279,6 +279,23 @@ export function t1Scenarios({ axeSource }) {
       await keys('home');
       await page.waitForSelector('app-home-view math-field');
     },
+    async explorer(page) {
+      const keys = async (...ks) => {
+        for (const k of ks) await page.click(`.key[data-key="${k}"]`);
+      };
+      await keys('apps');
+      await page.click('app-library .tile:has-text("Quadratic Explorer")');
+      await keys('enter');
+      await page.waitForSelector('app-explorer-view canvas');
+      // a = 1 → 1.5 with ↑ on the selected parameter a
+      await page.dispatchEvent('.rk.up', 'pointerdown');
+      await page.dispatchEvent('.rk.up', 'pointerup');
+      await page.waitForFunction(() =>
+        document.querySelector('app-explorer-view .det')?.textContent.includes('1.5x²'),
+      );
+      await keys('home');
+      await page.waitForSelector('app-home-view math-field');
+    },
     async keypad(page) {
       const r = await page.$$eval('app-t1-device .key', (keys) => ({
         count: keys.length,

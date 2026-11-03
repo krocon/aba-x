@@ -32,6 +32,7 @@
 | 033 | App-Rahmen (Bibliothek, Symb/Plot/Num/Setups/Info, Kopien), PlotCanvas in `@aba/core` | ✅ 03.11.2026 |
 | 034 | Funktionen-App: Trace, Zoom-Menü, Fcn-Analyse, Gehe zu, geteilte Ansicht, PNG, Plot-Optionen | ✅ 03.11.2026 |
 | 035 | Parametrisch, Polar, Folge (Treppe/Spinnennetz) als generische Kurven-App | ✅ 03.11.2026 |
+| 040 | Explorer: linear, quadratisch, trigonometrisch mit Übungsmodus | ✅ 03.11.2026 |
 | 045 | Notizen, Speicherverwaltung, Sicherung (Export/Import), Menü nativ/HTML, About | ✅ 03.11.2026 |
 
 ## Was funktioniert

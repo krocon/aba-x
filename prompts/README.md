@@ -69,7 +69,7 @@ Empfohlene Reihenfolge: 025 → 026 → 027 → 028 → 029 → 030 → 031 → 
 | 037 | [t1-statistik-1var-2var](037-t1-statistik-1var-2var.md) | Statistik 1 Var/2 Var, Diagramme, Regression | 032, 033 | L | Pflicht | offen |
 | 038 | [t1-inferenz-verteilungen](038-t1-inferenz-verteilungen.md) | Verteilungen, Hypothesentests, Konfidenzintervalle | 037 | M | Soll | offen |
 | 039 | [t1-loeser-apps](039-t1-loeser-apps.md) | Lösen, Linearlöser, Finanzen, Dreiecklöser | 032, 033 | L | Pflicht | offen |
-| 040 | [t1-explorer-apps](040-t1-explorer-apps.md) | Linear-/Quadratisch-/Trig-Explorer mit Übungsmodus | 034 | S | Kann | offen |
+| 040 | [t1-explorer-apps](done/040-t1-explorer-apps.md) | Linear-/Quadratisch-/Trig-Explorer mit Übungsmodus | 034 | S | Kann | ✅ 03.11.2026 |
 | 041 | [t1-spreadsheet](041-t1-spreadsheet.md) | Tabellenkalkulation mit Formeln, Namen, CAS-Zellen | 032, 033 | L | Soll | offen |
 | 042 | [t1-geometrie](042-t1-geometrie.md) | Dynamische Geometrie (042a/042b) | 033, 034 | XL | Soll | offen |
 | 043 | [t1-programmiersprache-kern](043-t1-programmiersprache-kern.md) | PPL-artige Sprache: `packages/ppl`, Interpreter im Worker | 027, 032 | L | Pflicht | offen |
