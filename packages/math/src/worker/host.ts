@@ -1,5 +1,6 @@
 /** Executes compute requests – runs in the worker, and in-thread where no worker exists (tests). */
 import { type MathResult, fail, ok } from '../result';
+import { runCas } from '../symbolic/cas-commands';
 import { NerdamerEngine } from '../symbolic/nerdamer-engine';
 import { evaluateValue } from '../value/evaluate-value';
 import type { ComputeOp, ComputeRequest, ComputeResponse } from './protocol';
@@ -27,6 +28,8 @@ export function execute(task: ComputeOp): MathResult<unknown> {
         return engine.solveSystem(task.equations, task.variables);
       case 'limit':
         return engine.limit(task.expr, task.variable, task.to, task.direction);
+      case 'cas':
+        return runCas(task.expr, task.scope);
       case 'evaluate':
         return evaluateValue(task.expr, task.scope);
       case 'sleep': {

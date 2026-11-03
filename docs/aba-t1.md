@@ -59,3 +59,10 @@ Zeile ab (leere Zeile: DUP), ⌫ in leerer Zeile = DROP, Operatoren und Funktion
 `ʸ√x` mit x auf Ebene 2) wirken sofort; eine nicht leere Zeile wird vorher abgelegt. Menü: Sto ▶ (Name eintippen,
 speichert Ebene 1, die bleibt), SWAP, DROP, DUP. Ebene mit Wippe ↑/↓ wählen: PICK, ROLL, ROLLD, DROPN, ECHO (Wert in
 die Zeile); Enter = ECHO, Esc hebt die Auswahl auf. ⇧Esc leert den Stack nach Rückfrage. Kein Rückgängig.
+
+## CAS (029)
+
+Taste CAS (Alt+K): eigener Verlauf mit exakten Ergebnissen; ⇧CAS = CAS-Einstellungen (exakt/Näherung, Zahlenformat).
+Enter rechnet exakt, ⇧Enter bzw. „≈“ als Dezimalwert. Menü: Sto ▶, Vereinfachen (umschließt die Zeile), ≈, Kopie,
+Einfügen. ⇧View kopiert ein Ergebnis (Start- oder CAS-Ansicht), ⇧Menu fügt es in der anderen Ansicht ein. Befehle und
+Abdeckung: [`mathematics/cas-aba-t1.md`](mathematics/cas-aba-t1.md). Markierungen: ≈ Näherung, ? nicht numerisch geprüft.

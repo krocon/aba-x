@@ -57,7 +57,8 @@ packages/math/src/           @aba/math – framework-frei (ESLint-Sperre), eigen
   parser/                    Pratt-Kern, Text- und LaTeX-Front-End, Statements (a = …, f(x) = …), *.cases.json
   serializer.ts, pretty.ts   AST → Text/LaTeX (Round-Trip); Lehrbuchform von CAS-Ausgaben (√, Brüche, Polynomordnung)
   numeric/                   evaluate (double, Fehlercodes, Grad), roots (Brent …), derivative (Ridders), quadrature (GK 7/15)
-  symbolic/                  SymbolicEngine, Nerdamer-Brücke + Engine, verify (numerische Stichprobe jedes Ergebnisses)
+  symbolic/                  SymbolicEngine, Nerdamer-Brücke + Engine, verify (numerische Stichprobe jedes Ergebnisses),
+                             cas-commands (ABA-T1: Befehle → Engine, Worker-Op `cas`), integer (ifactor, isprime …)
   graph/                     viewport, sampler (Pol-/Sprungerkennung), analysis (Nullstellen, Extrema, Fläche …)
   value/                     Value (real/komplex …), evaluateValue (ABA-T1-Startansicht, delegiert Reelles), format
   rpn/                       RPN-Stack auf Values (ABA-T1)

@@ -11,6 +11,8 @@ import { DeviceStore } from './core/device/device-store';
 import { NavStore } from './core/nav/nav-store';
 import { T1Device } from './features/device/t1-device';
 import { ShortcutsDialog } from './features/help/shortcuts-dialog';
+import { CasStore } from './features/cas/cas-store';
+import { CasView } from './features/cas/cas-view';
 import { HomeStore } from './features/home/home-store';
 import { HomeView } from './features/home/home-view';
 import { RpnStore } from './features/rpn/rpn-store';
@@ -26,7 +28,7 @@ import { SettingsView } from './features/settings/settings-view';
 @Component({
   selector: 'app-root',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [T1Device, ShortcutsDialog, HomeView, RpnView, SettingsView],
+  imports: [T1Device, ShortcutsDialog, HomeView, RpnView, SettingsView, CasView],
   template: `
     <main>
       <h1 class="visually-hidden">ABA-T1</h1>
@@ -45,7 +47,13 @@ import { SettingsView } from './features/settings/settings-view';
       >
         @switch (nav.screen()) {
           @case ('homeSettings') {
-            <app-settings-view />
+            <app-settings-view kind="home" />
+          }
+          @case ('cas') {
+            <app-cas-view />
+          }
+          @case ('casSettings') {
+            <app-settings-view kind="cas" />
           }
           @default {
             @if (rpnEntry()) {
@@ -97,6 +105,7 @@ export class App implements OnInit {
   private readonly settings = inject(SettingsStore);
   private readonly home = inject(HomeStore);
   private readonly rpn = inject(RpnStore);
+  private readonly cas = inject(CasStore);
   protected readonly rpnEntry = computed(() => this.settings.settings().entry === 'rpn');
 
   constructor() {
@@ -105,9 +114,11 @@ export class App implements OnInit {
     );
     this.device.onGlobal('home', () => this.nav.go('home'));
     this.device.onGlobal('home.shift', () => this.nav.go('homeSettings'));
+    this.device.onGlobal('cas', () => this.nav.go('cas'));
+    this.device.onGlobal('cas.shift', () => this.nav.go('casSettings'));
   }
 
   async ngOnInit(): Promise<void> {
-    await Promise.all([this.settings.load(), this.home.load(), this.rpn.load()]);
+    await Promise.all([this.settings.load(), this.home.load(), this.rpn.load(), this.cas.load()]);
   }
 }

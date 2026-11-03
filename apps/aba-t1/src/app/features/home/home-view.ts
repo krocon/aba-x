@@ -14,6 +14,7 @@ import type { Gesture } from '@aba/core/actions/gestures';
 import { MathField } from '@aba/core/shared/math-field';
 import { MathStatic } from '@aba/core/shared/math-static';
 import type { KeyPress } from '../../core/actions/shift-alpha';
+import { ClipboardStore } from '../../core/clipboard/clipboard-store';
 import { DeviceStore, type RockerDir } from '../../core/device/device-store';
 import { I18n } from '../../core/i18n/i18n';
 import type { MenuButton } from '../device/t1-device';
@@ -21,6 +22,7 @@ import { SettingsStore } from '../settings/settings-store';
 import { type EditAction, editFor } from './home-keys';
 import { type HistoryEntry, inputLatex, resultLatex, resultText, valueAsInput } from './home-logic';
 import { HomeStore } from './home-store';
+import { TemplatePalette, paletteMove } from './template-palette';
 import { TEMPLATES } from './templates';
 
 type Overlay = 'none' | 'templates' | 'show' | 'confirmClear';
@@ -34,7 +36,7 @@ type Overlay = 'none' | 'templates' | 'show' | 'confirmClear';
 @Component({
   selector: 'app-home-view',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MathField, MathStatic],
+  imports: [MathField, MathStatic, TemplatePalette],
   templateUrl: './home-view.html',
   styleUrl: './home-view.css',
 })
@@ -43,6 +45,7 @@ export class HomeView implements OnInit, OnDestroy {
   protected readonly settingsStore = inject(SettingsStore);
   protected readonly i18n = inject(I18n);
   private readonly device = inject(DeviceStore);
+  private readonly clipboard = inject(ClipboardStore);
   private readonly mathField = viewChild(MathField);
   private readonly textField = viewChild<ElementRef<HTMLInputElement>>('text');
   private readonly list = viewChild<ElementRef<HTMLOListElement>>('list');
@@ -193,6 +196,15 @@ export class HomeView implements OnInit, OnDestroy {
       this.home.cancel();
       return true;
     }
+    if (p.id === 'view' && p.layer === 'shift') {
+      this.copyToClipboard();
+      return true;
+    }
+    if (p.id === 'menu' && p.layer === 'shift') {
+      const c = this.clipboard.clip();
+      if (c) this.insert(c.latex, c.text);
+      return true;
+    }
     const action = editFor(p);
     if (!action) return false;
     this.run(action);
@@ -206,16 +218,9 @@ export class HomeView implements OnInit, OnDestroy {
       return true;
     }
     if (o === 'templates') {
-      const cols = 4;
-      const n = this.templates.length;
-      const move: Record<string, number> = {
-        ArrowRight: 1,
-        ArrowLeft: -1,
-        ArrowDown: cols,
-        ArrowUp: -cols,
-      };
-      if (key in move) {
-        this.templateIndex.update((i) => Math.min(n - 1, Math.max(0, i + move[key])));
+      const next = paletteMove(this.templateIndex(), key);
+      if (next !== null) {
+        this.templateIndex.set(next);
         return true;
       }
       if (key === 'Enter') {
@@ -336,6 +341,19 @@ export class HomeView implements OnInit, OnDestroy {
         : '';
     this.home.selected.set(null);
     this.insert(src, src);
+  }
+
+  /** ⇧View: the selected (or last) result for other views and the system clipboard. */
+  private copyToClipboard(): void {
+    const i = this.home.selected() ?? this.home.entries().length - 1;
+    const e = this.home.entries()[i];
+    if (!e?.value) return;
+    const s = this.settingsStore.settings();
+    this.clipboard.copy({
+      latex: valueAsInput(e.value, 'latex', s),
+      text: valueAsInput(e.value, 'text', s),
+    });
+    this.home.selected.set(null);
   }
 
   private closeOverlay(): void {

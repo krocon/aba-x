@@ -27,7 +27,7 @@ class DefiniteFailed extends Error {
   }
 }
 
-function run<T>(f: () => T): MathResult<T> {
+export function run<T>(f: () => T): MathResult<T> {
   try {
     return ok(f());
   } catch (e) {
@@ -41,7 +41,11 @@ function run<T>(f: () => T): MathResult<T> {
 }
 
 /** Parses Nerdamer text and applies a numerical check. */
-function accept(text: string, check: (e: Expr) => Check, param?: string): MathResult<CasValue> {
+export function accept(
+  text: string,
+  check: (e: Expr) => Check,
+  param?: string,
+): MathResult<CasValue> {
   const parsed = fromNerdamer(text, param);
   if (!parsed.ok) return parsed;
   const verdict = check(parsed.value.expr);

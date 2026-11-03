@@ -55,22 +55,11 @@
 
   @switch (overlay()) {
     @case ('templates') {
-      <div class="overlay templates" role="listbox" [attr.aria-label]="i18n.t('home.template')">
-        @for (t of templates; track t.id; let i = $index) {
-          <button
-            type="button"
-            role="option"
-            class="tpl"
-            [class.cur]="templateIndex() === i"
-            [attr.aria-selected]="templateIndex() === i"
-            [attr.aria-label]="t.label"
-            (pointerdown)="$event.preventDefault()"
-            (click)="pickTemplate(i)"
-          >
-            <app-math [latex]="t.preview" />
-          </button>
-        }
-      </div>
+      <app-template-palette
+        [index]="templateIndex()"
+        [label]="i18n.t('home.template')"
+        (pick)="pickTemplate($event)"
+      />
     }
     @case ('show') {
       @if (shown(); as r) {

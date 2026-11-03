@@ -82,26 +82,6 @@
   background: #f5f7f2;
   overflow: auto;
 }
-.templates {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 0.3em;
-  padding: 0.4em;
-  align-content: start;
-}
-.tpl {
-  min-height: 2.6em;
-  border: 1px solid #c9d5d1;
-  border-radius: 0.3em;
-  background: #fff;
-  color: inherit;
-  font: inherit;
-  font-size: 0.85em;
-  cursor: pointer;
-}
-.tpl.cur {
-  outline: 2px solid #e8603f;
-}
 .show {
   display: grid;
   align-content: center;

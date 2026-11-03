@@ -4,6 +4,7 @@
  */
 import type { Expr } from '../ast/nodes';
 import type { MathResult } from '../result';
+import type { CasOutput, CasScope } from '../symbolic/cas-commands';
 import type { CasValue, Solutions, SystemSolution } from '../symbolic/engine';
 import type { ValueScope } from '../value/evaluate-value';
 import type { Value } from '../value/value';
@@ -18,6 +19,8 @@ export type ComputeOp =
   | { op: 'solve'; equation: Expr; variable: string }
   | { op: 'solveSystem'; equations: Expr[]; variables: string[] }
   | { op: 'limit'; expr: Expr; variable: string; to: Expr; direction?: '+' | '-' }
+  /** One input line of the ABA-T1 CAS view (prompt 029). */
+  | { op: 'cas'; expr: Expr; scope: CasScope }
   /** General evaluation on values (prompt 027, ABA-T1 home view). */
   | { op: 'evaluate'; expr: Expr; scope: ValueScope }
   /** Test hook: busy-waits `ms` milliseconds (timeout and cancel specs, prompt 004). */
@@ -34,6 +37,7 @@ export interface ComputeResults {
   solveSystem: SystemSolution[];
   limit: CasValue;
   evaluate: Value;
+  cas: CasOutput;
   sleep: null;
 }
 

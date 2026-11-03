@@ -10,8 +10,12 @@ export type EntryMode = 'textbook' | 'algebraic' | 'rpn';
 export type Language = 'en' | 'de';
 export type FontSize = 'small' | 'medium' | 'large';
 
+export type CasMode = 'exact' | 'approx';
+
 export interface T1Settings {
   angle: AngleMode;
+  /** CAS view: exact results, or decimal approximations of them (prompt 029) */
+  casMode: CasMode;
   format: NumberFormat;
   complex: ComplexSetting;
   entry: EntryMode;
@@ -24,6 +28,7 @@ export const SETTINGS_VERSION = 1;
 export function defaultSettings(lang: Language): T1Settings {
   return {
     angle: 'rad',
+    casMode: 'exact',
     format: { mode: 'standard', digits: 4, decimal: '.' },
     complex: 'off',
     entry: 'textbook',
@@ -43,6 +48,7 @@ export function readSettings(doc: unknown, lang: Language): T1Settings {
   const digits = Number(s.format?.digits);
   return {
     angle: pick(s.angle, ['rad', 'deg'] as const, d.angle),
+    casMode: pick(s.casMode, ['exact', 'approx'] as const, d.casMode),
     format: {
       mode: pick<FormatMode>(s.format?.mode, ['standard', 'fixed', 'sci', 'eng'], 'standard'),
       digits: Number.isInteger(digits) && digits >= 0 && digits <= 11 ? digits : d.format.digits,
@@ -57,7 +63,16 @@ export function readSettings(doc: unknown, lang: Language): T1Settings {
 
 /** One row of the settings view: label key, current choice, choices. */
 export interface SettingRow {
-  id: 'angle' | 'mode' | 'digits' | 'decimal' | 'complex' | 'entry' | 'language' | 'fontSize';
+  id:
+    | 'angle'
+    | 'mode'
+    | 'digits'
+    | 'decimal'
+    | 'complex'
+    | 'entry'
+    | 'language'
+    | 'fontSize'
+    | 'casMode';
   options: readonly string[];
 }
 
@@ -70,6 +85,13 @@ export const SETTING_ROWS: readonly SettingRow[] = [
   { id: 'entry', options: ['textbook', 'algebraic', 'rpn'] },
   { id: 'language', options: ['en', 'de'] },
   { id: 'fontSize', options: ['small', 'medium', 'large'] },
+];
+
+/** CAS settings (⇧CAS): the CAS view shares angle and number format with home. */
+export const CAS_SETTING_ROWS: readonly SettingRow[] = [
+  { id: 'casMode', options: ['exact', 'approx'] },
+  { id: 'mode', options: ['standard', 'fixed', 'sci', 'eng'] },
+  { id: 'digits', options: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11'] },
 ];
 
 export function valueOf(s: T1Settings, id: SettingRow['id']): string {
@@ -90,6 +112,8 @@ export function valueOf(s: T1Settings, id: SettingRow['id']): string {
       return s.language;
     case 'fontSize':
       return s.fontSize;
+    case 'casMode':
+      return s.casMode;
   }
 }
 
@@ -106,7 +130,7 @@ export function withValue(s: T1Settings, id: SettingRow['id'], v: string): T1Set
 
 /** Next (step 1) or previous (step −1) choice of a row, wrapping around. */
 export function cycle(s: T1Settings, id: SettingRow['id'], step: 1 | -1): T1Settings {
-  const row = SETTING_ROWS.find((r) => r.id === id)!;
+  const row = [...SETTING_ROWS, ...CAS_SETTING_ROWS].find((r) => r.id === id)!;
   const i = row.options.indexOf(valueOf(s, id));
   const n = row.options.length;
   return withValue(s, id, row.options[(i + step + n) % n]);

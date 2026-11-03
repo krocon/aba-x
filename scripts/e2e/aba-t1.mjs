@@ -67,6 +67,28 @@ export function t1Scenarios({ axeSource }) {
       await setEntry('textbook');
       await page.waitForSelector('app-home-view math-field', { timeout: 20000 });
     },
+    async cas(page) {
+      await page.click('.key[data-key="cas"]');
+      await page.waitForSelector('app-cas-view math-field', { timeout: 20000 });
+      await page.click('app-cas-view math-field');
+      await page.keyboard.type('solve(x^2=4,x)');
+      await page.keyboard.press('Enter');
+      const last = (want) =>
+        page.waitForFunction(
+          (w) =>
+            [...document.querySelectorAll('app-cas-view .out')]
+              .at(-1)
+              ?.getAttribute('data-value') === w,
+          want,
+          { timeout: 20000 },
+        );
+      await last('x=-2, x=2');
+      await page.keyboard.type('ifactor(360)');
+      await page.keyboard.press('Enter');
+      await last('2^3*3^2*5');
+      await page.click('.key[data-key="home"]');
+      await page.waitForSelector('app-home-view math-field', { timeout: 20000 });
+    },
     async keypad(page) {
       const r = await page.$$eval('app-t1-device .key', (keys) => ({
         count: keys.length,
@@ -156,6 +178,10 @@ export function t1Scenarios({ axeSource }) {
   function state() {
     return {
       title: document.querySelector('app-t1-device .title')?.textContent?.trim(),
+      line: document.querySelector('math-field')?.value,
+      rows: [...document.querySelectorAll('.history li')].map((li) =>
+        li.textContent.trim().slice(0, 60),
+      ),
       menu: [...document.querySelectorAll('app-t1-device .mb')]
         .map((b) => b.textContent.trim())
         .join('|'),

@@ -25,6 +25,7 @@
 | 026 | Tastenfeld, Shift/Alpha, Wippe, Gesten, PC-Tastatur; Chords/Dispatcher/Gesten in `@aba/core` | ✅ 03.11.2026 |
 | 027 | Startansicht (Lehrbuch/Algebraisch), komplexe Zahlen, Zahlenformate, Variablen, Einstellungen | ✅ 03.11.2026 |
 | 028 | RPN-Stack (PICK, ROLL, ROLLD, DROPN, ECHO, SWAP, DUP, DROP) | ✅ 03.11.2026 |
+| 029 | CAS-Ansicht: Nerdamer + eigene Verfahren (Ganzzahl, Taylor), Lücken-Tabelle | ✅ 03.11.2026 |
 
 ## Was funktioniert
 

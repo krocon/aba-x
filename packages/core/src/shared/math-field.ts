@@ -18,6 +18,7 @@ export interface MathFieldElementLike extends HTMLElement {
   value: string;
   insert(latex: string, options?: Record<string, unknown>): boolean;
   executeCommand(command: string | [string, ...unknown[]]): boolean;
+  inlineShortcuts?: Record<string, string>;
 }
 
 /**
@@ -89,6 +90,8 @@ export class MathField implements OnInit, OnDestroy {
 
   readonly ariaLabel = input('Math input');
   readonly keyHook = input<(e: KeyboardEvent) => boolean>(() => false);
+  /** Typed words that become LaTeX (`factor` → `\operatorname{factor}`), on top of MathLive's. */
+  readonly shortcuts = input<Record<string, string>>({});
   readonly changed = output<string>();
   readonly ready = output<void>();
   readonly state = signal<'loading' | 'ready' | 'failed'>('loading');
@@ -109,6 +112,11 @@ export class MathField implements OnInit, OnDestroy {
       field.addEventListener('input', this.onInput);
       field.addEventListener('keydown', this.onKeydown, { capture: true });
       this.host().nativeElement.appendChild(field);
+      // options of MathLive can only be set once the field is mounted
+      const extra = this.shortcuts();
+      if (Object.keys(extra).length) {
+        field.inlineShortcuts = { ...(field.inlineShortcuts ?? {}), ...extra };
+      }
       this.field = field;
       this.state.set('ready');
       this.ready.emit();

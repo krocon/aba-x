@@ -5,6 +5,7 @@ import {
   OnInit,
   computed,
   inject,
+  input,
   signal,
 } from '@angular/core';
 import type { KeyPress } from '../../core/actions/shift-alpha';
@@ -12,7 +13,14 @@ import { DeviceStore, type RockerDir } from '../../core/device/device-store';
 import { I18n } from '../../core/i18n/i18n';
 import type { TextKey } from '../../core/i18n/texts';
 import { NavStore } from '../../core/nav/nav-store';
-import { SETTING_ROWS, type SettingRow, cycle, valueOf, withValue } from './settings-logic';
+import {
+  CAS_SETTING_ROWS,
+  SETTING_ROWS,
+  type SettingRow,
+  cycle,
+  valueOf,
+  withValue,
+} from './settings-logic';
 import { SettingsStore } from './settings-store';
 
 /**
@@ -83,10 +91,12 @@ export class SettingsView implements OnInit, OnDestroy {
   private readonly store = inject(SettingsStore);
   private readonly device = inject(DeviceStore);
   private readonly nav = inject(NavStore);
+  readonly kind = input<'home' | 'cas'>('home');
+  private readonly defs = computed(() => (this.kind() === 'cas' ? CAS_SETTING_ROWS : SETTING_ROWS));
   protected readonly cursor = signal(0);
   protected readonly rows = computed(() => {
     const s = this.store.settings();
-    return SETTING_ROWS.map((r) => ({
+    return this.defs().map((r) => ({
       ...r,
       label: `settings.${r.id}` as TextKey,
       value: valueOf(s, r.id),
@@ -96,8 +106,8 @@ export class SettingsView implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.pop = this.device.push({
-      id: 'homeSettings',
-      title: () => this.i18n.t('settings.title'),
+      id: 'settings',
+      title: () => this.i18n.t(this.kind() === 'cas' ? 'settings.casTitle' : 'settings.title'),
       menu: () => [
         { label: '' },
         { label: '' },
@@ -128,7 +138,7 @@ export class SettingsView implements OnInit, OnDestroy {
   }
 
   private key(p: KeyPress): boolean {
-    if (p.id === 'esc' || (p.id === 'home' && p.layer === 'main')) {
+    if (p.id === 'esc' || (p.id === this.kind() && p.layer === 'main')) {
       this.close();
       return true;
     }
@@ -140,7 +150,7 @@ export class SettingsView implements OnInit, OnDestroy {
   }
 
   private rocker(d: RockerDir): boolean {
-    const n = SETTING_ROWS.length;
+    const n = this.defs().length;
     if (d === 'up') this.cursor.update((c) => (c + n - 1) % n);
     else if (d === 'down') this.cursor.update((c) => (c + 1) % n);
     else this.change(d === 'right' ? 1 : -1);
@@ -148,11 +158,11 @@ export class SettingsView implements OnInit, OnDestroy {
   }
 
   private change(step: 1 | -1): void {
-    const id = SETTING_ROWS[this.cursor()].id;
+    const id = this.defs()[this.cursor()].id;
     this.store.update(cycle(this.store.settings(), id, step));
   }
 
   private close(): void {
-    this.nav.go('home');
+    this.nav.go(this.kind());
   }
 }
