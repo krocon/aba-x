@@ -1,0 +1,96 @@
+<div class="home">
+  <ol
+    class="history"
+    #list
+    tabindex="0"
+    [attr.aria-label]="i18n.t('home.history')"
+    aria-live="polite"
+  >
+    @for (r of rows(); track $index) {
+      <li
+        [class.sel]="home.selected() === $index"
+        [class.err]="r.e.error"
+        tabindex="-1"
+        (click)="tapRow($index)"
+        (keydown.enter)="tapRow($index)"
+        [attr.aria-current]="home.selected() === $index ? 'true' : null"
+      >
+        <span class="in">
+          @if (r.inLatex !== null) {
+            <app-math [latex]="r.inLatex" />
+            <span class="visually-hidden">{{ r.e.input }}</span>
+          } @else {
+            {{ r.e.input }}
+          }
+        </span>
+        <span class="out" [attr.data-value]="r.outText">
+          @if (r.outLatex !== null) {
+            <app-math [latex]="r.outLatex" />
+            <span class="visually-hidden">{{ r.outText }}</span>
+          } @else {
+            {{ r.e.note === 'Done' ? i18n.t('home.done') : r.outText }}
+          }
+        </span>
+      </li>
+    } @empty {
+      <li class="empty">{{ i18n.t('home.empty') }}</li>
+    }
+  </ol>
+
+  <div class="entry" [class.inactive]="home.selected() !== null">
+    @if (textbook()) {
+      <app-math-field [ariaLabel]="i18n.t('home.input')" [keyHook]="keyHook" />
+    } @else {
+      <input
+        #text
+        type="text"
+        class="text"
+        spellcheck="false"
+        autocomplete="off"
+        [attr.aria-label]="i18n.t('home.input')"
+        (keydown)="textKey($event)"
+      />
+    }
+  </div>
+
+  @switch (overlay()) {
+    @case ('templates') {
+      <div class="overlay templates" role="listbox" [attr.aria-label]="i18n.t('home.template')">
+        @for (t of templates; track t.id; let i = $index) {
+          <button
+            type="button"
+            role="option"
+            class="tpl"
+            [class.cur]="templateIndex() === i"
+            [attr.aria-selected]="templateIndex() === i"
+            [attr.aria-label]="t.label"
+            (pointerdown)="$event.preventDefault()"
+            (click)="pickTemplate(i)"
+          >
+            <app-math [latex]="t.preview" />
+          </button>
+        }
+      </div>
+    }
+    @case ('show') {
+      @if (shown(); as r) {
+        <div class="overlay show" role="dialog" [attr.aria-label]="i18n.t('home.show')">
+          <div class="big in">
+            @if (r.inLatex !== null) {
+              <app-math [latex]="r.inLatex" />
+            } @else {
+              {{ r.e.input }}
+            }
+          </div>
+          <div class="big out">
+            @if (r.outLatex !== null) {
+              <app-math [latex]="r.outLatex" />
+            } @else {
+              {{ r.outText }}
+            }
+          </div>
+        </div>
+      }
+    }
+  }
+</div>

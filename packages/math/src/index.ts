@@ -6,3 +6,6 @@ export * from './functions';
 export { parseText } from './parser/text-parser';
 export { parseLatex } from './parser/latex-parser';
 export { toLatex, toText } from './serializer';
+export * from './value/value';
+export { evaluateValue, type ValueScope } from './value/evaluate-value';
+export * from './value/format';

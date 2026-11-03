@@ -60,6 +60,11 @@ export const FUNCTIONS: readonly FunctionDef[] = [
   f('nCr', 2, 2, 'binomial coefficient', { aliases: ['binomial'] }),
   f('nPr', 2, 2, 'permutations'),
   f('erf', 1, 1, 'error function', { latex: 'operatorname{erf}' }),
+  // complex numbers (prompt 027, ABA-T1 home view); the CAS does not know them (adapter allow-list)
+  f('re', 1, 1, 'real part', { latex: 'operatorname{re}', aliases: ['real'] }),
+  f('im', 1, 1, 'imaginary part', { latex: 'operatorname{im}', aliases: ['imag'] }),
+  f('conj', 1, 1, 'complex conjugate', { latex: 'operatorname{conj}' }),
+  f('arg', 1, 1, 'argument (angle) of a complex number', { latex: 'arg' }),
 ];
 
 /** Names that build their own node type in text input: diff(f, x[, n]), integrate(f, x[, a, b]), … */

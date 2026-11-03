@@ -1,19 +1,23 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import type { Gesture } from '@aba/core/actions/gestures';
+import { ChangeDetectionStrategy, Component, OnInit, effect, inject } from '@angular/core';
 import { T1Keyboard } from './core/actions/t1-keyboard';
 import { DeviceStore } from './core/device/device-store';
+import { NavStore } from './core/nav/nav-store';
 import { T1Device } from './features/device/t1-device';
 import { ShortcutsDialog } from './features/help/shortcuts-dialog';
+import { HomeStore } from './features/home/home-store';
+import { HomeView } from './features/home/home-view';
+import { SettingsStore } from './features/settings/settings-store';
+import { SettingsView } from './features/settings/settings-view';
 
 /**
- * Page frame of ABA-T1: the device centred on a dark page, wired to the device store (prompt 026).
- * Views push their context onto the store; until the home view exists (027) a demo context echoes
- * the input.
+ * Page frame of ABA-T1: the device centred on a dark page, wired to the device store (prompt 026)
+ * and the screens of the display (home view, settings – prompt 027). Each view pushes its context
+ * onto the device store; app-level keys switch screens.
  */
 @Component({
   selector: 'app-root',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [T1Device, ShortcutsDialog],
+  imports: [T1Device, ShortcutsDialog, HomeView, SettingsView],
   template: `
     <main>
       <h1 class="visually-hidden">ABA-T1</h1>
@@ -30,7 +34,14 @@ import { ShortcutsDialog } from './features/help/shortcuts-dialog';
         (rocker)="device.rocker($event)"
         (gesture)="device.gesture($event.g, $event)"
       >
-        <div class="demo" aria-live="polite">{{ echo() }}</div>
+        @switch (nav.screen()) {
+          @case ('homeSettings') {
+            <app-settings-view />
+          }
+          @default {
+            <app-home-view />
+          }
+        }
       </app-t1-device>
       <p class="foot">
         <button type="button" class="link" (click)="keyboard.helpOpen.set(true)">Keyboard</button>
@@ -46,14 +57,6 @@ import { ShortcutsDialog } from './features/help/shortcuts-dialog';
       flex-direction: column;
       align-items: center;
       padding: 16px 0 24px;
-    }
-    .demo {
-      display: grid;
-      place-items: center;
-      height: 100%;
-      color: #5a6c67;
-      white-space: pre;
-      text-align: center;
     }
     .foot {
       margin: 10px 0 0;
@@ -74,40 +77,22 @@ import { ShortcutsDialog } from './features/help/shortcuts-dialog';
     }
   `,
 })
-export class App {
+export class App implements OnInit {
   protected readonly device = inject(DeviceStore);
   protected readonly keyboard = inject(T1Keyboard);
-  protected readonly echo = signal('ABA-T1');
+  protected readonly nav = inject(NavStore);
+  private readonly settings = inject(SettingsStore);
+  private readonly home = inject(HomeStore);
 
   constructor() {
-    this.device.push({
-      id: 'demo',
-      title: () => 'ABA-T1',
-      menu: () => [{ label: 'Demo' }],
-      key: (p) => {
-        this.echo.set(`${p.id} · ${p.layer}${p.char ? ` · ${p.char}` : ''}`);
-        return true;
-      },
-      menuPress: (i, s) => this.echo.set(`menu ${i + 1}${s ? ' · shift' : ''}`),
-      rocker: (d, s) => {
-        this.echo.set(`rocker ${d}${s ? ' · shift' : ''}`);
-        return true;
-      },
-      gesture: (g: Gesture) => {
-        if (g.kind !== 'drag' || g.phase !== 'move') this.echo.set(describe(g));
-      },
-    });
+    effect(() =>
+      this.device.status.set([this.settings.settings().angle === 'deg' ? 'DEG' : 'RAD']),
+    );
+    this.device.onGlobal('home', () => this.nav.go('home'));
+    this.device.onGlobal('home.shift', () => this.nav.go('homeSettings'));
   }
-}
 
-function describe(g: Gesture): string {
-  switch (g.kind) {
-    case 'drag':
-    case 'pinch':
-      return `${g.kind} ${g.phase}`;
-    case 'swipe':
-      return `swipe ${g.dir}`;
-    default:
-      return g.kind;
+  async ngOnInit(): Promise<void> {
+    await Promise.all([this.settings.load(), this.home.load()]);
   }
 }

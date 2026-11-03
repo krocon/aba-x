@@ -59,13 +59,14 @@ packages/math/src/           @aba/math – framework-frei (ESLint-Sperre), eigen
   numeric/                   evaluate (double, Fehlercodes, Grad), roots (Brent …), derivative (Ridders), quadrature (GK 7/15)
   symbolic/                  SymbolicEngine, Nerdamer-Brücke + Engine, verify (numerische Stichprobe jedes Ergebnisses)
   graph/                     viewport, sampler (Pol-/Sprungerkennung), analysis (Nullstellen, Extrema, Fläche …)
-  worker/                    Protokoll + Host (CAS im Web Worker)
+  value/                     Value (real/komplex …), evaluateValue (ABA-T1-Startansicht, delegiert Reelles), format
+  worker/                    Protokoll + Host (CAS und `evaluate` im Web Worker)
 packages/core/               @aba/core – app-unabhängige Angular-Bausteine (nie aus apps/ importieren)
   src/platform|storage|files Fassaden (Web + Tauri); APP_IDENTITY, STORAGE_DB_NAME liefert die App
   src/compute/               ComputeClient (Worker, Timeout, Abbruch), compute.worker.ts
   src/i18n/i18n-base.ts      I18nBase<K> (Sprachumschaltung); Texte bringt die App mit
   src/actions/               chords.ts (Kürzel je OS), ActionDispatcher<A>, GestureRecognizer (Touch, rein)
-  src/shared/                Modal, MathStatic (`<app-math>` mit Neu-Rendern)
+  src/shared/                Modal, MathStatic (`<app-math>` mit Neu-Rendern), MathField (MathLive-Zeile ohne App-Logik)
   testing/                   Fakes (Storage, Platform, Files) = @aba/core/testing, nur in Specs
 apps/aba-x1/                 die App ABA-X1 (package.json = Versionsquelle, ngsw-config.json, THIRD-PARTY-NOTICES.txt)
   src/app/app.config.ts      einzige Stelle mit runsInTauri(): Fassaden, APP_IDENTITY, STORAGE_DB_NAME 'aba-x', Service Worker nur Web
@@ -78,7 +79,8 @@ apps/aba-x1/                 die App ABA-X1 (package.json = Versionsquelle, ngsw
                              settings|about|help|menus/
   public/, src-tauri/, site/ Icons/Manifest; Crate (nur lib.rs: `aba_shell::builder()`); Produktseite
 apps/aba-t1/                 zweiter Rechner (ADR 0008), Bedienung: docs/aba-t1.md; core/device/DeviceStore (Kontext-Stack der
-                             Ansichten: ViewContext), core/actions (Shift/Alpha, Keymap, T1Keyboard), features/device (Gerät)
+                             Ansichten: ViewContext), core/nav (Bildschirme), core/actions (Shift/Alpha, Keymap,
+                             T1Keyboard), features/device|home|settings
 crates/shell/                gemeinsame Rust-Hülle (commands.rs, storage.rs, files.rs, app_menu.rs, about.rs, error.rs),
                              eigene Cargo.lock, kein Workspace
 scripts/                     apps.mjs (App-Registry), version, notices, release-notes, rust.mjs (+ Tests), e2e/run.mjs

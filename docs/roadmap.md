@@ -23,6 +23,7 @@
 |---|---|---|
 | 025 | Identität, App-Gerüst, `crates/shell` (ADR 0008) | ✅ 03.11.2026 |
 | 026 | Tastenfeld, Shift/Alpha, Wippe, Gesten, PC-Tastatur; Chords/Dispatcher/Gesten in `@aba/core` | ✅ 03.11.2026 |
+| 027 | Startansicht (Lehrbuch/Algebraisch), komplexe Zahlen, Zahlenformate, Variablen, Einstellungen | ✅ 03.11.2026 |
 
 ## Was funktioniert
 

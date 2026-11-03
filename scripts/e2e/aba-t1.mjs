@@ -1,6 +1,17 @@
 // End-to-end scenarios of ABA-T1 (prompt 025 ff.), run by scripts/e2e/run.mjs --app aba-t1.
 // Each prompt adds its checks here; the runner reports them per browser.
 
+async function lastResult(page, want) {
+  await page.waitForFunction(
+    (w) =>
+      [...document.querySelectorAll('app-home-view .history .out')]
+        .at(-1)
+        ?.getAttribute('data-value') === w,
+    want,
+    { timeout: 15000 },
+  );
+}
+
 /** @param {{ axeSource: string }} deps */
 export function t1Scenarios({ axeSource }) {
   const checks = {
@@ -8,6 +19,21 @@ export function t1Scenarios({ axeSource }) {
       await page.waitForSelector('app-t1-device .lcd', { timeout: 20000 });
       const title = await page.title();
       if (!title.startsWith('ABA-T1')) throw new Error(`title ${title}`);
+    },
+    async homeCalculates(page) {
+      await page.waitForSelector('app-home-view math-field', { timeout: 20000 });
+      for (const k of ['d2', 'add', 'd3', 'mul', 'd4', 'enter'])
+        await page.click(`.key[data-key="${k}"]`);
+      await lastResult(page, '14');
+      for (const k of ['shift', 'sq', 'd8', 'd1', 'enter'])
+        await page.click(`.key[data-key="${k}"]`);
+      await lastResult(page, '9');
+    },
+    async hardwareKeyboard(page) {
+      await page.click('app-home-view math-field');
+      await page.keyboard.type('7*6');
+      await page.keyboard.press('Enter');
+      await lastResult(page, '42');
     },
     async keypad(page) {
       const r = await page.$$eval('app-t1-device .key', (keys) => ({
@@ -19,8 +45,10 @@ export function t1Scenarios({ axeSource }) {
     async displayKeepsSize(page) {
       const h = () => page.$eval('app-t1-device .lcd', (e) => e.getBoundingClientRect().height);
       const before = await h();
-      await page.click('.key[data-key="d7"]');
-      await page.click('.key[data-key="enter"]');
+      for (let i = 0; i < 8; i++) {
+        await page.click('.key[data-key="d7"]');
+        await page.click('.key[data-key="enter"]');
+      }
       if (Math.abs((await h()) - before) > 0.5) throw new Error('display changed its size');
     },
     async shiftAlpha(page) {
@@ -36,10 +64,15 @@ export function t1Scenarios({ axeSource }) {
         document.querySelector('app-t1-device .ann').textContent.includes('🔒'),
       );
       await page.click('.key[data-key="alpha"]');
+      const mods = ['⇧', 'A', 'a', 'A🔒', 'a🔒'];
       await page.waitForFunction(
-        () => document.querySelector('app-t1-device .ann').textContent.trim() === '',
+        (m) =>
+          ![...document.querySelectorAll('app-t1-device .ann span')].some((s) =>
+            m.includes(s.textContent.trim()),
+          ),
+        mods,
       );
-      if ((await ann()) !== '') throw new Error(`annunciators ${await ann()}`);
+      if (/[⇧🔒]/u.test(await ann())) throw new Error(`annunciators ${await ann()}`);
     },
     async phoneWidth(page) {
       await page.setViewportSize({ width: 375, height: 812 });
@@ -82,7 +115,9 @@ export function t1Scenarios({ axeSource }) {
     await page.waitForTimeout(1500);
     await ctx.setOffline(true);
     await page.reload();
-    await page.waitForSelector('app-t1-device .lcd', { timeout: 20000 });
+    await page.waitForSelector('app-home-view math-field', { timeout: 20000 });
+    for (const k of ['d1', 'add', 'd1', 'enter']) await page.click(`.key[data-key="${k}"]`);
+    await lastResult(page, '2');
     await ctx.close();
   }
 

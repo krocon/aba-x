@@ -34,3 +34,20 @@ Fokus hat. Dazu (`Mod` = ⌘ auf macOS, sonst Strg; gleich auf allen Systemen):
 
 Alt-Kombinationen werden über `event.code` erkannt (macOS-Sonderzeichen mit ⌥ stören nicht). Strg+H/⌘H, ⌘K usw.
 sind bewusst nicht belegt (Browser/OS).
+
+## Startansicht (027)
+
+- Verlauf: Eingabe links, Ergebnis rechts, neueste unten; Wippe ↑/↓ (oder ↑ in leerer Zeile, Wischen) wählt einen
+  Eintrag, Enter bzw. „Kopie“ übernimmt das Ergebnis in die Eingabezeile, „Zeigen“ vergrößert ihn, Tippen wählt,
+  zweites Tippen kopiert. Enter in leerer Zeile wiederholt die letzte Eingabe. ⇧Esc (Clear) leert den Verlauf nach
+  Rückfrage. On bricht eine laufende Rechnung ab.
+- Eingabe **Lehrbuch** (MathLive, Vorlagen-Taste mit 16 Strukturen) oder **Algebraisch** (Textzeile); RPN folgt (028).
+- Rechnet numerisch im Worker mit reellen und komplexen Zahlen (`@aba/math/value`): `i` geht immer; reelle Funktionen
+  liefern komplexe Ergebnisse (√−4 = 2i, ln −1, arcsin 2) nur mit „Komplexe Ergebnisse“ an – sonst die Meldung
+  „the result is complex (complex results are off)“. tan 90°, 0⁻¹ usw. bleiben Fehler (kein geratenes Ergebnis).
+- Variablen: `Ausdruck ▶ A` (⇧EEX = Sto ▶), `A := Ausdruck`, beliebige freie Namen; Funktionen `f(x) := …`; `Ans`
+  (⇧+). Ein einfaches `=` ist ein Test (1/0), Vergleiche mit 12-stelliger Toleranz.
+- Einstellungen (⇧Home): Winkelmaß, Zahlenformat (Standard = bis 12 signifikante Stellen, wissenschaftlich außerhalb
+  10⁻⁶ ≤ |x| < 10¹²; Fest/Wissenschaftlich/Technisch mit 0–11 Stellen), Dezimalpunkt/-komma, komplexe Ergebnisse
+  (aus, a+b·i, r∠θ), Eingabe, Sprache, Schriftgröße. Annunciator RAD/DEG.
+- Gespeichert (Desktop: App-Datenordner, Web: IndexedDB `aba-t1`): Verlauf (200), Variablen, Funktionen, Einstellungen.
