@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
-import { FakeStorageApi } from '../../../testing/fake-storage-api';
-import { StorageApi } from '../storage/storage-api';
+import { FakeStorageApi } from '@aba/core/testing';
+import { StorageApi } from '@aba/core/storage/storage-api';
 import { UiStateStore } from './ui-state-store';
 
 describe('UiStateStore', () => {

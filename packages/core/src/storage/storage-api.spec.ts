@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { IDBFactory as FakeIDBFactory } from 'fake-indexeddb';
 import { INVOKE } from '../platform/platform-api';
-import { IDB_FACTORY, IndexedDbStorageApi, TauriStorageApi } from './storage-api';
+import { IDB_FACTORY, IndexedDbStorageApi, STORAGE_DB_NAME, TauriStorageApi } from './storage-api';
 
 describe('TauriStorageApi', () => {
   it('maps every call to the storage_* commands', async () => {
@@ -33,7 +33,11 @@ describe('TauriStorageApi', () => {
 describe('IndexedDbStorageApi', () => {
   function setup(factory: IDBFactory | undefined) {
     TestBed.configureTestingModule({
-      providers: [IndexedDbStorageApi, { provide: IDB_FACTORY, useValue: factory }],
+      providers: [
+        IndexedDbStorageApi,
+        { provide: IDB_FACTORY, useValue: factory },
+        { provide: STORAGE_DB_NAME, useValue: 'aba-x' },
+      ],
     });
     return TestBed.inject(IndexedDbStorageApi);
   }

@@ -1,5 +1,5 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { StorageApi } from '../storage/storage-api';
+import { StorageApi } from '@aba/core/storage/storage-api';
 import { AppMode, DEFAULT_UI_STATE, sanitizeUiState } from './ui-state-logic';
 
 /** Selected mode and other small UI state, persisted in the document `ui-state`. */

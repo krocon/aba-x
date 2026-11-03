@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { FilesApi, type OpenedFile } from '../app/core/files/files-api';
+import { FilesApi, type OpenedFile } from '../src/files/files-api';
 
 /** In-memory `FilesApi` for specs. Never import from production code. */
 @Injectable()

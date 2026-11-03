@@ -20,7 +20,7 @@ import {
 } from '@aba/math/graph/viewport';
 import { compile } from '@aba/math/numeric/evaluate';
 import { toText } from '@aba/math/serializer';
-import { StorageApi } from '../../core/storage/storage-api';
+import { StorageApi } from '@aba/core/storage/storage-api';
 import { CalculatorEngine } from '../calculator/calculator-engine';
 import { formatNumber } from '../calculator/evaluation-logic';
 import { SettingsStore } from '../settings/settings-store';

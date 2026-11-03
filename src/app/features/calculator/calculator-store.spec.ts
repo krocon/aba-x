@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
-import { FakeStorageApi } from '../../../testing/fake-storage-api';
-import { StorageApi } from '../../core/storage/storage-api';
+import { FakeStorageApi } from '@aba/core/testing';
+import { StorageApi } from '@aba/core/storage/storage-api';
 import { VarsStore } from '../vars/vars-store';
 import { UiStateStore } from '../../core/ui-state/ui-state-store';
 import { CalculatorStore, MathEditor } from './calculator-store';

@@ -1,5 +1,5 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { FilesApi } from '../../core/files/files-api';
+import { FilesApi } from '@aba/core/files/files-api';
 import { HistoryStore } from '../history/history-store';
 import { historyDoc, loadHistory, withoutId } from '../history/history-logic';
 import { functionsDoc, loadFunctions, loadVariables, variablesDoc } from '../vars/vars-logic';

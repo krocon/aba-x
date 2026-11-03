@@ -1,6 +1,5 @@
 import { Injectable, InjectionToken, inject } from '@angular/core';
 import { invoke, isTauri } from '@tauri-apps/api/core';
-import { version as packageVersion } from '../../../../package.json';
 
 export type PlatformKind = 'desktop' | 'web';
 
@@ -43,18 +42,19 @@ export class TauriPlatformApi extends PlatformApi {
   }
 }
 
-/** Version of the web build: package.json is the single source (the bundler keeps only this key). */
-export const WEB_VERSION = new InjectionToken<string>('WEB_VERSION', {
-  providedIn: 'root',
-  factory: () => packageVersion,
-});
+/** Name and version of the running app – each app provides it (version from its package.json). */
+export interface AppIdentity {
+  name: string;
+  version: string;
+}
+export const APP_IDENTITY = new InjectionToken<AppIdentity>('APP_IDENTITY');
 
 @Injectable()
 export class WebPlatformApi extends PlatformApi {
-  private readonly version = inject(WEB_VERSION);
+  private readonly app = inject(APP_IDENTITY);
   readonly kind = 'web' as const;
 
   appInfo(): Promise<AppInfo> {
-    return Promise.resolve({ name: 'ABA-X1', version: this.version, os: 'web', arch: '' });
+    return Promise.resolve({ ...this.app, os: 'web', arch: '' });
   }
 }

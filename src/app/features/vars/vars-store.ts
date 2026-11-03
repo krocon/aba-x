@@ -1,7 +1,7 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import type { Expr } from '@aba/math/ast/nodes';
 import type { UserFunction } from '@aba/math/numeric/evaluate';
-import { StorageApi } from '../../core/storage/storage-api';
+import { StorageApi } from '@aba/core/storage/storage-api';
 import { functionsDoc, loadFunctions, loadVariables, variablesDoc } from './vars-logic';
 
 /** User variables and functions, persisted in the documents `variables` and `functions` (prompt 008). */

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { LoadedDoc, StorageApi, StorageKey } from '../app/core/storage/storage-api';
+import { LoadedDoc, StorageApi, StorageKey } from '../src/storage/storage-api';
 
 /** In-memory `StorageApi` for specs. Never import from production code. */
 @Injectable()

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, output } from '@angular/core';
 import { I18n } from '../../core/i18n/i18n';
-import { Modal } from '../../shared/modal';
+import { Modal } from '@aba/core/shared/modal';
 import { BackupStore } from './backup-store';
 
 /** Confirms an import (prompt 017): what is in the file and what happens to existing data. */

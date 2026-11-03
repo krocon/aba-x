@@ -3,7 +3,7 @@ import { KeyboardDispatcher } from '../actions/keyboard-dispatcher';
 import { I18n } from '../i18n/i18n';
 import type { TextKey } from '../i18n/texts';
 import type { ActionId } from '../actions/keymap';
-import { INVOKE } from '../platform/platform-api';
+import { INVOKE } from '@aba/core/platform/platform-api';
 import { type Submenu, desktopMenu, nativeSpec } from './menu-model';
 
 /** Menu labels in the current language. */

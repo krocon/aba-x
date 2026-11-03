@@ -61,6 +61,46 @@ module.exports = defineConfig([
     },
   },
   {
+    // Shared Angular building blocks: never depend on an app (ADR 0007).
+    files: ['packages/core/**/*.ts'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['**/apps/**', '**/src/app/**'],
+              message: 'packages/core must not depend on an app.',
+            },
+            {
+              group: ['**/packages/math/**', '../../math/**'],
+              message: 'Import the math core as @aba/math/….',
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    // Apps use the packages only through their aliases; fakes only in specs (ADR 0007).
+    files: ['src/**/*.ts', 'apps/**/*.ts'],
+    ignores: ['**/*.spec.ts'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['**/packages/**'],
+              message: 'Import packages as @aba/math/… or @aba/core/….',
+            },
+            { group: ['@aba/core/testing'], message: 'Test fakes belong in specs only.' },
+          ],
+        },
+      ],
+    },
+  },
+  {
     files: ['**/*.html'],
     extends: [angular.configs.templateRecommended, angular.configs.templateAccessibility],
     rules: {},

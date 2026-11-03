@@ -3,7 +3,7 @@ import { SwUpdate } from '@angular/service-worker';
 import { I18n } from './core/i18n/i18n';
 import { KeyboardDispatcher } from './core/actions/keyboard-dispatcher';
 import { MenuApi } from './core/menu/menu-api';
-import { AppInfo, PlatformApi } from './core/platform/platform-api';
+import { AppInfo, PlatformApi } from '@aba/core/platform/platform-api';
 import { UiStateStore } from './core/ui-state/ui-state-store';
 import { AboutDialog } from './features/about/about-dialog';
 import { BackupStore } from './features/backup/backup-store';

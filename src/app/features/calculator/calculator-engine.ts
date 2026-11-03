@@ -6,7 +6,7 @@ import { parseLatex } from '@aba/math/parser/latex-parser';
 import { parseLatexStatement } from '@aba/math/parser/statement';
 import { type MathResult, fail, ok } from '@aba/math/result';
 import { toLatex } from '@aba/math/serializer';
-import { ComputeClient } from '../../core/compute/compute-client';
+import { ComputeClient } from '@aba/core/compute/compute-client';
 import { SettingsStore } from '../settings/settings-store';
 import { pickVariable, solutionsDisplay, variablesOf, withConstant } from '../cas/cas-logic';
 import {

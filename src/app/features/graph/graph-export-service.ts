@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { FilesApi } from '../../core/files/files-api';
+import { FilesApi } from '@aba/core/files/files-api';
 import { curves, drawPlot } from './graph-draw';
 import { plotSvg } from './graph-export';
 import { GraphStore } from './graph-store';

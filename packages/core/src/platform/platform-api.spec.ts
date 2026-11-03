@@ -1,13 +1,14 @@
 import { TestBed } from '@angular/core/testing';
-import { INVOKE, TauriPlatformApi, WEB_VERSION, WebPlatformApi } from './platform-api';
-import { version } from '../../../../package.json';
+import { APP_IDENTITY, INVOKE, TauriPlatformApi, WebPlatformApi } from './platform-api';
 
 describe('PlatformApi', () => {
-  it('web: reports the package.json version and os "web"', async () => {
-    TestBed.configureTestingModule({ providers: [WebPlatformApi] });
+  it('web: reports the app identity and os "web"', async () => {
+    const version = '1.2.3';
+    TestBed.configureTestingModule({
+      providers: [WebPlatformApi, { provide: APP_IDENTITY, useValue: { name: 'ABA-X1', version } }],
+    });
     const api = TestBed.inject(WebPlatformApi);
     expect(api.kind).toBe('web');
-    expect(TestBed.inject(WEB_VERSION)).toBe(version);
     expect(await api.appInfo()).toEqual({ name: 'ABA-X1', version, os: 'web', arch: '' });
   });
 

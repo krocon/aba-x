@@ -1,0 +1,7 @@
+{
+  "name": "@aba/core",
+  "version": "0.0.0",
+  "private": true,
+  "description": "App-independent Angular building blocks of the ABA calculators: platform facades, compute worker client, i18n base, shared components, test fakes",
+  "license": "MIT"
+}

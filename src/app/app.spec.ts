@@ -1,14 +1,14 @@
 import { TestBed } from '@angular/core/testing';
-import { FakePlatformApi } from '../testing/fake-platform-api';
-import { FakeFilesApi } from '../testing/fake-files-api';
-import { FakeStorageApi } from '../testing/fake-storage-api';
+import { FakePlatformApi } from '@aba/core/testing';
+import { FakeFilesApi } from '@aba/core/testing';
+import { FakeStorageApi } from '@aba/core/testing';
 import { KeyboardDispatcher } from './core/actions/keyboard-dispatcher';
-import { FilesApi } from './core/files/files-api';
+import { FilesApi } from '@aba/core/files/files-api';
 import { MenuApi, WebMenuApi } from './core/menu/menu-api';
 import { provideServiceWorker } from '@angular/service-worker';
 import { App } from './app';
-import { PlatformApi } from './core/platform/platform-api';
-import { StorageApi } from './core/storage/storage-api';
+import { PlatformApi } from '@aba/core/platform/platform-api';
+import { StorageApi } from '@aba/core/storage/storage-api';
 import { MATH_FIELD_FACTORY, MathFieldLike } from './features/calculator/math-input';
 
 /** A stand-in for `<math-field>`: keeps the inserted LaTeX as its value. */

@@ -1,8 +1,11 @@
 import { Injectable, InjectionToken, inject } from '@angular/core';
 import { INVOKE } from '../platform/platform-api';
 
-/** Document keys – the same on both platforms (file `<key>.json` on desktop, IndexedDB row on web). */
-export type StorageKey = 'ui-state' | 'settings' | 'history' | 'variables' | 'functions' | 'graph';
+/**
+ * Document key – the same on both platforms (file `<key>.json` on desktop, IndexedDB row on web).
+ * `a-z`, digits and `-`, at most 32 characters (checked by `storage.rs`); each app names its own.
+ */
+export type StorageKey = string;
 
 export interface LoadedDoc<T> {
   /** `null` when the document does not exist yet (or was unreadable and set aside). */
@@ -49,7 +52,11 @@ export const IDB_FACTORY = new InjectionToken<IDBFactory | undefined>('IDB_FACTO
   factory: () => globalThis.indexedDB,
 });
 
-const DB_NAME = 'aba-x';
+/**
+ * Name of the IndexedDB database. Every app needs its own: all web apps live on one origin
+ * (krocon.de/products/<app>/) and would otherwise share their documents.
+ */
+export const STORAGE_DB_NAME = new InjectionToken<string>('STORAGE_DB_NAME');
 const DB_VERSION = 1;
 const STORE = 'documents';
 
@@ -72,6 +79,7 @@ function storageError(code: string, err: unknown): StorageError {
 @Injectable()
 export class IndexedDbStorageApi extends StorageApi {
   private readonly factory = inject(IDB_FACTORY);
+  private readonly dbName = inject(STORAGE_DB_NAME);
   private db: Promise<IDBDatabase> | null = null;
 
   private open(): Promise<IDBDatabase> {
@@ -79,7 +87,7 @@ export class IndexedDbStorageApi extends StorageApi {
       return Promise.reject<IDBDatabase>({ code: 'unavailable', message: 'no IndexedDB' });
     }
     this.db ??= new Promise<IDBDatabase>((resolve, reject) => {
-      const req = this.factory!.open(DB_NAME, DB_VERSION);
+      const req = this.factory!.open(this.dbName, DB_VERSION);
       req.onupgradeneeded = () => {
         if (!req.result.objectStoreNames.contains(STORE)) req.result.createObjectStore(STORE);
       };

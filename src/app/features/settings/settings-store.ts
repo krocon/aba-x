@@ -1,6 +1,6 @@
 import { DOCUMENT, Injectable, computed, effect, inject, signal } from '@angular/core';
 import { I18n } from '../../core/i18n/i18n';
-import { StorageApi } from '../../core/storage/storage-api';
+import { StorageApi } from '@aba/core/storage/storage-api';
 import { DEFAULT_SETTINGS, type Settings, sanitizeSettings, settingsDoc } from './settings-logic';
 
 /** User settings (prompt 018), persisted in the document `settings`; applies theme and language. */

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AppInfo, PlatformApi, PlatformKind } from '../app/core/platform/platform-api';
+import { AppInfo, PlatformApi, PlatformKind } from '../src/platform/platform-api';
 
 /** `PlatformApi` for specs. Never import from production code. */
 @Injectable()

@@ -1,5 +1,5 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { StorageApi } from '../../core/storage/storage-api';
+import { StorageApi } from '@aba/core/storage/storage-api';
 import {
   type HistoryEntry,
   addEntry,

@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, output, signal } from '@angular/core';
 import { I18n } from '../../core/i18n/i18n';
-import { type AppInfo, PlatformApi } from '../../core/platform/platform-api';
-import { Modal } from '../../shared/modal';
+import { type AppInfo, PlatformApi } from '@aba/core/platform/platform-api';
+import { Modal } from '@aba/core/shared/modal';
 
 /** About ABA-X1 (prompt 002): version, platform, licence, third-party notices. */
 @Component({

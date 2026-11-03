@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, output } from '@angular/core';
 import { I18n } from '../../core/i18n/i18n';
-import { Modal } from '../../shared/modal';
+import { Modal } from '@aba/core/shared/modal';
 import type { TextKey } from '../../core/i18n/texts';
 import type { Theme } from './settings-logic';
 import { SettingsStore } from './settings-store';
