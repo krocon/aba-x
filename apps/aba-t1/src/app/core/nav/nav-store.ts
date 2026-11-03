@@ -12,7 +12,10 @@ export type Screen =
   | 'library'
   | 'app'
   | 'notes'
-  | 'memory';
+  | 'memory'
+  | 'programs'
+  | 'programEditor'
+  | 'terminal';
 
 /** Which screen the display shows. App-level keys (Home, shift Home, …) switch it. */
 @Injectable({ providedIn: 'root' })

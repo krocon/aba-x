@@ -3,7 +3,9 @@ import { ComputeClient } from '@aba/core/compute/compute-client';
 import { StorageApi } from '@aba/core/storage/storage-api';
 import type { Expr } from '@aba/math/ast/nodes';
 import type { UserFunction } from '@aba/math/numeric/evaluate';
-import type { MathResult } from '@aba/math/result';
+import { type MathErrorCode, type MathResult, fail, ok } from '@aba/math/result';
+import { parseText } from '@aba/math/parser/text-parser';
+import { valueInput } from '@aba/math/value/format';
 import type { ValueScope } from '@aba/math/value/evaluate-value';
 import type { Value } from '@aba/math/value/value';
 import { SettingsStore } from '../settings/settings-store';
@@ -16,6 +18,15 @@ import {
 } from './home-logic';
 
 const DOC_VERSION = 1;
+
+class ProgramCallError extends Error {
+  constructor(
+    readonly code: MathErrorCode,
+    message: string,
+  ) {
+    super(message);
+  }
+}
 
 interface HomeDoc {
   version: number;
@@ -43,6 +54,14 @@ export class HomeStore {
   /** message of the last save problem, shown in the title bar */
   readonly problem = signal<string | null>(null);
   readonly ans = computed(() => this.variables().get('Ans') ?? null);
+  /**
+   * Exported program functions (prompt 043), installed by the program runner: their names (for
+   * parsing) and how to call one.
+   */
+  programs: {
+    names(): string[];
+    call(name: string, args: readonly Value[]): Promise<MathResult<Value>>;
+  } | null = null;
 
   async load(): Promise<void> {
     try {
@@ -68,7 +87,8 @@ export class HomeStore {
       if (!last) return false;
       return this.submit(last.input, last.kind);
     }
-    const parsed = parseHomeInput(src, kind, new Set(this.functions().keys()));
+    const names = new Set([...this.functions().keys(), ...(this.programs?.names() ?? [])]);
+    const parsed = parseHomeInput(src, kind, names);
     if (!parsed.ok) {
       this.append({ input: src, kind, value: null, note: parsed.error.message, error: true });
       return true;
@@ -94,13 +114,56 @@ export class HomeStore {
     return true;
   }
 
-  /** Evaluates an expression with the current variables, functions and settings (worker). */
+  /**
+   * Evaluates an expression with the current variables, functions and settings (worker). Calls of
+   * exported programs run first (innermost first) and are replaced by their values.
+   */
   async evaluate(expr: Expr): Promise<MathResult<Value>> {
     this.busy.set(true);
     try {
+      if (this.programs) {
+        const r = await this.callPrograms(expr);
+        if (!r.ok) return r;
+        expr = r.value;
+      }
       return await this.compute.run({ op: 'evaluate', expr, scope: this.scope() });
     } finally {
       this.busy.set(false);
+    }
+  }
+
+  private async callPrograms(e: Expr): Promise<MathResult<Expr>> {
+    const progs = this.programs!;
+    const known = new Set(progs.names().map((n) => n.toLowerCase()));
+    if (!known.size) return ok(e);
+    const visit = async (x: unknown): Promise<unknown> => {
+      if (Array.isArray(x)) {
+        const out = [];
+        for (const y of x) out.push(await visit(y));
+        return out;
+      }
+      if (!x || typeof x !== 'object' || !('type' in x)) return x;
+      const node: Record<string, unknown> = {};
+      for (const [k, v] of Object.entries(x)) node[k] = await visit(v);
+      const n = node as unknown as Expr;
+      if (n.type !== 'call' || !known.has(n.name.toLowerCase())) return n;
+      const args: Value[] = [];
+      for (const a of n.args) {
+        const v = await this.compute.run({ op: 'evaluate', expr: a, scope: this.scope() });
+        if (!v.ok) throw new ProgramCallError(v.error.code, v.error.message);
+        args.push(v.value);
+      }
+      const r = await progs.call(n.name, args);
+      if (!r.ok) throw new ProgramCallError(r.error.code, r.error.message);
+      const p = parseText(valueInput(r.value));
+      if (!p.ok) throw new ProgramCallError('unsupported', 'the result cannot be used here');
+      return p.value;
+    };
+    try {
+      return ok((await visit(e)) as Expr);
+    } catch (err) {
+      if (err instanceof ProgramCallError) return fail(err.code, err.message);
+      throw err;
     }
   }
 

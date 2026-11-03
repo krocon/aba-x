@@ -1,3 +1,4 @@
+import { ProgramStore } from '../programs/program-store';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -209,6 +210,7 @@ const TABS: ToolboxTab[] = ['math', 'cas', 'app', 'user', 'catalog'];
   `,
 })
 export class PopupView implements OnInit, OnDestroy {
+  private readonly programs = inject(ProgramStore);
   protected readonly popup = inject(PopupStore);
   private readonly i18n = inject(I18n);
   private readonly device = inject(DeviceStore);
@@ -243,9 +245,11 @@ export class PopupView implements OnInit, OnDestroy {
           category: c,
         }));
       case 'user':
-        return userEntries([...this.home.functions().keys(), ...this.cas.functions().keys()]).map(
-          (e) => this.entryRow(e),
-        );
+        return userEntries([
+          ...this.home.functions().keys(),
+          ...this.cas.functions().keys(),
+          ...[...this.programs.exports().values()].map((e) => e.name),
+        ]).map((e) => this.entryRow(e));
       case 'catalog':
         return catalog().map((e) => this.entryRow(e));
       default:

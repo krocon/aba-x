@@ -208,3 +208,12 @@ alle numerisch. ⇧Plot: Fenster, gleiche Achsen, Gitter. Mathematik: [`docs/mat
   bzw. Kapitalwertkurve. Eingänge positiv, Zahlungen negativ ([`mathematics/finance.md`](mathematics/finance.md)).
 - **Dreiecklöser**: drei von a, b, c, A, B, C (mindestens eine Seite); SSW mit zwei Lösungen (Lsg 1/2), rechtwinkliger
   Modus, Fläche und Umfang; Plot zeichnet maßstäblich.
+
+## Programme (043/044)
+
+⇧1 öffnet den Programmkatalog (Neu, Bearbeiten, Umbenennen, Löschen, Mehr: Kopieren, Export/Import als Textdatei,
+Terminal; Start). Exportierte Funktionen (`EXPORT FAK(n) … END;`) sind in der Startansicht aufrufbar (`FAK(5)`) und
+stehen in Toolbox → Nutzer. Editor mit Hervorhebung, automatischer Einrückung, Vorlagen, Prüfen (Sprung zum Fehler),
+Suchen/Ersetzen; Debug mit Haltepunkten (Zeilennummer antippen), Schritt, Weiter, Stopp und Variablenanzeige. PRINT
+schreibt ins Terminal, Grafikbefehle zeichnen auf G0–G9; On bricht ab. Sprache: `docs/ppl/language.md`.
+

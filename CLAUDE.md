@@ -27,7 +27,7 @@
 | App-Auswahl | Root-Befehle gelten für **ABA-X1** (Standard-App); andere App: `--app <name>` bzw. `APP=<name>` für Skripte, `pnpm --filter <name> <skript>` für App-Skripte. Registry: `scripts/apps.mjs` |
 | Web-Dev-Server | `pnpm start` (= `ng serve aba-x1`, Port 1420; im Browser ohne Tauri → Web-Fassaden, IndexedDB) |
 | Desktop-Dev | `pnpm tauri dev` (= `pnpm --filter aba-x1 exec tauri dev`, Tauri läuft im App-Ordner) |
-| Tests | `pnpm test` = `pnpm test:math` (reines Vitest + `tsc` in `packages/math`) + `ng test aba-x1` (Vitest + jsdom, inkl. `packages/core`-Specs); `pnpm test:watch` |
+| Tests | `pnpm test` = `pnpm test:math` (reines Vitest + `tsc` in `packages/math`) + `pnpm test:ppl` (dito `packages/ppl`) + `ng test aba-x1`/`aba-t1` (Vitest + jsdom, inkl. `packages/core`-Specs); `pnpm test:watch` |
 | Lint / Format | `pnpm lint` (`eslint apps packages`, Import-Sperren je Paket), `pnpm format`, `pnpm format:check` |
 | Build Desktop-Frontend / Web | `pnpm build` → `dist/aba-x1/desktop` (base `/`), `pnpm build:web` → `dist/aba-x1/web` (Service Worker, base `/products/aba-x1/` = Ziel krocon.de) |
 | Rust | `pnpm rust:fmt`, `pnpm rust:lint` (clippy `-D warnings`), `pnpm rust:test` (`scripts/rust.mjs`: `crates/shell` + jede App-Crate; `--app <name>`) |
@@ -65,6 +65,8 @@ packages/math/src/           @aba/math – framework-frei (ESLint-Sperre), eigen
   units/, integer/           Einheiten (_m, convert …) + Konstanten (CODATA 2022); Basis-Ganzzahlen #FFh (BigInt)
   linalg/                    reelle lineare Algebra (LU, RREF, Inverse, Jacobi, Hessenberg-QR-Eigenwerte)
   worker/                    Protokoll + Host (CAS und `evaluate` im Web Worker)
+packages/ppl/src/            @aba/ppl – Programmiersprache (Lexer, Parser, Interpreter, Host-Schnittstelle); framework-frei,
+                             Mathe nur über src/math-bridge.ts (Alias @aba/math); Doku docs/ppl/
 packages/core/               @aba/core – app-unabhängige Angular-Bausteine (nie aus apps/ importieren)
   src/platform|storage|files Fassaden (Web + Tauri); APP_IDENTITY, STORAGE_DB_NAME liefert die App
   src/compute/               ComputeClient (Worker, Timeout, Abbruch), compute.worker.ts

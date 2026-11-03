@@ -18,6 +18,8 @@
     "paths": {
       "@aba/math": ["./packages/math/src/index.ts"],
       "@aba/math/*": ["./packages/math/src/*"],
+      "@aba/ppl": ["./packages/ppl/src/index.ts"],
+      "@aba/ppl/*": ["./packages/ppl/src/*"],
       "@aba/core": ["./packages/core/src/index.ts"],
       "@aba/core/testing": ["./packages/core/testing/index.ts"],
       "@aba/core/*": ["./packages/core/src/*"]

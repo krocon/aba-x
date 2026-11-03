@@ -64,6 +64,28 @@ module.exports = defineConfig([
     },
   },
   {
+    // The programming language core is framework-free and reaches the math core only through its
+    // alias, in one file (src/math-bridge.ts – prompt 043).
+    files: ['packages/ppl/**/*.ts'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['@angular/*', '@tauri-apps/*', 'mathlive', '@aba/core', '@aba/core/*'],
+              message: 'packages/ppl must stay framework-free.',
+            },
+            {
+              group: ['**/apps/**', '**/packages/**', '**/math/src/**', '**/src/app/**'],
+              message: 'Import the math core as @aba/math/… (in src/math-bridge.ts).',
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
     // Shared Angular building blocks: never depend on an app (ADR 0007).
     files: ['packages/core/**/*.ts'],
     rules: {

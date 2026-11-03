@@ -753,6 +753,64 @@ export function t1Scenarios({ axeSource }) {
       await keys('home');
       await page.waitForSelector('app-home-view math-field');
     },
+    async programs(page) {
+      const keys = async (...ks) => {
+        for (const k of ks) await page.click(`.key[data-key="${k}"]`);
+      };
+      const menu = (label) => page.click(`app-t1-device button.mb:text-is("${label}")`);
+      // ⇧1: catalogue, New FAK, source, Run with the argument 5 → terminal shows PRINT
+      await keys('shift', 'd1');
+      await page.waitForSelector('app-program-catalog');
+      await menu('New');
+      await page.fill('app-program-catalog .ask input', 'FAK');
+      await page.press('app-program-catalog .ask input', 'Enter');
+      await page.waitForSelector('app-program-editor textarea');
+      await page.fill(
+        'app-program-editor textarea',
+        [
+          'EXPORT FAK(n)',
+          'BEGIN',
+          '  LOCAL r := 1, k;',
+          '  FOR k FROM 2 TO n DO',
+          '    r := r * k;',
+          '  END;',
+          '  PRINT("fak " + n);',
+          '  RETURN r;',
+          'END;',
+          'EXPORT LOOPY()',
+          'BEGIN',
+          '  WHILE 1 DO END;',
+          'END;',
+        ].join('\n'),
+      );
+      await menu('Check');
+      await page.waitForFunction(() =>
+        document.querySelector('app-program-editor .status')?.textContent.includes('No syntax'),
+      );
+      await menu('Run');
+      await page.fill('app-program-dialog .field input', '5');
+      await page.click('app-program-dialog button[type="submit"]');
+      await page.waitForFunction(() =>
+        document.querySelector('app-terminal-view pre')?.textContent.includes('fak 5'),
+      );
+      // the exported function in the home view
+      await keys('home');
+      await page.click('app-home-view math-field');
+      await page.keyboard.type('FAK(6)+1');
+      await page.keyboard.press('Enter');
+      await lastResult(page, '721');
+      // an endless loop stops with On
+      await page.click('app-home-view math-field');
+      await page.keyboard.type('LOOPY()');
+      await page.keyboard.press('Enter');
+      await page.waitForTimeout(400);
+      await keys('on');
+      await page.waitForFunction(() =>
+        [...document.querySelectorAll('app-home-view .history .out')]
+          .at(-1)
+          ?.textContent.includes('cancelled'),
+      );
+    },
     async keypad(page) {
       const r = await page.$$eval('app-t1-device .key', (keys) => ({
         count: keys.length,

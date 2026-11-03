@@ -51,6 +51,8 @@ export class DeviceStore {
   readonly status = signal<string[]>([]);
   private readonly stack = signal<ViewContext[]>([]);
   private readonly globals = new Map<string, () => void>();
+  /** sees every key first (a running program – prompt 043); true = consumed */
+  private interceptor: ((p: KeyPress) => boolean) | null = null;
   private litTimer: ReturnType<typeof setTimeout> | undefined;
 
   readonly top = computed(() => this.stack().at(-1) ?? null);
@@ -71,6 +73,14 @@ export class DeviceStore {
     this.globals.set(action, run);
     return () => {
       if (this.globals.get(action) === run) this.globals.delete(action);
+    };
+  }
+
+  /** Lets one handler see every key first (a running program); returns its removal. */
+  intercept(f: (p: KeyPress) => boolean): () => void {
+    this.interceptor = f;
+    return () => {
+      if (this.interceptor === f) this.interceptor = null;
     };
   }
 
@@ -114,6 +124,7 @@ export class DeviceStore {
   }
 
   private dispatch(p: KeyPress): void {
+    if (!this.off() && this.interceptor?.(p)) return;
     if (p.id === 'on') {
       if (p.layer === 'shift') this.off.set(true);
       else if (this.off()) this.off.set(false);

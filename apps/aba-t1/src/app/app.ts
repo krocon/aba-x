@@ -22,6 +22,14 @@ import { AboutDialog } from './features/menus/about-dialog';
 import { MenuService } from './features/menus/menu-service';
 import { WebMenu } from './features/menus/web-menu';
 import { NotesStore } from './features/notes/notes-store';
+import { ProgramRunner } from './features/programs/program-runner';
+import { ProgramStore } from './features/programs/program-store';
+import {
+  ProgramCatalog,
+  ProgramDialogView,
+  ProgramEditor,
+  TerminalView,
+} from './features/programs/program-views';
 import { NotesView } from './features/notes/notes-view';
 import { I18n } from './core/i18n/i18n';
 import { AppStore } from './apps/app-store';
@@ -59,6 +67,10 @@ import { PopupView } from './features/toolbox/popup-view';
     AppHost,
     NotesView,
     MemoryView,
+    ProgramCatalog,
+    ProgramEditor,
+    TerminalView,
+    ProgramDialogView,
     WebMenu,
     AboutDialog,
     Modal,
@@ -113,6 +125,15 @@ import { PopupView } from './features/toolbox/popup-view';
           @case ('memory') {
             <app-memory-view />
           }
+          @case ('programs') {
+            <app-program-catalog />
+          }
+          @case ('programEditor') {
+            <app-program-editor />
+          }
+          @case ('terminal') {
+            <app-terminal-view />
+          }
           @default {
             @if (rpnEntry()) {
               <app-rpn-view />
@@ -135,6 +156,7 @@ import { PopupView } from './features/toolbox/popup-view';
     @if (keyboard.helpOpen()) {
       <app-shortcuts-dialog (closed)="keyboard.helpOpen.set(false)" />
     }
+    <app-program-dialog />
     @if (aboutOpen()) {
       <app-about-dialog (closed)="aboutOpen.set(false)" />
     }
@@ -196,6 +218,9 @@ export class App implements OnInit {
   protected readonly menu = inject(MenuService);
   protected readonly backup = inject(BackupService);
   private readonly notes = inject(NotesStore);
+  private readonly programs = inject(ProgramStore);
+  /** created at start: takes the keys while a program runs, lets the home view call programs */
+  private readonly runner = inject(ProgramRunner);
   protected readonly i18n = inject(I18n);
   protected readonly aboutOpen = signal(false);
 
@@ -225,6 +250,8 @@ export class App implements OnInit {
     this.device.onGlobal('sub.shift', open('base'));
     this.device.onGlobal('d0.shift', () => this.nav.go('notes'));
     this.device.onGlobal('toolbox.shift', () => this.nav.go('memory'));
+    // programs (prompts 043/044): catalogue on ⇧1
+    this.device.onGlobal('d1.shift', () => this.nav.go('programs'));
     // menu (prompt 045): one set of actions for the native menu, the HTML menu and the keyboard
     const actions: Record<string, () => void> = {
       exportBackup: () => void this.backup.exportBackup(),
@@ -271,6 +298,7 @@ export class App implements OnInit {
       this.cas.load(),
       this.apps.load(),
       this.notes.load(),
+      this.programs.load(),
     ]);
     await this.menu.listen().catch((e) => console.error(e));
   }
