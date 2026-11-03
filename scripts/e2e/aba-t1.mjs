@@ -973,6 +973,49 @@ export function t1Scenarios({ axeSource }) {
       await page.setViewportSize({ width: 1000, height: 900 });
       if (overflow > 0) throw new Error(`horizontal overflow ${overflow}px at 375px`);
     },
+    async accessibilitySweep(page) {
+      // axe over the main views (prompt 048), light and dark
+      const keys = async (...ks) => {
+        for (const k of ks) await page.click(`.key[data-key="${k}"]`);
+      };
+      const app = async (title, view) => {
+        await keys('apps');
+        await page.click(`app-library .tile:has-text("${title}")`);
+        await keys('enter');
+        if (view) await keys(view);
+        await page.waitForTimeout(400);
+      };
+      const views = [
+        ['home', () => keys('home')],
+        ['cas', () => keys('cas')],
+        ['settings', () => keys('shift', 'home')],
+        ['toolbox', async () => (await keys('home'), keys('toolbox'))],
+        ['library', async () => (await keys('esc', 'home'), keys('apps'))],
+        ['function symb', () => app('Function', 'symb')],
+        ['function num', () => keys('num')],
+        ['stats num', () => app('Statistics 1Var', 'num')],
+        ['inference num', () => app('Inference', 'num')],
+        ['lists', async () => (await keys('home'), keys('shift', 'd7'))],
+        ['notes', async () => (await keys('home'), keys('shift', 'd0'))],
+        ['memory', async () => (await keys('home'), keys('shift', 'toolbox'))],
+        ['programs', async () => (await keys('home'), keys('shift', 'd1'))],
+        ['python', () => app('Python', 'num')],
+      ];
+      for (const scheme of ['light', 'dark']) {
+        await page.emulateMedia({ colorScheme: scheme });
+        for (const [name, open] of views) {
+          await open();
+          await page.waitForTimeout(250);
+          try {
+            await axeOn(page, 'app-root');
+          } catch (e) {
+            throw new Error(`${scheme} ${name}: ${e.message}`);
+          }
+        }
+        await keys('home');
+      }
+      await page.emulateMedia({ colorScheme: 'light' });
+    },
     async accessibility(page) {
       await page.addScriptTag({ content: axeSource });
       const r = await page.evaluate(() =>

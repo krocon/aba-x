@@ -43,6 +43,7 @@
     "serve:web": "node scripts/e2e/run.mjs --serve 4300",
     "screenshots:examples": "pnpm build:web && node scripts/screenshots/run.mjs examples",
     "screenshots:site": "pnpm build:web && node scripts/screenshots/run.mjs site",
+    "screenshots:t1": "pnpm --filter aba-t1 build:web && node scripts/screenshots/run.mjs --app aba-t1 all",
     "build:all": "ng build aba-x1 && ng build aba-x1 --configuration web && ng build aba-t1 && ng build aba-t1 --configuration web"
   },
   "private": true,

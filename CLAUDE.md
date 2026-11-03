@@ -13,7 +13,7 @@
 
 ## 1. Stand
 
-- Alle Prompts 001–024 sind umgesetzt (024 Monorepo: 03.11.2026; Index `prompts/README.md`, erledigte unter `prompts/done/` mit
+- Alle Prompts 001–048 sind umgesetzt (024 Monorepo, 025–048 zweite App **ABA-T1**: 03.11.2026; Index `prompts/README.md`, erledigte unter `prompts/done/` mit
   Design-Dokument). ABA-T1: Prompts 025–048 (Vision `prompts/000-ABA-T1-Master-Prompt.md`), Stand im Index. Offen sind nur Schritte mit Freigabe durch Marc: Push/CI auf Windows und Linux, Release mit
   Signierung, Web-Deployment (`docs/roadmap.md` „Offen“).
 - Details: `docs/roadmap.md`, `docs/architecture.md`, `docs/technical-evaluation.md`, `docs/decisions/`,

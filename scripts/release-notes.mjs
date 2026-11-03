@@ -94,7 +94,8 @@ export function parseLog(raw) {
 }
 
 function git(args) {
-  return execFileSync('git', args, { encoding: 'utf8' }).trim();
+  // stderr stays quiet: a missing tag (first release of an app) is expected, not an error
+  return execFileSync('git', args, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }).trim();
 }
 
 function main(argv) {

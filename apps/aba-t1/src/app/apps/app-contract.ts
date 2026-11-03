@@ -7,6 +7,16 @@ import type { Type } from '@angular/core';
 
 export type AppView = 'symb' | 'plot' | 'num' | 'symbSetup' | 'plotSetup' | 'numSetup' | 'info';
 
+/** A view loaded on first use (its own chunk – prompt 048). */
+export interface LazyView {
+  load: () => Promise<Type<unknown>>;
+}
+
+export const lazy = (load: () => Promise<Type<unknown>>): LazyView => ({ load });
+
+export const isLazy = (v: Type<unknown> | LazyView): v is LazyView =>
+  typeof (v as LazyView).load === 'function' && !('ɵcmp' in v);
+
 export interface AppDef<S = unknown> {
   id: string;
   title: { en: string; de: string };
@@ -18,7 +28,7 @@ export interface AppDef<S = unknown> {
   version: number;
   /** the view that opens when the app starts */
   start: AppView;
-  views: Partial<Record<Exclude<AppView, 'info'>, Type<unknown>>>;
+  views: Partial<Record<Exclude<AppView, 'info'>, Type<unknown> | LazyView>>;
 }
 
 export interface AppInstance<S = unknown> {

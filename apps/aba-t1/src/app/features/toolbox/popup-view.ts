@@ -98,7 +98,7 @@ const TABS: ToolboxTab[] = ['math', 'cas', 'app', 'user', 'catalog'];
         @if (crumb()) {
           <div class="crumb">{{ crumb() }}</div>
         }
-        <ul class="list" #list role="listbox" [attr.aria-label]="heading()">
+        <ul class="list" #list role="listbox" tabindex="0" [attr.aria-label]="heading()">
           @for (r of rows(); track $index; let i = $index) {
             <li
               role="option"

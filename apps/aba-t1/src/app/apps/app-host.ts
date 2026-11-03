@@ -1,5 +1,13 @@
 import { NgComponentOutlet } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  type Type,
+  effect,
+  inject,
+  signal,
+} from '@angular/core';
+import { isLazy } from './app-contract';
 import { AppStore } from './app-store';
 import { InfoView } from './info-view';
 
@@ -24,8 +32,28 @@ import { InfoView } from './info-view';
 })
 export class AppHost {
   protected readonly apps = inject(AppStore);
-  protected readonly component = computed(() => {
-    const v = this.apps.view();
-    return v === 'info' ? null : (this.apps.currentDef().views[v] ?? null);
-  });
+  protected readonly component = signal<Type<unknown> | null>(null);
+  private static readonly loaded = new Map<unknown, Type<unknown>>();
+
+  constructor() {
+    // lazy views come as their own chunk; the last request wins
+    effect(() => {
+      const v = this.apps.view();
+      const entry = v === 'info' ? null : (this.apps.currentDef().views[v] ?? null);
+      if (!entry || !isLazy(entry)) {
+        this.component.set(entry);
+        return;
+      }
+      const known = AppHost.loaded.get(entry.load);
+      if (known) {
+        this.component.set(known);
+        return;
+      }
+      void entry.load().then((t) => {
+        AppHost.loaded.set(entry.load, t);
+        const now = this.apps.view();
+        if (now !== 'info' && this.apps.currentDef().views[now] === entry) this.component.set(t);
+      });
+    });
+  }
 }

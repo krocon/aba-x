@@ -134,7 +134,8 @@
   cursor: pointer;
 }
 .mb.active {
-  background: var(--lcd-accent);
+  /* darker than the accent: white text keeps 4.5:1 (prompt 048) */
+  background: #b4432a;
 }
 .mb:disabled {
   background: #23403d;

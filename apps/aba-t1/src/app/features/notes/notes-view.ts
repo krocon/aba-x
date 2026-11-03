@@ -54,7 +54,7 @@ type Mode = 'list' | 'edit' | 'show';
         <textarea
           #text
           [attr.aria-label]="i18n.t('notes.title')"
-          [value]="current()?.text ?? ''"
+          [value]="currentText()"
           (input)="edited($any($event.target).value)"
         ></textarea>
       }
@@ -178,6 +178,7 @@ export class NotesView implements OnInit, OnDestroy {
   protected readonly mode = signal<Mode>('list');
   protected readonly cursor = signal(0);
   protected readonly current = computed(() => this.notes.notes()[this.cursor()] ?? null);
+  protected readonly currentText = computed(() => this.current()?.text ?? '');
   protected readonly blocks = computed(() => render(this.current()?.text ?? ''));
   private pop: (() => void) | null = null;
 

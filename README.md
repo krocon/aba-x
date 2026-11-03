@@ -48,20 +48,44 @@ mouse, wheel and pinch; TRACE; zeros, extrema, intersections, tangent, signed ar
 desktop and web), settings (angle, exact/decimal, digits, time limit, theme), English and German, native menu on the
 desktop, installable offline web app (PWA), **full-size mode** (⤢ or `⌥F`) in which display and keypad fill the window.
 
+## ABA-T1 – the second calculator
+
+**ABA-T1** is a touch graphing calculator from the same code base (`apps/aba-t1`): a device with a touch display,
+six menu buttons and a full keypad, plus the hardware keyboard. It runs the same math core and adds:
+
+- **Home and CAS views** with textbook or algebraic entry, RPN, complex numbers, units, based integers, lists and
+  matrices; a toolbox with every command and help in English and German.
+- **Apps** (each with symbolic, plot and numeric views, setups and saved copies): Function, Parametric, Polar,
+  Sequence, Advanced Graphing (relations with interval arithmetic), 3D Graphing, Linear/Quadratic/Trig Explorer,
+  Statistics 1Var/2Var, Inference, Solve, Linear Solver, Finance, Triangle Solver, Spreadsheet, Geometry, Python.
+- **Programming:** a structured calculator language (`@aba/ppl`) with an editor, debugger, user keys and app
+  programs; **Python** via MicroPython in a worker.
+
+<p align="center">
+  <img src="docs/screenshots/aba-t1/function-light.png" alt="ABA-T1: function plot of x·sin x" width="200">
+  <img src="docs/screenshots/aba-t1/cas-light.png" alt="ABA-T1: CAS with derivative, integral and solve" width="200">
+  <img src="docs/screenshots/aba-t1/geometry-light.png" alt="ABA-T1: triangle with circumcircle in the geometry app" width="200">
+  <img src="docs/screenshots/aba-t1/python-light.png" alt="ABA-T1: Python shell" width="200">
+</p>
+
+Run it with `pnpm --filter aba-t1 start` (web, port 1421) or `pnpm --filter aba-t1 exec tauri dev`; end-to-end tests
+with `pnpm e2e --app aba-t1`, screenshots with `pnpm screenshots:t1`. User guide: [`docs/aba-t1.md`](docs/aba-t1.md);
+product page: [`apps/aba-t1/site/`](apps/aba-t1/site/README.md).
+
 ## Keyboard
 
-| Key | Action |
-|---|---|
-| any character | goes to the input line |
-| `Enter` / `⇧Enter` | ENTER / →NUM (decimal value) |
-| `Esc` | clear the line, cancel a computation, leave the stack |
-| `↑` on an empty line | browse the stack (↑ ↓, Enter = edit, Delete = drop); click a level to edit it |
-| `F1`–`F6` | softkeys (mode menu: Standard, CAS, Graph, VARS, HIST, SETUP) |
-| `⌥R` / `⌥E` | radians ↔ degrees / exact ↔ decimal |
-| `⌥F` | full size: display and keypad fill the window (landscape: keypad beside the display) |
-| `⌥⌫` / `⌥S` | DROP / SWAP |
-| `⌘/` · `⌘,` · `⌘S` · `⌘O` | shortcuts · settings · export · import (Ctrl on Windows/Linux) |
-| Graph mode, empty line | arrows pan (TRACE: move/switch), `+`/`−` zoom |
+| Key                       | Action                                                                               |
+| ------------------------- | ------------------------------------------------------------------------------------ |
+| any character             | goes to the input line                                                               |
+| `Enter` / `⇧Enter`        | ENTER / →NUM (decimal value)                                                         |
+| `Esc`                     | clear the line, cancel a computation, leave the stack                                |
+| `↑` on an empty line      | browse the stack (↑ ↓, Enter = edit, Delete = drop); click a level to edit it        |
+| `F1`–`F6`                 | softkeys (mode menu: Standard, CAS, Graph, VARS, HIST, SETUP)                        |
+| `⌥R` / `⌥E`               | radians ↔ degrees / exact ↔ decimal                                                  |
+| `⌥F`                      | full size: display and keypad fill the window (landscape: keypad beside the display) |
+| `⌥⌫` / `⌥S`               | DROP / SWAP                                                                          |
+| `⌘/` · `⌘,` · `⌘S` · `⌘O` | shortcuts · settings · export · import (Ctrl on Windows/Linux)                       |
+| Graph mode, empty line    | arrows pan (TRACE: move/switch), `+`/`−` zoom                                        |
 
 ## Development
 
@@ -83,7 +107,6 @@ The repository is a monorepo for several calculators ([ADR 0007](docs/decisions/
 `packages/math` (framework-free core), `packages/core` (shared Angular building blocks) and `apps/aba-x1` (this
 app: Angular sources, Tauri crate, product page). Root commands work on ABA-X1; other apps via `--app <name>`.
 
-
 More: [`CLAUDE.md`](CLAUDE.md) (commands, layout, rules), [`docs/architecture.md`](docs/architecture.md),
 [`docs/technical-evaluation.md`](docs/technical-evaluation.md), [`docs/mathematics/`](docs/mathematics/),
 [`docs/decisions/`](docs/decisions/), [`docs/release.md`](docs/release.md). The product page (static, no build step) is in
@@ -92,5 +115,6 @@ prompts in [`prompts/`](prompts/README.md).
 
 ## Licence
 
-MIT (see [`LICENSE`](LICENSE)); third-party licences in [`apps/aba-x1/THIRD-PARTY-NOTICES.txt`](apps/aba-x1/THIRD-PARTY-NOTICES.txt).
+MIT (see [`LICENSE`](LICENSE)); third-party licences in [`apps/aba-x1/THIRD-PARTY-NOTICES.txt`](apps/aba-x1/THIRD-PARTY-NOTICES.txt)
+and [`apps/aba-t1/THIRD-PARTY-NOTICES.txt`](apps/aba-t1/THIRD-PARTY-NOTICES.txt).
 ABA-X1 is an independent project and not affiliated with any calculator manufacturer.

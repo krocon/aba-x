@@ -19,31 +19,32 @@
 
 ### ABA-T1
 
-| Prompt | Inhalt                                                                                                            | Status        |
-| ------ | ----------------------------------------------------------------------------------------------------------------- | ------------- |
-| 025    | Identität, App-Gerüst, `crates/shell` (ADR 0008)                                                                  | ✅ 03.11.2026 |
-| 026    | Tastenfeld, Shift/Alpha, Wippe, Gesten, PC-Tastatur; Chords/Dispatcher/Gesten in `@aba/core`                      | ✅ 03.11.2026 |
-| 027    | Startansicht (Lehrbuch/Algebraisch), komplexe Zahlen, Zahlenformate, Variablen, Einstellungen                     | ✅ 03.11.2026 |
-| 028    | RPN-Stack (PICK, ROLL, ROLLD, DROPN, ECHO, SWAP, DUP, DROP)                                                       | ✅ 03.11.2026 |
-| 029    | CAS-Ansicht: Nerdamer + eigene Verfahren (Ganzzahl, Taylor), Lücken-Tabelle                                       | ✅ 03.11.2026 |
-| 030    | Toolbox (Math/CAS/App/Nutzer/Katalog), Vars, Zeichen, Hilfe DE/EN                                                 | ✅ 03.11.2026 |
-| 031    | Einheiten (≈ 85, Präfixe, Temperaturen), Konstanten CODATA 2022, Basis-Ganzzahlen                                 | ✅ 03.11.2026 |
-| 032    | Listen, Matrizen, lineare Algebra (LU, RREF, Eigenwerte), Katalog + Tabelleneditor                                | ✅ 03.11.2026 |
-| 033    | App-Rahmen (Bibliothek, Symb/Plot/Num/Setups/Info, Kopien), PlotCanvas in `@aba/core`                             | ✅ 03.11.2026 |
-| 034    | Funktionen-App: Trace, Zoom-Menü, Fcn-Analyse, Gehe zu, geteilte Ansicht, PNG, Plot-Optionen                      | ✅ 03.11.2026 |
-| 035    | Parametrisch, Polar, Folge (Treppe/Spinnennetz) als generische Kurven-App                                         | ✅ 03.11.2026 |
-| 040    | Explorer: linear, quadratisch, trigonometrisch mit Übungsmodus                                                    | ✅ 03.11.2026 |
-| 036    | Erweiterte Grafiken: Relationen/Ungleichungen mit Intervallarithmetik (garantierte Gebiete), Trace, Galerie       | ✅ 03.11.2026 |
-| 037    | Statistik 1Var/2Var: 10 Diagrammtypen, 11 Anpassungen, Kennzahlen, Vorhersage; Kern `@aba/math/stats`             | ✅ 03.11.2026 |
-| 038    | Inferenz-App (Z/T-Tests, Intervalle, χ², Regression) und Verteilungen im Katalog (pdf/cdf/inv, Zufall)            | ✅ 03.11.2026 |
-| 042    | Geometrie: dynamische Konstruktionen (Werkzeuge, Ziehen, Kegelschnitte, Abbildungen, Ortslinie), Messen/Tests     | ✅ 03.11.2026 |
-| 043    | Programmiersprache `@aba/ppl` (Parser, Interpreter, Budgets), Aufruf aus der Startansicht, Terminal, Grafik G0–G9 | ✅ 03.11.2026 |
-| 044    | Programmkatalog, Editor (Hervorhebung, Einrückung, Vorlagen, Suchen), Debugger, App-Programme, Nutzertasten       | ✅ 03.11.2026 |
-| 047    | Python-App: MicroPython (WASM, MIT) im Worker, Shell, Skripte, Module calc und graphic, offline                   | ✅ 03.11.2026 |
-| 046    | 3D-Grafik (Canvas 2D, Drehen/Zoomen, Höhenfarben)                                                                 | ✅ 03.11.2026 |
-| 045    | Notizen, Speicherverwaltung, Sicherung (Export/Import), Menü nativ/HTML, About                                    | ✅ 03.11.2026 |
-| 041    | Tabellenkalkulation: Formeln, Bezüge, Namen (auch in der Startansicht), Füllen, Sortieren, Formate, CSV           | ✅ 03.11.2026 |
-| 039    | Löser: Lösen (E1…E0, Systeme), Linearlöser n×n, Finanzen (TVM, Tilgung, Cashflow …), Dreiecklöser (SSW)           | ✅ 03.11.2026 |
+| Prompt | Inhalt                                                                                                                     | Status        |
+| ------ | -------------------------------------------------------------------------------------------------------------------------- | ------------- |
+| 025    | Identität, App-Gerüst, `crates/shell` (ADR 0008)                                                                           | ✅ 03.11.2026 |
+| 026    | Tastenfeld, Shift/Alpha, Wippe, Gesten, PC-Tastatur; Chords/Dispatcher/Gesten in `@aba/core`                               | ✅ 03.11.2026 |
+| 027    | Startansicht (Lehrbuch/Algebraisch), komplexe Zahlen, Zahlenformate, Variablen, Einstellungen                              | ✅ 03.11.2026 |
+| 028    | RPN-Stack (PICK, ROLL, ROLLD, DROPN, ECHO, SWAP, DUP, DROP)                                                                | ✅ 03.11.2026 |
+| 029    | CAS-Ansicht: Nerdamer + eigene Verfahren (Ganzzahl, Taylor), Lücken-Tabelle                                                | ✅ 03.11.2026 |
+| 030    | Toolbox (Math/CAS/App/Nutzer/Katalog), Vars, Zeichen, Hilfe DE/EN                                                          | ✅ 03.11.2026 |
+| 031    | Einheiten (≈ 85, Präfixe, Temperaturen), Konstanten CODATA 2022, Basis-Ganzzahlen                                          | ✅ 03.11.2026 |
+| 032    | Listen, Matrizen, lineare Algebra (LU, RREF, Eigenwerte), Katalog + Tabelleneditor                                         | ✅ 03.11.2026 |
+| 033    | App-Rahmen (Bibliothek, Symb/Plot/Num/Setups/Info, Kopien), PlotCanvas in `@aba/core`                                      | ✅ 03.11.2026 |
+| 034    | Funktionen-App: Trace, Zoom-Menü, Fcn-Analyse, Gehe zu, geteilte Ansicht, PNG, Plot-Optionen                               | ✅ 03.11.2026 |
+| 035    | Parametrisch, Polar, Folge (Treppe/Spinnennetz) als generische Kurven-App                                                  | ✅ 03.11.2026 |
+| 040    | Explorer: linear, quadratisch, trigonometrisch mit Übungsmodus                                                             | ✅ 03.11.2026 |
+| 036    | Erweiterte Grafiken: Relationen/Ungleichungen mit Intervallarithmetik (garantierte Gebiete), Trace, Galerie                | ✅ 03.11.2026 |
+| 037    | Statistik 1Var/2Var: 10 Diagrammtypen, 11 Anpassungen, Kennzahlen, Vorhersage; Kern `@aba/math/stats`                      | ✅ 03.11.2026 |
+| 038    | Inferenz-App (Z/T-Tests, Intervalle, χ², Regression) und Verteilungen im Katalog (pdf/cdf/inv, Zufall)                     | ✅ 03.11.2026 |
+| 042    | Geometrie: dynamische Konstruktionen (Werkzeuge, Ziehen, Kegelschnitte, Abbildungen, Ortslinie), Messen/Tests              | ✅ 03.11.2026 |
+| 043    | Programmiersprache `@aba/ppl` (Parser, Interpreter, Budgets), Aufruf aus der Startansicht, Terminal, Grafik G0–G9          | ✅ 03.11.2026 |
+| 044    | Programmkatalog, Editor (Hervorhebung, Einrückung, Vorlagen, Suchen), Debugger, App-Programme, Nutzertasten                | ✅ 03.11.2026 |
+| 047    | Python-App: MicroPython (WASM, MIT) im Worker, Shell, Skripte, Module calc und graphic, offline                            | ✅ 03.11.2026 |
+| 048    | Produktreife: Lazy Loading (Start 0,84 MB), axe-Runde hell/dunkel, Screenshots, Werbeseite, CHANGELOG, Release-Trockenlauf | ✅ 03.11.2026 |
+| 046    | 3D-Grafik (Canvas 2D, Drehen/Zoomen, Höhenfarben)                                                                          | ✅ 03.11.2026 |
+| 045    | Notizen, Speicherverwaltung, Sicherung (Export/Import), Menü nativ/HTML, About                                             | ✅ 03.11.2026 |
+| 041    | Tabellenkalkulation: Formeln, Bezüge, Namen (auch in der Startansicht), Füllen, Sortieren, Formate, CSV                    | ✅ 03.11.2026 |
+| 039    | Löser: Lösen (E1…E0, Systeme), Linearlöser n×n, Finanzen (TVM, Tilgung, Cashflow …), Dreiecklöser (SSW)                    | ✅ 03.11.2026 |
 
 ## Was funktioniert
 

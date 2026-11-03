@@ -36,3 +36,15 @@ Keine Befunde der Stufen „serious“ oder „critical“ (Prüfung schlägt so
 
 - Screenreader-Durchgang mit VoiceOver/NVDA/Orca von Hand (axe ersetzt das nicht).
 - Fehlermeldungen des Mathe-Kerns sind englisch (auch in der deutschen Oberfläche).
+
+## ABA-T1 (Prompt 048)
+
+- Jede Taste hat ein `aria-label` (Haupt-, Shift- und Alpha-Belegung), Shift/Alpha melden ihren Zustand; die Wippe ist
+  per Tastatur bedienbar; die Hardware-Tastatur ist gleichwertig (Hilfe: Fußzeile „Keyboard“).
+- Ergebnisse und Statuszeilen sind Live-Regionen; Grafiken (Plot, 3D, Geometrie, Statistik, Inferenz) haben eine
+  Textalternative und eine Tabellen-/Num-Ansicht mit denselben Werten.
+- Scrollbare Bereiche sind fokussierbar, Listen ohne verschachtelte Bedienelemente, Kontraste ≥ 4,5:1 (aktive Menütaste
+  dunkler als die Akzentfarbe).
+- Prüfung: `pnpm e2e --app aba-t1` – Szenario `accessibilitySweep` (axe über 14 Ansichten, hell und dunkel) und axe in
+  den App-Szenarien; serious/critical lassen den Lauf scheitern.
+

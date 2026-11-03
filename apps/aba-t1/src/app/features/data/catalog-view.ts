@@ -25,6 +25,7 @@ import { type DataKind, SLOTS, sizeText } from './data-logic';
 @Component({
   selector: 'app-data-catalog',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { tabindex: '0' },
   template: `
     <ul class="cat" role="listbox" [attr.aria-label]="title()">
       @for (r of rows(); track r.name; let i = $index) {

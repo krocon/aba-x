@@ -6,11 +6,14 @@
 //   node scripts/screenshots/run.mjs examples   # worked examples (light)       → docs/screenshots/examples/
 //   node scripts/screenshots/run.mjs site       # pictures of the product page       → apps/aba-x1/site/img/
 //   node scripts/screenshots/run.mjs all
+//   node scripts/screenshots/run.mjs --app aba-t1 [site|all]   # ABA-T1 → docs/screenshots/aba-t1/, apps/aba-t1/site/img/
 import { mkdir } from 'node:fs/promises';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { chromium } from 'playwright';
 import { serve, webBuild } from '../e2e/run.mjs';
+import { appFromArgs } from '../apps.mjs';
+import { T1_OUT, T1_SITE, t1Readme, t1Site } from './aba-t1.mjs';
 
 const OUT = join(fileURLToPath(new URL('.', import.meta.url)), '../../docs/screenshots');
 
@@ -199,7 +202,7 @@ const readme = [
   },
 ];
 
-async function shoot(browser, url, scene, scheme, dir) {
+async function shoot(browser, url, scene, scheme, dir, t1 = false) {
   const ctx = await browser.newContext({
     viewport: scene.viewport ?? { width: 520, height: 980 },
     deviceScaleFactor: 2,
@@ -208,17 +211,36 @@ async function shoot(browser, url, scene, scheme, dir) {
   });
   const page = await ctx.newPage();
   await page.goto(url);
-  await page.waitForSelector('math-field');
+  await page.waitForSelector(t1 ? 'app-t1-device .lcd' : 'math-field');
   await scene.setup(page);
   await page.waitForTimeout(500);
   await mkdir(dir, { recursive: true });
   const file = join(
     dir,
-    `${scene.name}${scheme === 'light' && dir !== OUT ? '' : `-${scheme}`}.png`,
+    `${scene.name}${scheme === 'light' && dir !== OUT && dir !== T1_OUT ? '' : `-${scheme}`}.png`,
   );
-  await page.locator('.device').screenshot({ path: file });
+  if (scene.page) {
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await page.screenshot({ path: file });
+  } else await page.locator(t1 ? 'app-t1-device' : '.device').screenshot({ path: file });
   console.log(`✔ ${file}`);
   await ctx.close();
+}
+
+async function mainT1(group = 'readme') {
+  const { root, base } = webBuild('aba-t1');
+  const server = await serve(root, base);
+  const url = `http://127.0.0.1:${server.address().port}${base}`;
+  const browser = await chromium.launch();
+  if (group === 'readme' || group === 'all') {
+    for (const scheme of ['light', 'dark'])
+      for (const s of t1Readme) await shoot(browser, url, s, scheme, T1_OUT, true);
+  }
+  if (group === 'site' || group === 'all') {
+    for (const s of t1Site) await shoot(browser, url, s, 'light', T1_SITE, true);
+  }
+  await browser.close();
+  server.close();
 }
 
 async function main(group = 'readme') {
@@ -241,4 +263,6 @@ async function main(group = 'readme') {
   server.close();
 }
 
-await main(process.argv[2]);
+const { app, rest } = appFromArgs(process.argv.slice(2), process.env);
+if (app === 'aba-t1') await mainT1(rest[0]);
+else await main(rest[0]);

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <title>ABA-T1</title>
+  <!-- borderless logo (favicon, PWA); app icon with margin: src-tauri/icons/app-icon.svg -->
+  <rect width="1024" height="1024" rx="230" fill="#17322f"/>
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M110 512 H914 M512 110 V914" stroke="#3f6662" stroke-width="34"/>
+    <path d="M100 740 C270 740 320 250 490 250 S710 760 880 760 S960 570 980 500" stroke="#ff7a59" stroke-width="88"/>
+    <circle cx="490" cy="250" r="86" fill="#b9dc6e"/>
+  </g>
+</svg>

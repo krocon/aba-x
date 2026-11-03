@@ -33,3 +33,14 @@ pnpm tauri:build:linux          # auf Linux
   `APPLE_TEAM_ID`) – Details `docs/macos-signing.md`. Ohne Secrets: unsignierte Pakete (Gatekeeper-Hinweis).
 - **Windows:** `WINDOWS_CERTIFICATE` (PFX, base64) und `WINDOWS_CERTIFICATE_PASSWORD`. Ohne: SmartScreen-Hinweis.
 - **Auto-Updater:** nicht aktiv (Nicht-Ziel der ersten Version).
+
+## ABA-T1 (Prompt 048)
+
+- Version **0.1.0** (`apps/aba-t1/package.json`, `pnpm version:check` grün), Tag-Schema `aba-t1-v0.1.0`;
+  `release.yml` hat die Auswahl `aba-t1` und baut beim Tag nur diese App.
+- Trockenlauf 03.11.2026: `pnpm release:notes --app aba-t1` → Inhalt von [`CHANGELOG.md`](../CHANGELOG.md);
+  `pnpm --filter aba-t1 exec tauri build --debug --bundles app` → `ABA-T1.app` (33,6 MB, Debug, macOS arm64).
+- Signierung wie ABA-X1 (`docs/macos-signing.md`, Bundle-ID `io.github.krocon.abat1`).
+- **Offen, nur mit Freigabe von Marc:** Tag `aba-t1-v0.1.0` und Push, Release-Entwurf veröffentlichen, Web-Deployment
+  (Vorschlag: App unter `krocon.de/products/aba-t1/`, Produktseite unter `krocon.de/products/aba-t/`).
+

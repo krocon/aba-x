@@ -1,33 +1,17 @@
 /**
  * The built-in apps of ABA-T1 (prompt 033 ff.). Icons are our own simple glyphs on a 24×24 grid.
  */
-import type { AppDef } from './app-contract';
-import { PythonPlot, PythonScripts, PythonShell, initPython } from './python/python-views';
-import { FunctionNum } from './function/function-num';
-import { FunctionPlot } from './function/function-plot';
-import { FunctionSymb } from './function/function-symb';
-import { FunctionNumSetup, FunctionPlotSetup } from './function/function-setup';
+import { type AppDef, lazy } from './app-contract';
+import { initPython } from './python/python-state';
 import { initFunctionState } from './function/function-logic';
 import { initCurveState } from './curve/curve-logic';
 import { ExplorerView, initExplorer } from './explorer/explorer-view';
 import { initInference } from './inference/inference-logic';
-import { InferenceNum, InferencePlotView, InferenceSymb } from './inference/inference-views';
 import { initStats1, initStats2 } from './stats/stats-logic';
-import { StatsNum, StatsPlot, StatsPlotSetup, StatsSymb } from './stats/stats-views';
-import { RelationNum, RelationPlot } from './relation/relation-views';
-import { SurfaceNum, SurfacePlot, SurfaceSetup } from './surface/surface-views';
-import { CurveNum, CurveNumSetup, CurvePlot, CurvePlotSetup, CurveSymb } from './curve/curve-views';
 import { initSheetState } from './spreadsheet/sheet-logic';
-import { SheetNum, SheetNumSetup } from './spreadsheet/sheet-views';
 import { initGeometryState } from './geometry/geometry-logic';
-import { GeometryPlot } from './geometry/geometry-plot';
-import { GeometryNum, GeometryPlotSetup, GeometrySymb } from './geometry/geometry-views';
-import { SolveNum, SolvePlot } from './solve/solve-views';
-import { LinearView } from './linear-solver/linear-view';
 import { initLinear } from './linear-solver/linear-logic';
-import { FinanceNum, FinancePlot, FinanceSymb } from './finance/finance-views';
 import { initFinance } from './finance/finance-logic';
-import { TriangleNum, TrianglePlot } from './triangle-solver/triangle-views';
 import { initTriangle } from './triangle-solver/triangle-logic';
 
 export const APP_DEFS: AppDef[] = [
@@ -39,11 +23,11 @@ export const APP_DEFS: AppDef[] = [
     version: 2,
     start: 'symb',
     views: {
-      symb: FunctionSymb,
-      plot: FunctionPlot,
-      num: FunctionNum,
-      plotSetup: FunctionPlotSetup,
-      numSetup: FunctionNumSetup,
+      symb: lazy(() => import('./function/function-symb').then((m) => m.FunctionSymb)),
+      plot: lazy(() => import('./function/function-plot').then((m) => m.FunctionPlot)),
+      num: lazy(() => import('./function/function-num').then((m) => m.FunctionNum)),
+      plotSetup: lazy(() => import('./function/function-setup').then((m) => m.FunctionPlotSetup)),
+      numSetup: lazy(() => import('./function/function-setup').then((m) => m.FunctionNumSetup)),
     },
   },
   ...(['parametric', 'polar', 'sequence'] as const).map((kind): AppDef => ({
@@ -62,11 +46,11 @@ export const APP_DEFS: AppDef[] = [
     version: 1,
     start: 'symb',
     views: {
-      symb: CurveSymb,
-      plot: CurvePlot,
-      num: CurveNum,
-      plotSetup: CurvePlotSetup,
-      numSetup: CurveNumSetup,
+      symb: lazy(() => import('./curve/curve-views').then((m) => m.CurveSymb)),
+      plot: lazy(() => import('./curve/curve-views').then((m) => m.CurvePlot)),
+      num: lazy(() => import('./curve/curve-views').then((m) => m.CurveNum)),
+      plotSetup: lazy(() => import('./curve/curve-views').then((m) => m.CurvePlotSetup)),
+      numSetup: lazy(() => import('./curve/curve-views').then((m) => m.CurveNumSetup)),
     },
   })),
   ...(['linear', 'quadratic', 'trig'] as const).map((kind): AppDef => ({
@@ -94,11 +78,11 @@ export const APP_DEFS: AppDef[] = [
     version: 1,
     start: 'symb',
     views: {
-      symb: CurveSymb,
-      plot: RelationPlot,
-      num: RelationNum,
-      plotSetup: CurvePlotSetup,
-      numSetup: CurveNumSetup,
+      symb: lazy(() => import('./curve/curve-views').then((m) => m.CurveSymb)),
+      plot: lazy(() => import('./relation/relation-views').then((m) => m.RelationPlot)),
+      num: lazy(() => import('./relation/relation-views').then((m) => m.RelationNum)),
+      plotSetup: lazy(() => import('./curve/curve-views').then((m) => m.CurvePlotSetup)),
+      numSetup: lazy(() => import('./curve/curve-views').then((m) => m.CurveNumSetup)),
     },
   },
   ...(['stats1', 'stats2'] as const).map((id): AppDef => ({
@@ -114,7 +98,12 @@ export const APP_DEFS: AppDef[] = [
     init: id === 'stats1' ? initStats1 : initStats2,
     version: 1,
     start: 'num',
-    views: { symb: StatsSymb, plot: StatsPlot, num: StatsNum, plotSetup: StatsPlotSetup },
+    views: {
+      symb: lazy(() => import('./stats/stats-views').then((m) => m.StatsSymb)),
+      plot: lazy(() => import('./stats/stats-views').then((m) => m.StatsPlot)),
+      num: lazy(() => import('./stats/stats-views').then((m) => m.StatsNum)),
+      plotSetup: lazy(() => import('./stats/stats-views').then((m) => m.StatsPlotSetup)),
+    },
   })),
   {
     id: 'inference',
@@ -123,7 +112,11 @@ export const APP_DEFS: AppDef[] = [
     init: initInference,
     version: 1,
     start: 'symb',
-    views: { symb: InferenceSymb, num: InferenceNum, plot: InferencePlotView },
+    views: {
+      symb: lazy(() => import('./inference/inference-views').then((m) => m.InferenceSymb)),
+      num: lazy(() => import('./inference/inference-views').then((m) => m.InferenceNum)),
+      plot: lazy(() => import('./inference/inference-views').then((m) => m.InferencePlotView)),
+    },
   },
   {
     id: 'graph3d',
@@ -132,7 +125,12 @@ export const APP_DEFS: AppDef[] = [
     init: () => initCurveState('graph3d'),
     version: 1,
     start: 'symb',
-    views: { symb: CurveSymb, plot: SurfacePlot, num: SurfaceNum, plotSetup: SurfaceSetup },
+    views: {
+      symb: lazy(() => import('./curve/curve-views').then((m) => m.CurveSymb)),
+      plot: lazy(() => import('./surface/surface-views').then((m) => m.SurfacePlot)),
+      num: lazy(() => import('./surface/surface-views').then((m) => m.SurfaceNum)),
+      plotSetup: lazy(() => import('./surface/surface-views').then((m) => m.SurfaceSetup)),
+    },
   },
   {
     id: 'spreadsheet',
@@ -141,7 +139,10 @@ export const APP_DEFS: AppDef[] = [
     init: initSheetState,
     version: 1,
     start: 'num',
-    views: { num: SheetNum, numSetup: SheetNumSetup },
+    views: {
+      num: lazy(() => import('./spreadsheet/sheet-views').then((m) => m.SheetNum)),
+      numSetup: lazy(() => import('./spreadsheet/sheet-views').then((m) => m.SheetNumSetup)),
+    },
   },
   {
     id: 'geometry',
@@ -151,10 +152,10 @@ export const APP_DEFS: AppDef[] = [
     version: 1,
     start: 'plot',
     views: {
-      symb: GeometrySymb,
-      plot: GeometryPlot,
-      num: GeometryNum,
-      plotSetup: GeometryPlotSetup,
+      symb: lazy(() => import('./geometry/geometry-views').then((m) => m.GeometrySymb)),
+      plot: lazy(() => import('./geometry/geometry-plot').then((m) => m.GeometryPlot)),
+      num: lazy(() => import('./geometry/geometry-views').then((m) => m.GeometryNum)),
+      plotSetup: lazy(() => import('./geometry/geometry-views').then((m) => m.GeometryPlotSetup)),
     },
   },
   // solver apps (prompt 039)
@@ -165,7 +166,11 @@ export const APP_DEFS: AppDef[] = [
     init: () => initCurveState('solve'),
     version: 1,
     start: 'symb',
-    views: { symb: CurveSymb, plot: SolvePlot, num: SolveNum },
+    views: {
+      symb: lazy(() => import('./curve/curve-views').then((m) => m.CurveSymb)),
+      plot: lazy(() => import('./solve/solve-views').then((m) => m.SolvePlot)),
+      num: lazy(() => import('./solve/solve-views').then((m) => m.SolveNum)),
+    },
   },
   {
     id: 'linearSolver',
@@ -174,7 +179,7 @@ export const APP_DEFS: AppDef[] = [
     init: initLinear,
     version: 1,
     start: 'num',
-    views: { num: LinearView },
+    views: { num: lazy(() => import('./linear-solver/linear-view').then((m) => m.LinearView)) },
   },
   {
     id: 'finance',
@@ -183,7 +188,11 @@ export const APP_DEFS: AppDef[] = [
     init: initFinance,
     version: 1,
     start: 'num',
-    views: { symb: FinanceSymb, plot: FinancePlot, num: FinanceNum },
+    views: {
+      symb: lazy(() => import('./finance/finance-views').then((m) => m.FinanceSymb)),
+      plot: lazy(() => import('./finance/finance-views').then((m) => m.FinancePlot)),
+      num: lazy(() => import('./finance/finance-views').then((m) => m.FinanceNum)),
+    },
   },
   {
     id: 'triangleSolver',
@@ -192,7 +201,10 @@ export const APP_DEFS: AppDef[] = [
     init: initTriangle,
     version: 1,
     start: 'num',
-    views: { num: TriangleNum, plot: TrianglePlot },
+    views: {
+      num: lazy(() => import('./triangle-solver/triangle-views').then((m) => m.TriangleNum)),
+      plot: lazy(() => import('./triangle-solver/triangle-views').then((m) => m.TrianglePlot)),
+    },
   },
   {
     id: 'python',
@@ -201,6 +213,10 @@ export const APP_DEFS: AppDef[] = [
     init: initPython,
     version: 1,
     start: 'num',
-    views: { symb: PythonScripts, num: PythonShell, plot: PythonPlot },
+    views: {
+      symb: lazy(() => import('./python/python-views').then((m) => m.PythonScripts)),
+      num: lazy(() => import('./python/python-views').then((m) => m.PythonShell)),
+      plot: lazy(() => import('./python/python-views').then((m) => m.PythonPlot)),
+    },
   },
 ];

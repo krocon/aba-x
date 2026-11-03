@@ -35,6 +35,7 @@ const size = (x: unknown) => new Blob([JSON.stringify(x ?? null)]).size;
 @Component({
   selector: 'app-memory-view',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { tabindex: '0', role: 'region', '[attr.aria-label]': 'i18n.t("mem.title")' },
   template: `
     <table class="mem">
       <tbody>
