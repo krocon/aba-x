@@ -1,0 +1,15 @@
+{
+  "name": "aba-t1",
+  "version": "0.1.0",
+  "private": true,
+  "description": "ABA-T1 – touch graphing calculator with CAS, apps and a programming language for desktop (Tauri 2) and web",
+  "license": "MIT",
+  "author": "Marc Kronberg",
+  "scripts": {
+    "start": "ng serve aba-t1",
+    "build": "ng build aba-t1",
+    "build:web": "ng build aba-t1 --configuration web",
+    "test": "ng test aba-t1 --watch=false",
+    "tauri": "tauri"
+  }
+}

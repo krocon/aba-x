@@ -4,7 +4,9 @@
   "cli": {
     "packageManager": "pnpm",
     "analytics": false,
-    "schematicCollections": ["angular-eslint"]
+    "schematicCollections": [
+      "angular-eslint"
+    ]
   },
   "newProjectRoot": "apps",
   "projects": {
@@ -37,9 +39,13 @@
                 "output": "mathlive/fonts"
               }
             ],
-            "styles": ["apps/aba-x1/src/styles.css"],
+            "styles": [
+              "apps/aba-x1/src/styles.css"
+            ],
             "webWorkerTsConfig": "apps/aba-x1/tsconfig.worker.json",
-            "allowedCommonJsDependencies": ["nerdamer"]
+            "allowedCommonJsDependencies": [
+              "nerdamer"
+            ]
           },
           "configurations": {
             "production": {
@@ -101,13 +107,132 @@
         "test": {
           "builder": "@angular/build:unit-test",
           "options": {
-            "include": ["**/*.spec.ts", "../../../packages/core/**/*.spec.ts"]
+            "include": [
+              "**/*.spec.ts",
+              "../../../packages/core/**/*.spec.ts"
+            ]
           }
         },
         "lint": {
           "builder": "@angular-eslint/builder:lint",
           "options": {
-            "lintFilePatterns": ["apps/aba-x1/**/*.ts", "apps/aba-x1/**/*.html"]
+            "lintFilePatterns": [
+              "apps/aba-x1/**/*.ts",
+              "apps/aba-x1/**/*.html"
+            ]
+          }
+        }
+      }
+    },
+    "aba-t1": {
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "css"
+        }
+      },
+      "root": "apps/aba-t1",
+      "sourceRoot": "apps/aba-t1/src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:application",
+          "options": {
+            "browser": "apps/aba-t1/src/main.ts",
+            "tsConfig": "apps/aba-t1/tsconfig.app.json",
+            "inlineStyleLanguage": "css",
+            "outputPath": "dist/aba-t1/desktop",
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "apps/aba-t1/public"
+              },
+              {
+                "glob": "**/*.woff2",
+                "input": "node_modules/mathlive/fonts",
+                "output": "mathlive/fonts"
+              }
+            ],
+            "styles": [
+              "apps/aba-t1/src/styles.css"
+            ],
+            "webWorkerTsConfig": "apps/aba-t1/tsconfig.worker.json",
+            "allowedCommonJsDependencies": [
+              "nerdamer"
+            ]
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "1.5MB",
+                  "maximumError": "2.5MB"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "8kB",
+                  "maximumError": "12kB"
+                }
+              ],
+              "outputHashing": "all"
+            },
+            "web": {
+              "outputPath": "dist/aba-t1/web",
+              "baseHref": "/products/aba-t1/",
+              "serviceWorker": "apps/aba-t1/ngsw-config.json",
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "1.5MB",
+                  "maximumError": "2.5MB"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "8kB",
+                  "maximumError": "12kB"
+                }
+              ],
+              "outputHashing": "all"
+            },
+            "development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular/build:dev-server",
+          "options": {
+            "port": 1421
+          },
+          "configurations": {
+            "production": {
+              "buildTarget": "aba-t1:build:production"
+            },
+            "development": {
+              "buildTarget": "aba-t1:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "test": {
+          "builder": "@angular/build:unit-test",
+          "options": {
+            "include": [
+              "**/*.spec.ts"
+            ]
+          }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "apps/aba-t1/**/*.ts",
+              "apps/aba-t1/**/*.html"
+            ]
           }
         }
       }

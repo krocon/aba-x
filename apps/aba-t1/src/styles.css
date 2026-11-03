@@ -1,0 +1,73 @@
+/* ABA-T1 design tokens. The page is always dark; the device has fixed colours (ADR 0008). */
+:root {
+  color-scheme: light dark;
+  --font-ui: system-ui, -apple-system, 'Segoe UI', Roboto, Ubuntu, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+
+  --page-bg: #101d1c;
+  --page-text: #dfe8e5;
+  --page-muted: #9db1ac;
+
+  /* dialogs and panels outside the device follow light/dark */
+  --color-surface: #ffffff;
+  --color-surface-2: #eaf0ee;
+  --color-border: #c9d5d1;
+  --color-text: #12201e;
+  --color-text-muted: #51625e;
+  --color-accent: #e8603f;
+  --color-focus: #ff9a7d;
+  --color-danger: #b42318;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --color-surface: #182725;
+    --color-surface-2: #22332f;
+    --color-border: #34504a;
+    --color-text: #e3ece9;
+    --color-text-muted: #9db1ac;
+    --color-accent: #ff8a6b;
+    --color-danger: #ff8a7a;
+  }
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --color-surface: #182725;
+  --color-surface-2: #22332f;
+  --color-border: #34504a;
+  --color-text: #e3ece9;
+  --color-text-muted: #9db1ac;
+  --color-accent: #ff8a6b;
+  --color-danger: #ff8a7a;
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
+}
+
+html,
+body {
+  margin: 0;
+  background: var(--page-bg);
+  color: var(--page-text);
+  font-family: var(--font-ui);
+  font-size: 16px;
+  line-height: 1.45;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}

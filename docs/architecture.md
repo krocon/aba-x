@@ -49,6 +49,12 @@ Die Auswahl der Implementierung je Plattform passiert **nur** in `apps/aba-x1/sr
 Pfad-Aliase in `tsconfig.json`, Abhängigkeiten zentral in der Root-`package.json`, pnpm-Workspace
 `apps/*` + `packages/*`. Ausgabe: `dist/<app>/desktop`, `dist/<app>/web`.
 
+### Zweite App ABA-T1 und gemeinsame Rust-Hülle (ADR 0008)
+
+`apps/aba-t1` nutzt dieselben Pakete (`@aba/math`, `@aba/core`) und eine eigene Gerät-Oberfläche. Beide Desktop-Apps
+sind dünne Crates über `crates/shell` (`aba_shell::builder()`: Storage, Export-Dateien, natives Menü, About,
+Dialog- und Fensterzustand-Plugin). Kein Cargo-Workspace – jede Crate hat ihre `Cargo.lock`.
+
 ## 3. Persistenz (ADR 0005)
 
 | Dokument | Inhalt | seit |

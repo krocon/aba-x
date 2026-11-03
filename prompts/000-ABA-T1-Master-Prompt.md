@@ -4,9 +4,9 @@
 > dessen Bedienkonzept und Funktionsumfang sich am **HP Prime G2** orientieren – als Desktop-App (Tauri 2: macOS,
 > Windows, Linux) **und** als Webseite (statisch, PWA), aus derselben Codebasis wie ABA-X1.
 >
-> **Arbeitsname:** ABA-T1 („T“ für Touch), App-Ordner `apps/aba-t1`. Name, Langform, Logo, Bundle-ID und Web-Pfad
-> entscheidet Marc in Prompt 025 – bis dahin gilt der Arbeitsname in allen Prompts (bei Umbenennung per Suchen/
-> Ersetzen nachziehen).
+> **Produktname:** ABA-T1 („T“ für Touch, Entscheidung Marc 03.11.2026, ADR 0008), App-Ordner `apps/aba-t1`,
+> Bundle-ID `io.github.krocon.abat1`, Web `krocon.de/products/aba-t1/`. **CAS:** Nerdamer, gezielt erweitert
+> (Entscheidung Marc 03.11.2026, kein Giac).
 > **Technik und Arbeitsweise:** wie ABA-X1 – siehe `CLAUDE.md`, [`000-arbeitsweise.md`](000-arbeitsweise.md),
 > [`000-ABA-X1-Master-Prompt.md`](000-ABA-X1-Master-Prompt.md) (Qualität §6, Open Source §9 gelten unverändert).
 > **Quellen (nur als funktionale Referenz, nichts daraus kopieren):** HP Prime Benutzerhandbuch (c05942639, 765 S.,

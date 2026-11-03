@@ -36,6 +36,12 @@
     },
     {
       "path": "./apps/aba-x1/tsconfig.spec.json"
+    },
+    {
+      "path": "./apps/aba-t1/tsconfig.app.json"
+    },
+    {
+      "path": "./apps/aba-t1/tsconfig.spec.json"
     }
   ]
 }

@@ -54,7 +54,7 @@ Empfohlene Reihenfolge: 025 → 026 → 027 → 028 → 029 → 030 → 031 → 
 
 | Nr. | Prompt | Inhalt | Abhängig von | Aufwand | Umfang | Status |
 |---|---|---|---|---|---|---|
-| 025 | [t1-produkt-geruest](025-t1-produkt-geruest.md) | Name, Logo, Bundle-ID, `apps/aba-t1`, `crates/shell`, leeres Gerät | 024 | L | Pflicht | offen |
+| 025 | [t1-produkt-geruest](done/025-t1-produkt-geruest.md) | Name, Logo, Bundle-ID, `apps/aba-t1`, `crates/shell`, leeres Gerät | 024 | L | Pflicht | ✅ 03.11.2026 |
 | 026 | [t1-geraet-tastenfeld-touch](026-t1-geraet-tastenfeld-touch.md) | Tastenfeld (Shift/Alpha), Wippe, Touch-Gesten, Dispatcher nach core | 025 | L | Pflicht | offen |
 | 027 | [t1-startansicht](027-t1-startansicht.md) | Startansicht, Textbuch/Algebraisch, Verlauf, Vorlagen, Einstellungen, Komplex | 026 | L | Pflicht | offen |
 | 028 | [t1-rpn-modus](028-t1-rpn-modus.md) | RPN-Stack in der Startansicht | 027 | M | Pflicht | offen |

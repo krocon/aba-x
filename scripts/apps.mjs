@@ -21,6 +21,15 @@ export const APPS = {
     tagPrefix: 'aba-x1-v',
     legacyTagPrefix: 'v',
   },
+  'aba-t1': {
+    dir: 'apps/aba-t1',
+    title: 'ABA-T1',
+    project: 'aba-t1',
+    crate: 'aba-t1',
+    /** krocon.de/products/aba-t1/ (prompt 025, ADR 0008). */
+    base: '/products/aba-t1/',
+    tagPrefix: 'aba-t1-v',
+  },
 };
 
 export const DEFAULT_APP = 'aba-x1';

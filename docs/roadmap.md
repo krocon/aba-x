@@ -15,7 +15,13 @@
 | 7 | Plattform-Integration, Produktreife | 002, 017–021 | ✅ 02.11.2026 |
 | 8 | Distribution | 022, 023 | 🟡 vorbereitet – Veröffentlichung, Signierung und Web-Deployment brauchen Marcs Freigabe |
 | 9 | Monorepo für mehrere Rechner (`packages/math`, `packages/core`, `apps/aba-x1`) | 024 | ✅ 03.11.2026 |
-| 10 | Zweiter Rechner (grafikfähiger Touch-Rechner) | 025 ff. | ⬜ offen |
+| 10 | Zweiter Rechner ABA-T1 (Bedienkonzept HP Prime G2) | 025–048 | 🟡 in Arbeit |
+
+### ABA-T1
+
+| Prompt | Inhalt | Status |
+|---|---|---|
+| 025 | Identität, App-Gerüst, `crates/shell` (ADR 0008) | ✅ 03.11.2026 |
 
 ## Was funktioniert
 

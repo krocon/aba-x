@@ -1,0 +1,126 @@
+<div class="device" role="application" aria-label="ABA-T1">
+  <div class="brand">
+    <img src="logo.svg" alt="" width="18" height="18" />
+    <span class="name">ABA-T1</span>
+    <span class="tag">GRAPHING · CAS · TOUCH</span>
+  </div>
+
+  <div class="screen">
+    <div class="lcd">
+      <div class="titlebar">
+        <span class="title">{{ title() }}</span>
+        <span class="ann" aria-live="polite">
+          @for (a of annunciators(); track a) {
+            <span>{{ a }}</span>
+          }
+        </span>
+      </div>
+      <div class="content">
+        <ng-content />
+      </div>
+      <div class="menubar" role="toolbar" aria-label="Menu">
+        @for (i of slots; track i) {
+          <button
+            type="button"
+            class="mb"
+            [class.active]="menu()[i]?.active"
+            [disabled]="!menu()[i]?.label"
+            [attr.aria-label]="(menu()[i]?.label || 'unused') + ' (F' + (i + 1) + ')'"
+            (pointerdown)="keep($event)"
+            (click)="menuPress.emit(i)"
+          >
+            {{ menu()[i]?.label ?? '' }}
+          </button>
+        }
+      </div>
+    </div>
+  </div>
+
+  <div class="top">
+    <div class="cluster left">
+      @for (row of topLeft; track $index) {
+        <div class="crow">
+          @for (k of row; track k.id) {
+            <ng-container *ngTemplateOutlet="keyTpl; context: { $implicit: k }" />
+          }
+        </div>
+      }
+    </div>
+    <div class="rocker" role="group" aria-label="Cursor">
+      <button
+        type="button"
+        class="rk up"
+        aria-label="Up"
+        (pointerdown)="keep($event)"
+        (click)="rocker.emit('up')"
+      ></button>
+      <button
+        type="button"
+        class="rk left"
+        aria-label="Left"
+        (pointerdown)="keep($event)"
+        (click)="rocker.emit('left')"
+      ></button>
+      <button
+        type="button"
+        class="rk right"
+        aria-label="Right"
+        (pointerdown)="keep($event)"
+        (click)="rocker.emit('right')"
+      ></button>
+      <button
+        type="button"
+        class="rk down"
+        aria-label="Down"
+        (pointerdown)="keep($event)"
+        (click)="rocker.emit('down')"
+      ></button>
+    </div>
+    <div class="cluster right">
+      @for (row of topRight; track $index) {
+        <div class="crow">
+          @for (k of row; track k.id) {
+            <ng-container *ngTemplateOutlet="keyTpl; context: { $implicit: k }" />
+          }
+        </div>
+      }
+    </div>
+  </div>
+
+  <div class="keys fn">
+    @for (row of functionRows; track $index) {
+      @for (k of row; track k.id) {
+        <ng-container *ngTemplateOutlet="keyTpl; context: { $implicit: k }" />
+      }
+    }
+  </div>
+  <div class="keys num">
+    @for (row of numberRows; track $index) {
+      @for (k of row; track k.id) {
+        <ng-container *ngTemplateOutlet="keyTpl; context: { $implicit: k }" />
+      }
+    }
+  </div>
+</div>
+
+<ng-template #keyTpl let-k>
+  <div class="cell" [class.span2]="k.span === 2">
+    <span class="legends" aria-hidden="true">
+      <span class="sh">{{ k.shift ?? '' }}</span>
+      <span class="al">{{ k.alpha ?? '' }}</span>
+    </span>
+    <button
+      type="button"
+      class="key"
+      [class]="'key g-' + k.group"
+      [class.lit]="lit() === k.id"
+      [attr.data-key]="k.id"
+      [attr.aria-label]="label(k)"
+      [attr.aria-pressed]="k.id === 'shift' ? shift() : k.id === 'alpha' ? alpha() : null"
+      (pointerdown)="keep($event)"
+      (click)="key.emit(k.id)"
+    >
+      {{ k.main }}
+    </button>
+  </div>
+</ng-template>

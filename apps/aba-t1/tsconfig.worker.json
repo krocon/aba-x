@@ -1,0 +1,10 @@
+/* Web worker build (prompt 004, ABA-T1 from 025). */
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../out-tsc/aba-t1/worker",
+    "lib": ["es2022", "webworker"],
+    "types": []
+  },
+  "include": ["src/**/*.worker.ts", "../../packages/core/src/**/*.worker.ts"]
+}

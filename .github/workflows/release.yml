@@ -17,7 +17,7 @@ on:
       app:
         description: 'App to build (scripts/apps.mjs)'
         type: choice
-        options: [aba-x1]
+        options: [aba-x1, aba-t1]
         default: aba-x1
       draft:
         description: 'Create the GitHub release as a draft'

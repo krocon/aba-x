@@ -6,7 +6,10 @@
 //   node scripts/e2e/run.mjs                 # chromium, webkit, firefox
 //   E2E_BROWSERS=chromium node scripts/e2e/run.mjs
 //   node scripts/e2e/run.mjs --serve 4300    # local preview of the web build, as hosted
-// `--app <name>` / `APP=<name>` picks the app (scripts/apps.mjs); the scenarios exist for ABA-X1.
+//   node scripts/e2e/run.mjs --build         # builds the web build of the app first (`pnpm e2e`)
+// `--app <name>` / `APP=<name>` picks the app (scripts/apps.mjs); scenarios: ABA-X1 here,
+// ABA-T1 in scripts/e2e/aba-t1.mjs.
+import { execFileSync } from 'node:child_process';
 import { readFile } from 'node:fs/promises';
 import { createServer } from 'node:http';
 import { createRequire } from 'node:module';
@@ -14,6 +17,7 @@ import { extname, join, normalize } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { chromium, firefox, webkit } from 'playwright';
 import { DEFAULT_APP, appConfig, appFromArgs, appPaths } from '../apps.mjs';
+import { t1Scenarios } from './aba-t1.mjs';
 
 const TYPES = {
   '.html': 'text/html',
@@ -212,7 +216,23 @@ async function offline(browser, url) {
   await ctx.close();
 }
 
-async function main({ root, base }) {
+/** Scenarios per app: the checks (in order), the offline check and a label of the page state. */
+function scenarios(app) {
+  if (app === 'aba-t1') return t1Scenarios({ axeSource });
+  if (app === 'aba-x1') return { checks, offline, state: x1State };
+  return null;
+}
+
+function x1State() {
+  return {
+    path: document.querySelector('.path')?.textContent,
+    menu: [...document.querySelectorAll('.menu-label')].map((x) => x.textContent.trim()).join(' '),
+    levels: [...document.querySelectorAll('.level .main')].map((x) => x.textContent.trim()),
+    msg: document.querySelector('.msg')?.textContent.trim(),
+  };
+}
+
+async function main({ root, base }, { checks, offline, state }) {
   const server = await serve(root, base);
   const url = `http://127.0.0.1:${server.address().port}${base}`;
   const wanted = (process.env.E2E_BROWSERS ?? 'chromium,webkit,firefox').split(',');
@@ -247,18 +267,9 @@ async function main({ root, base }) {
         console.log(`✔ ${name} ${check}${extra}`);
       } catch (e) {
         failed++;
-        const state = await page
-          .evaluate(() => ({
-            path: document.querySelector('.path')?.textContent,
-            menu: [...document.querySelectorAll('.menu-label')]
-              .map((x) => x.textContent.trim())
-              .join(' '),
-            levels: [...document.querySelectorAll('.level .main')].map((x) => x.textContent.trim()),
-            msg: document.querySelector('.msg')?.textContent.trim(),
-          }))
-          .catch(() => null);
+        const pageState = await page.evaluate(state).catch(() => null);
         console.log(
-          `✘ ${name} ${check}: ${e.message.split('\n')[0]}\n    state: ${JSON.stringify(state)}`,
+          `✘ ${name} ${check}: ${e.message.split('\n')[0]}\n    state: ${JSON.stringify(pageState)}`,
         );
       }
     }
@@ -282,7 +293,17 @@ async function main({ root, base }) {
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  const { app, rest } = appFromArgs(process.argv.slice(2), process.env);
+  const { app, rest: args } = appFromArgs(process.argv.slice(2), process.env);
+  const rest = args.filter((a) => a !== '--build');
+  if (args.includes('--build')) {
+    execFileSync(
+      'pnpm',
+      ['exec', 'ng', 'build', appConfig(app).project, '--configuration', 'web'],
+      {
+        stdio: 'inherit',
+      },
+    );
+  }
   const { root, base } = webBuild(app);
   if (rest[0] === '--serve') {
     // local preview exactly as hosted: http://localhost:<port>/products/<app>/
@@ -292,10 +313,10 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     createServer((req, res) => server.emit('request', req, res)).listen(port, () =>
       console.log(`web build of ${app} at http://localhost:${port}${base}`),
     );
-  } else if (app !== 'aba-x1') {
+  } else if (!scenarios(app)) {
     console.error(`no end-to-end scenarios for ${app} yet (scripts/e2e/run.mjs)`);
     process.exitCode = 1;
   } else {
-    await main({ root, base });
+    await main({ root, base }, scenarios(app));
   }
 }

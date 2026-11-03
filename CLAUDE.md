@@ -3,7 +3,8 @@
 > Leitfaden für Claude (und Menschen) zur Arbeit an **ABA-X1** – Advanced Browser Algebra, Scientific & Symbolic
 > Calculator: wissenschaftlicher Rechner mit CAS, natürlicher Darstellung und Funktionsplotter als **Desktop-App**
 > (Tauri 2: macOS, Windows, Linux) **und** als **Webseite** (statisch, PWA) aus einer Codebasis. Seit Prompt 024 ein
-> **Monorepo für mehrere Rechner** (ADR 0007): `packages/math`, `packages/core`, `apps/aba-x1`.
+> **Monorepo für mehrere Rechner** (ADR 0007): `packages/math`, `packages/core`, `apps/aba-x1`, `apps/aba-t1`
+> (zweiter Rechner, Bedienkonzept nach HP Prime G2, ADR 0008), `crates/shell` (gemeinsame Rust-Hülle).
 > Autor: Marc Kronberg · Repo: https://github.com/krocon/aba-x · Lizenz: MIT (bestätigt von Marc, 02.11.2026)
 > Produktvision: [`prompts/000-ABA-X1-Master-Prompt.md`](prompts/000-ABA-X1-Master-Prompt.md).
 > Vorbild für Aufbau und Arbeitsweise: Files and Folders (FnF), lokal `../files-and-folders-tauri` (nur lesen).
@@ -13,7 +14,7 @@
 ## 1. Stand
 
 - Alle Prompts 001–024 sind umgesetzt (024 Monorepo: 03.11.2026; Index `prompts/README.md`, erledigte unter `prompts/done/` mit
-  Design-Dokument). Offen sind nur Schritte mit Freigabe durch Marc: Push/CI auf Windows und Linux, Release mit
+  Design-Dokument). ABA-T1: Prompts 025–048 (Vision `prompts/000-ABA-T1-Master-Prompt.md`), Stand im Index. Offen sind nur Schritte mit Freigabe durch Marc: Push/CI auf Windows und Linux, Release mit
   Signierung, Web-Deployment (`docs/roadmap.md` „Offen“).
 - Details: `docs/roadmap.md`, `docs/architecture.md`, `docs/technical-evaluation.md`, `docs/decisions/`,
   `docs/mathematics/`.
@@ -29,13 +30,14 @@
 | Tests | `pnpm test` = `pnpm test:math` (reines Vitest + `tsc` in `packages/math`) + `ng test aba-x1` (Vitest + jsdom, inkl. `packages/core`-Specs); `pnpm test:watch` |
 | Lint / Format | `pnpm lint` (`eslint apps packages`, Import-Sperren je Paket), `pnpm format`, `pnpm format:check` |
 | Build Desktop-Frontend / Web | `pnpm build` → `dist/aba-x1/desktop` (base `/`), `pnpm build:web` → `dist/aba-x1/web` (Service Worker, base `/products/aba-x1/` = Ziel krocon.de) |
-| Rust | `pnpm rust:fmt`, `pnpm rust:lint` (clippy `-D warnings`), `pnpm rust:test` (Crate `apps/aba-x1/src-tauri`) |
+| Rust | `pnpm rust:fmt`, `pnpm rust:lint` (clippy `-D warnings`), `pnpm rust:test` (`scripts/rust.mjs`: `crates/shell` + jede App-Crate; `--app <name>`) |
+| ABA-T1 | `pnpm --filter aba-t1 start` (Port 1421), `pnpm --filter aba-t1 build`/`build:web`, `pnpm --filter aba-t1 exec tauri dev`, `pnpm e2e --app aba-t1`; Vorschau `aba-t1-dev`/`aba-t1-web-dist` (launch.json) |
 | Desktop-Debug-Build | `pnpm tauri build --debug --no-bundle` bzw. `--bundles app` (macOS, für Automation mit Bundle-ID `io.github.krocon.abax`) |
 | Pakete | `pnpm tauri:build:mac` · `pnpm tauri:build:windows` · `pnpm tauri:build:linux` (nur mit Freigabe) |
 | Version | `pnpm version:check` (alle Apps), `pnpm version:set X.Y.Z [--app aba-x1]` (Quelle `apps/<app>/package.json`) |
 | Lizenzen | `pnpm notices` nach jeder Abhängigkeitsänderung (schreibt `apps/<app>/THIRD-PARTY-NOTICES.txt` je App); `pnpm notices:check` |
 | Alles prüfen | `pnpm check` |
-| Ende-zu-Ende | `pnpm e2e` (Web-Build in Chromium + WebKit: Rechnen, CAS, Graph, echtes Tippen, gerenderter Stack, 375 px, axe, offline); `E2E_BROWSERS=chromium` für einen Browser |
+| Ende-zu-Ende | `pnpm e2e [--app <name>]` (baut den Web-Build der App; Szenarien ABA-T1: `scripts/e2e/aba-t1.mjs`; ABA-X1: Web-Build in Chromium + WebKit: Rechnen, CAS, Graph, echtes Tippen, gerenderter Stack, 375 px, axe, offline); `E2E_BROWSERS=chromium` für einen Browser |
 | Screenshots | `pnpm screenshots` → `docs/screenshots/` (README-Bilder), `pnpm screenshots:examples` → `docs/screenshots/examples/` (a: 8.5·88·1.19, b: ∫₀¹ sin 2x exakt/numerisch/Stammfunktion, c: Plot sin((x−1)(x+2))); neue Beispiele in `scripts/screenshots/run.mjs` (`examples`); Szenen sind ABA-X1-spezifisch |
 | Produktseite | `apps/aba-x1/site/` – statische Werbeseite (eine `index.html`, CSS inline, kein JS, keine fremden Server; Vorbild comic-commander-tauri/site); Bilder mit `pnpm screenshots:site` → `apps/aba-x1/site/img/`; Test `scripts/site.test.mjs`; ansehen: launch-Konfiguration `site` (Port 4310); Ziel `krocon.de/products/aba-x/`, Hochladen: `apps/aba-x1/site/README.md` |
 | Release Notes | `pnpm release:notes [--app aba-x1]` (Conventional Commits seit dem letzten Tag der App `aba-x1-v*`, davor `v*`; ohne Commits, die nur eine andere App betreffen) |
@@ -73,8 +75,12 @@ apps/aba-x1/                 die App ABA-X1 (package.json = Versionsquelle, ngsw
   src/app/core/ui-state/     Modus (standard/cas/graph)
   src/app/features/          calculator/ (device/, keypad/, Store, Engine, …), cas/, graph/, vars|history|backup|
                              settings|about|help|menus/
-  public/, src-tauri/, site/ Icons/Manifest; Crate (commands.rs, storage.rs, files.rs, app_menu.rs, about.rs, error.rs); Produktseite
-scripts/                     apps.mjs (App-Registry), version, notices, release-notes (+ Tests), e2e/run.mjs, screenshots/run.mjs
+  public/, src-tauri/, site/ Icons/Manifest; Crate (nur lib.rs: `aba_shell::builder()`); Produktseite
+apps/aba-t1/                 zweiter Rechner (ADR 0008): src/app/features/device (Gerät, Tastenmodell), Crate wie oben
+crates/shell/                gemeinsame Rust-Hülle (commands.rs, storage.rs, files.rs, app_menu.rs, about.rs, error.rs),
+                             eigene Cargo.lock, kein Workspace
+scripts/                     apps.mjs (App-Registry), version, notices, release-notes, rust.mjs (+ Tests), e2e/run.mjs
+                             (+ aba-t1.mjs), screenshots/run.mjs
 docs/                        architecture, roadmap, technical-evaluation, decisions/, mathematics/, deployment, release,
                              distribution, macos-signing, accessibility, ci/, screenshots/
 ```
@@ -87,7 +93,11 @@ docs/                        architecture, roadmap, technical-evaluation, decisi
 - **Paketgrenzen (ADR 0007):** Importe über Paketgrenzen nur per Alias (`@aba/math/…`, `@aba/core/…`), nie relativ;
   `packages/core` kennt keine App; App-Spezifisches (Keymap, Menü, Texte, Features) bleibt in `apps/<app>/`, bis
   eine zweite App es wirklich braucht. Neue App: Ordner unter `apps/`, Eintrag in `scripts/apps.mjs`,
-  Angular-Projekt, eigener `STORAGE_DB_NAME`, `matrix.app` in `ci.yml`, Auswahl in `release.yml`.
+  Angular-Projekt, eigener `STORAGE_DB_NAME`, eigener Dev-Port, Crate per Pfad an `crates/shell`, `matrix.crate` und
+  Build-Schritte in `ci.yml`, Auswahl in `release.yml`, E2E-Szenarien in `scripts/e2e/<app>.mjs`.
+- ABA-T1 (ADR 0008): Bedienkonzept wie HP Prime, aber nie HP-Namen, -Logos, -Farben, -Grafiken oder Handbuchtexte.
+  Gerätefarben nur als `--dev-*`/`--key-*`/`--lcd-*`-Tokens; Display fest 4:3, Größen darin in `cqw`.
+- App-Crates brauchen `tauri-plugin-dialog` als direkte Abhängigkeit (sonst kennt `tauri-build` die Capabilities nicht).
 - Jedes Feature in **Desktop-App und Web-Build** prüfen (Master-Prompt §6.5).
 - MathLive: nur `latex` weiterverarbeiten (ASCII-Math ist verlustbehaftet); Fonts aus dem Bundle, kein CDN.
 - Nerdamer (ab 009): nur über den Adapter, Funktionen per Positivliste (`ln` ist dort unbekannt → falsches `0`).
