@@ -21,7 +21,7 @@ point to the page folder; links to the app are absolute.
 ## Pictures
 
 ```bash
-pnpm screenshots:t1   # builds the web version, writes docs/screenshots/aba-t1/ and apps/aba-t1/site/img/
+pnpm t1:screenshots   # builds the web version, writes docs/screenshots/aba-t1/ and apps/aba-t1/site/img/
 ```
 
 Scenes: `scripts/screenshots/aba-t1.mjs`. Test: `node --test scripts/site.test.mjs` (both product pages).

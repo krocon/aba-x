@@ -2,8 +2,8 @@
 <!--
   ABA-T1 – product page (prompt 048), after the page of ABA-X1.
   One static file: CSS inline, no JavaScript, no web fonts, no trackers, no external requests.
-  Dark, colours of the device: body #10201d / #1b3533, accent #e8603f, display white.
-  Pictures: img/*.png next to this file – regenerate with `pnpm screenshots:t1`. See site/README.md.
+  Dark, colours of the device: black top, metal keypad, orange alpha, light-blue shift.
+  Pictures: img/*.png next to this file – regenerate with `pnpm t1:screenshots`. See site/README.md.
 -->
 <html lang="en">
   <head>
@@ -30,15 +30,15 @@
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
     <style>
       :root {
-        --bg: #10201d;
-        --bg-2: #0b1715;
-        --surface: #1b3533;
-        --line: #2c4a46;
-        --text: #eef3f1;
-        --muted: #b4c4bf;
-        --accent: #e8603f;
-        --accent-hi: #ff8a6b;
-        --link: #8fe0d9;
+        --bg: #121417;
+        --bg-2: #0a0b0d;
+        --surface: #1e2125;
+        --line: #34383e;
+        --text: #eef0f2;
+        --muted: #b3b7bd;
+        --accent: #c25f00;
+        --accent-hi: #f6a04d;
+        --link: #7cc8f0;
         --sans:
           system-ui, -apple-system, 'Segoe UI', Roboto, Ubuntu, Cantarell, 'Noto Sans', sans-serif;
         --gutter: clamp(16px, 4vw, 40px);
@@ -195,7 +195,7 @@
       .card img {
         width: 100%;
         height: auto;
-        aspect-ratio: 880 / 1806;
+        aspect-ratio: 880 / 1828;
         object-fit: cover;
         object-position: top;
         max-height: 420px;
@@ -289,7 +289,7 @@
           <img
             src="img/function.png"
             width="880"
-            height="1806"
+            height="1828"
             alt="The ABA-T1 device showing a plot of x times sine of x"
           />
         </figure>
@@ -311,7 +311,7 @@
             <img
               src="img/home.png"
               width="880"
-              height="1806"
+              height="1828"
               loading="lazy"
               alt="The home view with fractions, a root, a complex product and a binomial coefficient"
             />
@@ -327,7 +327,7 @@
             <img
               src="img/cas.png"
               width="880"
-              height="1806"
+              height="1828"
               loading="lazy"
               alt="The CAS view with a factorisation, a derivative, an integral and the solutions of a quadratic equation"
             />
@@ -343,7 +343,7 @@
             <img
               src="img/function.png"
               width="880"
-              height="1806"
+              height="1828"
               loading="lazy"
               alt="The function app plotting x times sine of x with the trace cursor"
             />
@@ -359,7 +359,7 @@
             <img
               src="img/relation.png"
               width="880"
-              height="1806"
+              height="1828"
               loading="lazy"
               alt="Advanced graphing with a ring between two circles and a half plane with a dashed border"
             />
@@ -375,7 +375,7 @@
             <img
               src="img/statistics.png"
               width="880"
-              height="1806"
+              height="1828"
               loading="lazy"
               alt="A histogram of twenty values in the statistics app"
             />
@@ -391,7 +391,7 @@
             <img
               src="img/graph3d.png"
               width="880"
-              height="1806"
+              height="1828"
               loading="lazy"
               alt="A 3D surface of sine x times cosine y inside its bounding box"
             />
@@ -407,7 +407,7 @@
             <img
               src="img/geometry.png"
               width="880"
-              height="1806"
+              height="1828"
               loading="lazy"
               alt="A triangle with its circumcircle and the midpoint of one side"
             />
@@ -423,7 +423,7 @@
             <img
               src="img/program.png"
               width="880"
-              height="1806"
+              height="1828"
               loading="lazy"
               alt="The program editor with a Collatz step counter"
             />
@@ -439,7 +439,7 @@
             <img
               src="img/python.png"
               width="880"
-              height="1806"
+              height="1828"
               loading="lazy"
               alt="The Python shell with a sum, a list comprehension and pi"
             />

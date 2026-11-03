@@ -15,7 +15,7 @@
     Die App-Szenarien prüfen ihre eigenen Ansichten zusätzlich mit axe.
   - E4 **Web-Ziel (Vorschlag, Entscheidung Marc):** App unter `krocon.de/products/aba-t1/` (bereits `baseHref`),
     Produktseite unter `krocon.de/products/aba-t/` (wie ABA-X1: `aba-x` / `aba-x1`).
-  - E5 **Screenshots:** `scripts/screenshots/aba-t1.mjs` (9 Szenen, hell/dunkel), `pnpm screenshots:t1`;
+  - E5 **Screenshots:** `scripts/screenshots/aba-t1.mjs` (9 Szenen, hell/dunkel), `pnpm t1:screenshots`;
     Werbeseite `apps/aba-t1/site/` (statisch, ohne JS und fremde Server), Site-Test für beide Apps.
 - Messwerte: Start bis zur Eingabezeile im Web-Build ≈ 200–280 ms (Chromium), ≈ 390 ms (WebKit), headless lokal;
   MicroPython-Start im Worker ≈ 20 ms nach dem Laden; Desktop-Debug-Build `ABA-T1.app` 33,6 MB.

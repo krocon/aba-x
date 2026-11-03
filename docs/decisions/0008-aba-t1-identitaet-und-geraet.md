@@ -27,3 +27,12 @@ eigene Identität ohne Fremdmarken und eine Desktop-Hülle, die nicht kopiert wi
 + ABA-X1 unverändert (Bundle-ID, Daten, Notices identisch), Rust-Code nur einmal vorhanden.
 + `pnpm rust:*` (`scripts/rust.mjs`) und CI prüfen Shell und jede App-Crate auf allen drei Plattformen.
 − Drei `Cargo.lock`-Dateien müssen bei Tauri-Updates gemeinsam angehoben werden.
+
+## Nachtrag 03.11.2026 – Gerätefarben
+
+Auf Wunsch von Marc folgt das Gerät jetzt dem vertrauten Farbschema dieser Geräteklasse: glänzend schwarzer oberer
+Teil (Display, App-Tasten, Wippe), Tastenfeld in gebürstetem Metall, schwarze Funktions- und weiße Zahlentasten,
+Shift hellblau, Alpha orange. Weiterhin gilt: eigener Name (ABA-T1), eigenes Logo und Schriftzug, keine Herstellernamen,
+-logos, -grafiken oder Handbuchtexte. Die Farben stehen als `--dev-*`/`--key-*`/`--lcd-*`/`--metal-*`-Tokens in
+`features/device/t1-device.css`.
+

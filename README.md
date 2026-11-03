@@ -69,7 +69,7 @@ six menu buttons and a full keypad, plus the hardware keyboard. It runs the same
 </p>
 
 Run it with `pnpm --filter aba-t1 start` (web, port 1421) or `pnpm --filter aba-t1 exec tauri dev`; end-to-end tests
-with `pnpm e2e --app aba-t1`, screenshots with `pnpm screenshots:t1`. User guide: [`docs/aba-t1.md`](docs/aba-t1.md);
+with `pnpm e2e --app aba-t1`, screenshots with `pnpm t1:screenshots`. User guide: [`docs/aba-t1.md`](docs/aba-t1.md);
 product page: [`apps/aba-t1/site/`](apps/aba-t1/site/README.md).
 
 ## Keyboard

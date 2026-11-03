@@ -24,6 +24,7 @@
 | Zweck | Befehl |
 |---|---|
 | Install | `pnpm install` |
+| Je Rechner | `pnpm x1:<befehl>` / `pnpm t1:<befehl>`: `start` (Web-Dev, Port 1420/1421), `dev` (Desktop), `build`, `build:web`, `serve:web` (Web-Build wie gehostet, Port 4300/4301), `test`, `e2e`, `screenshots`, `release:notes`, `tauri:build:mac`/`:mac:local`/`:debug` (Pakete nur mit Freigabe); `t1:site` (Produktseite, Port 4311) |
 | App-Auswahl | Root-Befehle gelten für **ABA-X1** (Standard-App); andere App: `--app <name>` bzw. `APP=<name>` für Skripte, `pnpm --filter <name> <skript>` für App-Skripte. Registry: `scripts/apps.mjs` |
 | Web-Dev-Server | `pnpm start` (= `ng serve aba-x1`, Port 1420; im Browser ohne Tauri → Web-Fassaden, IndexedDB) |
 | Desktop-Dev | `pnpm tauri dev` (= `pnpm --filter aba-x1 exec tauri dev`, Tauri läuft im App-Ordner) |
@@ -108,8 +109,9 @@ docs/                        architecture, roadmap, technical-evaluation, decisi
   eine zweite App es wirklich braucht. Neue App: Ordner unter `apps/`, Eintrag in `scripts/apps.mjs`,
   Angular-Projekt, eigener `STORAGE_DB_NAME`, eigener Dev-Port, Crate per Pfad an `crates/shell`, `matrix.crate` und
   Build-Schritte in `ci.yml`, Auswahl in `release.yml`, E2E-Szenarien in `scripts/e2e/<app>.mjs`.
-- ABA-T1 (ADR 0008): Bedienkonzept wie HP Prime, aber nie HP-Namen, -Logos, -Farben, -Grafiken oder Handbuchtexte.
-  Gerätefarben nur als `--dev-*`/`--key-*`/`--lcd-*`-Tokens; Display fest 4:3, Größen darin in `cqw`.
+- ABA-T1 (ADR 0008): Bedienkonzept und Farbschema (schwarz oben, Metall unten, Shift hellblau, Alpha orange) wie die
+  Geräteklasse, aber nie HP-Namen, -Logos, -Grafiken oder Handbuchtexte. Gerätefarben nur als `--dev-*`/`--key-*`/
+  `--lcd-*`/`--metal-*`-Tokens; Display fest 4:3, Größen darin in `cqw`.
 - App-Crates brauchen `tauri-plugin-dialog` als direkte Abhängigkeit (sonst kennt `tauri-build` die Capabilities nicht).
 - Jedes Feature in **Desktop-App und Web-Build** prüfen (Master-Prompt §6.5).
 - MathLive: nur `latex` weiterverarbeiten (ASCII-Math ist verlustbehaftet); Fonts aus dem Bundle, kein CDN.

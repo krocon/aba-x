@@ -108,19 +108,21 @@
     </div>
   </div>
 
-  <div class="keys fn">
-    @for (row of functionRows; track $index) {
-      @for (k of row; track k.id) {
-        <ng-container *ngTemplateOutlet="keyTpl; context: { $implicit: k }" />
+  <div class="metal">
+    <div class="keys fn">
+      @for (row of functionRows; track $index) {
+        @for (k of row; track k.id) {
+          <ng-container *ngTemplateOutlet="keyTpl; context: { $implicit: k }" />
+        }
       }
-    }
-  </div>
-  <div class="keys num">
-    @for (row of numberRows; track $index) {
-      @for (k of row; track k.id) {
-        <ng-container *ngTemplateOutlet="keyTpl; context: { $implicit: k }" />
+    </div>
+    <div class="keys num">
+      @for (row of numberRows; track $index) {
+        @for (k of row; track k.id) {
+          <ng-container *ngTemplateOutlet="keyTpl; context: { $implicit: k }" />
+        }
       }
-    }
+    </div>
   </div>
 </div>
 
